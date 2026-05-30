@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->nullable(); // Default 'name' field, keeping it nullable if we use username primarily
+            $table->string('name')->nullable();
+            $table->string('profile_photo')->nullable();
             $table->string('username')->unique();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->date('date_of_birth')->nullable();
             $table->string('gender')->nullable();
             $table->text('description')->nullable();
+            $table->string('role')->default('donatur');
             $table->rememberToken();
             $table->timestamps();
         });

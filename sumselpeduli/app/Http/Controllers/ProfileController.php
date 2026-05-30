@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\FundraiserVerification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
+    public function show()
+    {
+        $user = Auth::user()->load(['follows.campaign', 'campaigns']);
+        return view('profile.show', compact('user'));
+    }
+
     public function edit()
     {
         return view('profile.edit', ['user' => Auth::user()]);
@@ -17,13 +26,62 @@ class ProfileController extends Controller
         $user = Auth::user();
 
         $request->validate([
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|string|in:Male,Female,Other',
             'description' => 'nullable|string|max:500',
+            'password' => 'nullable|string|min:8|confirmed',
+            'profile_photo' => 'nullable|image|max:2048',
         ]);
 
-        $user->update($request->only('date_of_birth', 'gender', 'description'));
+        $data = $request->only('username', 'email', 'date_of_birth', 'gender', 'description');
 
-        return redirect()->route('home')->with('success', 'Profile updated successfully!');
+        if ($request->hasFile('profile_photo')) {
+            if ($user->profile_photo) {
+                Storage::delete($user->profile_photo);
+            }
+            $data['profile_photo'] = $request->file('profile_photo')->store('profiles');
+        }
+
+        if ($request->filled('password')) {
+            $data['password'] = Hash::make($request->password);
+        }
+
+        $user->update($data);
+
+        return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
+    }
+
+    public function upgrade(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user->role === 'fundraiser') {
+            return redirect()->back()->with('error', 'You are already a fundraiser.');
+        }
+
+        $request->validate([
+            'full_name' => 'required|string|max:255',
+            'nik' => 'required|string|size:16',
+            'organization_name' => 'required|string|max:255',
+            'ktp_photo' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'statement' => 'required|accepted',
+        ]);
+
+        $path = $request->file('ktp_photo')->store('verifications');
+
+        FundraiserVerification::create([
+            'user_id' => $user->id,
+            'full_name' => $request->full_name,
+            'nik' => $request->nik,
+            'organization_name' => $request->organization_name,
+            'ktp_photo' => $path,
+            'status' => 'approved', // Auto-approve for demo as requested (upgrade directly)
+        ]);
+
+        $user->update(['role' => 'fundraiser']);
+
+        return redirect()->route('profile.show')->with('success', 'Congratulations! You are now a Fundraiser.');
     }
 }

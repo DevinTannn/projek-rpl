@@ -2,47 +2,84 @@
 
 @section('content')
 <div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card p-4">
-            <h3 class="fw-bold mb-4">Complete Your Profile</h3>
-            <p class="text-muted mb-4">Tell us a bit more about yourself to get started.</p>
+    <div class="col-md-7">
+        <div class="card border-0 shadow-sm p-4 p-lg-5" style="border-radius: 28px;">
+            <div class="d-flex align-items-center gap-3 mb-5">
+                <div class="bg-surface p-3 rounded-circle">
+                    <i data-lucide="user-cog" class="text-primary-custom" style="width: 32px; height: 32px;"></i>
+                </div>
+                <h3 class="fw-bold m-0 text-primary-custom">Edit Profile Settings</h3>
+            </div>
             
-            <form action="{{ route('profile.update') }}" method="POST">
+            <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
-                <div class="mb-3">
-                    <label for="date_of_birth" class="form-label">Date of Birth</label>
-                    <input type="date" name="date_of_birth" id="date_of_birth" class="form-control @error('date_of_birth') is-invalid @enderror" value="{{ old('date_of_birth', $user->date_of_birth) }}">
-                    @error('date_of_birth')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
+                <div class="row g-4">
+                    <!-- Photo Header -->
+                    <div class="col-12 text-center mb-4">
+                        <div class="position-relative d-inline-block">
+                            <img src="{{ $user->profile_photo ? Storage::url($user->profile_photo) : 'https://ui-avatars.com/api/?name='.$user->username.'&background=7CA982' }}" 
+                                 class="rounded-circle border border-4 border-white shadow-sm mb-3" 
+                                 style="width: 120px; height: 120px; object-fit: cover;">
+                            <label for="profile_photo" class="btn btn-sm btn-accent position-absolute bottom-0 start-50 translate-middle-x rounded-pill shadow-sm" style="margin-bottom: -10px;">
+                                <i data-lucide="camera" style="width: 14px;"></i> Edit
+                            </label>
+                            <input type="file" name="profile_photo" id="profile_photo" class="d-none">
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Username</label>
+                        <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username', $user->username) }}" required>
+                        @error('username') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Email Address</label>
+                        <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required>
+                        @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Date of Birth</label>
+                        <input type="date" name="date_of_birth" class="form-control @error('date_of_birth') is-invalid @enderror" value="{{ old('date_of_birth', $user->date_of_birth) }}">
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Gender</label>
+                        <select name="gender" class="form-select @error('gender') is-invalid @enderror">
+                            <option value="">Select Gender</option>
+                            <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>Male</option>
+                            <option value="Female" {{ old('gender', $user->gender) == 'Female' ? 'selected' : '' }}>Female</option>
+                            <option value="Other" {{ old('gender', $user->gender) == 'Other' ? 'selected' : '' }}>Other</option>
+                        </select>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label fw-bold">Description / Bio</label>
+                        <textarea name="description" rows="3" class="form-control @error('description') is-invalid @enderror">{{ old('description', $user->description) }}</textarea>
+                    </div>
+
+                    <hr class="my-4 text-muted border-dashed">
+
+                    <h6 class="fw-bold text-primary-custom mb-3 mt-0">Change Password</h6>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">New Password</label>
+                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Leave blank to keep current">
+                        @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                    </div>
+
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Confirm New Password</label>
+                        <input type="password" name="password_confirmation" class="form-control" placeholder="Repeat new password">
+                    </div>
+
                 </div>
 
-                <div class="mb-3">
-                    <label for="gender" class="form-label">Gender</label>
-                    <select name="gender" id="gender" class="form-select @error('gender') is-invalid @enderror">
-                        <option value="">Select Gender</option>
-                        <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>Male</option>
-                        <option value="Female" {{ old('gender', $user->gender) == 'Female' ? 'selected' : '' }}>Female</option>
-                        <option value="Other" {{ old('gender', $user->gender) == 'Other' ? 'selected' : '' }}>Other</option>
-                    </select>
-                    @error('gender')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-4">
-                    <label for="description" class="form-label">Short Bio / Description</label>
-                    <textarea name="description" id="description" rows="3" class="form-control @error('description') is-invalid @enderror">{{ old('description', $user->description) }}</textarea>
-                    @error('description')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="d-flex justify-content-between align-items-center">
-                    <a href="/" class="text-muted text-decoration-none">Skip for now</a>
-                    <button type="submit" class="btn btn-accent px-4 py-2 fw-semibold">Save Profile</button>
+                <div class="mt-5 d-flex gap-3">
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Update Profile</button>
+                    <a href="{{ route('profile.show') }}" class="btn btn-light px-5 py-2 fw-bold rounded-pill">Cancel</a>
                 </div>
             </form>
         </div>

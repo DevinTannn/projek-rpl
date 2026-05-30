@@ -1,48 +1,46 @@
-@extends('layouts.app')
+@extends('layouts.auth')
 
 @section('content')
-<div class="row justify-content-center">
-    <div class="col-md-5">
-        <div class="card p-4">
-            <h3 class="fw-bold mb-4 text-center">Join SumselPeduli</h3>
-            <form action="{{ route('register') }}" method="POST">
-                @csrf
-                <div class="mb-3">
-                    <label for="username" class="form-label">Username</label>
-                    <input type="text" name="username" id="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" required>
-                    @error('username')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email Address</label>
-                    <input type="email" name="email" id="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required>
-                    @error('email')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-3">
-                    <label for="password" class="form-label">Password</label>
-                    <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" required>
-                    @error('password')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <div class="mb-4">
-                    <label for="password_confirmation" class="form-label">Confirm Password</label>
-                    <input type="password" name="password_confirmation" id="password_confirmation" class="form-control" required>
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold">Register Now</button>
-
-                <div class="mt-3 text-center">
-                    <small>Already have an account? <a href="{{ route('login') }}" class="text-accent-custom text-decoration-none">Login here</a></small>
-                </div>
-            </form>
-        </div>
-    </div>
+<div class="text-center mb-5">
+    <h3 class="fw-bold text-primary-custom">Buat Akun</h3>
+    <p class="text-muted">Mulai langkah kebaikan Anda hari ini</p>
 </div>
+
+@if($errors->any())
+    <div class="alert alert-danger border-0 rounded-4 mb-4 small">
+        @foreach($errors->all() as $error)
+            <div>{{ $error }}</div>
+        @endforeach
+    </div>
+@endif
+
+<form action="{{ route('register') }}" method="POST">
+    @csrf
+    
+    <div class="mb-3">
+        <label class="form-label small fw-bold">Username</label>
+        <input type="text" name="username" class="form-control" placeholder="jokosusilo" value="{{ old('username') }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label small fw-bold">Email</label>
+        <input type="email" name="email" class="form-control" placeholder="joko@email.com" value="{{ old('email') }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label small fw-bold">Kata Sandi</label>
+        <input type="password" name="password" class="form-control" placeholder="Min. 8 karakter" required>
+    </div>
+
+    <div class="mb-4">
+        <label class="form-label small fw-bold">Konfirmasi Sandi</label>
+        <input type="password" name="password_confirmation" class="form-control" placeholder="Ulangi kata sandi" required>
+    </div>
+
+    <button type="submit" class="btn btn-auth">Daftar Sekarang</button>
+
+    <div class="auth-switch">
+        Sudah punya akun? <a href="{{ route('login') }}">Masuk</a>
+    </div>
+</form>
 @endsection
