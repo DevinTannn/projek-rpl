@@ -3,11 +3,16 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\DonationController;
+use App\Http\Controllers\FundraiserVerificationController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+use App\Http\Controllers\HomeController;
+
+Route::get('/', HomeController::class)->name('home');
+
+Route::get('/search', [CampaignController::class, 'search'])->name('campaigns.search');
+Route::get('/api/search', [CampaignController::class, 'apiSearch'])->name('api.campaigns.search');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {
@@ -25,16 +30,50 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::post('/profile/upgrade', [ProfileController::class, 'upgrade'])->name('profile.upgrade');
+    Route::get('/profile/archived', [DonationController::class, 'archive'])->name('profile.archived');
+    Route::get('/profile/verification', [FundraiserVerificationController::class, 'show'])->name('profile.verification');
+    Route::post('/profile/verification', [FundraiserVerificationController::class, 'store'])->name('profile.verification.store');
+    Route::post('/profile/verification/org', [FundraiserVerificationController::class, 'updateOrganization'])->name('profile.verification.updateOrg');
+    Route::get('/followed', [CampaignController::class, 'followedIndex'])->name('campaigns.followed');
+    Route::get('/last-accessed', [CampaignController::class, 'lastAccessedIndex'])->name('campaigns.last-accessed');
+    Route::get('/donations/{id}/certificate', [DonationController::class, 'downloadCertificate'])->name('donations.certificate');
+    
+    // Donation Route
+    Route::post('/campaigns/{id}/donate', [DonationController::class, 'store'])->name('campaigns.donate');
+    Route::post('/campaigns/{id}/follow', [CampaignController::class, 'toggleFollow'])->name('campaigns.follow');
 });
 
-// Campaign Management (Fundraiser Only)
-Route::middleware(['auth', 'role:fundraiser'])->group(function () {
+// Admin Routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/donations', [\App\Http\Controllers\Admin\AdminDonationController::class, 'index'])->name('donations.index');
+    Route::post('/donations/{id}/verify', [\App\Http\Controllers\Admin\AdminDonationController::class, 'verify'])->name('donations.verify');
+    Route::post('/donations/{id}/reject', [\App\Http\Controllers\Admin\AdminDonationController::class, 'reject'])->name('donations.reject');
+    
+    Route::get('/fundraisers', [\App\Http\Controllers\Admin\AdminFundraiserController::class, 'index'])->name('fundraisers.index');
+    Route::post('/fundraisers/{id}/verify', [\App\Http\Controllers\Admin\AdminFundraiserController::class, 'verify'])->name('fundraisers.verify');
+    Route::post('/fundraisers/{id}/reject', [\App\Http\Controllers\Admin\AdminFundraiserController::class, 'reject'])->name('fundraisers.reject');
+});
+
+Route::middleware('auth')->group(function () {
     Route::get('/my-campaigns', [CampaignController::class, 'myIndex'])->name('campaigns.index');
     Route::post('/my-campaigns', [CampaignController::class, 'store'])->name('campaigns.store');
     Route::get('/my-campaigns/{id}', [CampaignController::class, 'show'])->name('campaigns.show');
-    Route::patch('/my-campaigns/{id}/tag', [CampaignController::class, 'updateTag'])->name('campaigns.update-tag');
+    
+    // Restricted Management Actions
+    Route::middleware('role:fundraiser')->group(function () {
+        Route::put('/my-campaigns/{id}', [CampaignController::class, 'update'])->name('campaigns.update');
+        Route::patch('/my-campaigns/{id}/tag', [CampaignController::class, 'updateTag'])->name('campaigns.update-tag');
+        Route::delete('/my-campaigns/{id}', [CampaignController::class, 'destroy'])->name('campaigns.destroy');
+        Route::post('/my-campaigns/{id}/media', [CampaignController::class, 'uploadMedia'])->name('campaigns.media.upload');
+        Route::delete('/my-campaigns/{campaignId}/media/{mediaId}', [CampaignController::class, 'deleteMedia'])->name('campaigns.media.delete');
+        Route::post('/my-campaigns/{id}/updates', [CampaignController::class, 'addUpdate'])->name('campaigns.updates.store');
+    });
 });
+
+// Midtrans Notification
+Route::post('/midtrans/notification', [DonationController::class, 'notification'])->name('midtrans.notification');
+
+Route::get('/events/{type}', [\App\Http\Controllers\EventController::class, 'show'])->name('events.show');
 
 Route::get('/preview', function () {
     return view('demo_shell');

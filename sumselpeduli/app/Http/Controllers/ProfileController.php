@@ -31,7 +31,6 @@ class ProfileController extends Controller
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|string|in:Male,Female,Other',
             'description' => 'nullable|string|max:500',
-            'password' => 'nullable|string|min:8|confirmed',
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
@@ -42,10 +41,6 @@ class ProfileController extends Controller
                 Storage::delete($user->profile_photo);
             }
             $data['profile_photo'] = $request->file('profile_photo')->store('profiles');
-        }
-
-        if ($request->filled('password')) {
-            $data['password'] = Hash::make($request->password);
         }
 
         $user->update($data);

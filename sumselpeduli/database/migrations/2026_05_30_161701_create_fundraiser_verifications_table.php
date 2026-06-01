@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('nik');
             $table->string('organization_name');
             $table->string('ktp_photo');
-            $table->string('status')->default('pending');
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
         });
     }

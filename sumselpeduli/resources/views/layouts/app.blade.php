@@ -11,6 +11,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <script type="text/javascript"
+            src="https://app.sandbox.midtrans.com/snap/snap.js"
+            data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     <style>
         :root {
             --primary-color: #243E36;
@@ -201,6 +204,52 @@
             align-items: center;
         }
 
+        .search-results-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            margin-top: 10px;
+            display: none;
+            overflow: hidden;
+            z-index: 2000;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .search-result-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: background 0.2s;
+            border-bottom: 1px solid rgba(0,0,0,0.03);
+        }
+
+        .search-result-item:hover {
+            background-color: #f7faf8;
+            color: #1b4d3e;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-item .icon-box {
+            width: 32px;
+            height: 32px;
+            background: #E0EEC6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+        }
+
         .search-container input {
             background-color: #f0f2f1;
             border: 1px solid transparent;
@@ -343,6 +392,54 @@
             transform: scale(1.05);
             background-color: #2c4a40;
         }
+
+        /* Floating Event Button */
+        .floating-event-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #1b4d3e 0%, #243e36 100%);
+            border: 4px solid white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #c2a83e;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 2100;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+        }
+        .floating-event-btn:hover {
+            transform: scale(1.15) rotate(15deg);
+            box-shadow: 0 15px 40px rgba(27, 77, 62, 0.4);
+            color: white;
+        }
+        .floating-event-btn i {
+            width: 35px;
+            height: 35px;
+        }
+        .event-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ff4757;
+            color: white;
+            font-size: 10px;
+            font-weight: 800;
+            padding: 4px 8px;
+            border-radius: 20px;
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body>
@@ -386,16 +483,18 @@
     <div id="main-content" class="main-content wide-space">
         <!-- Top Bar (Desktop Only) -->
         <header class="top-bar d-none d-lg-flex">
-            <div class="search-container">
+            <form action="{{ route('campaigns.search') }}" method="GET" class="search-container">
                 <span class="search-icon">
                     <i data-lucide="search"></i>
                 </span>
-                <input type="text" placeholder="Cari kampanye donasi...">
-            </div>
+                <input type="text" id="main-search-input" name="query" placeholder="Cari kampanye donasi..." value="{{ request('query') }}" autocomplete="off">
+                <div id="search-results" class="search-results-dropdown">
+                    <!-- Results injected here -->
+                </div>
+            </form>
 
             <div class="profile-area">
                 @auth
-                <span id="role-display" class="role-badge">{{ Auth::user()->role ?? 'Donatur' }}</span>
                 <a href="{{ route('profile.show') }}" class="text-decoration-none d-flex align-items-center gap-3">
                     <div class="d-flex flex-column align-items-end me-1">
                         <span class="fw-bold small text-primary-custom">{{ Auth::user()->username }}</span>
@@ -413,9 +512,38 @@
         </header>
 
         <div class="container-fluid px-lg-5 py-4">
+            {{-- Global Alerts --}}
+            @if(session('success'))
+                <div class="alert alert-success border-0 rounded-4 mb-4 shadow-sm animate__animated animate__fadeInDown">
+                    <i data-lucide="check-circle" class="me-2" style="width: 18px;"></i> {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger border-0 rounded-4 mb-4 shadow-sm animate__animated animate__fadeInDown">
+                    <i data-lucide="alert-circle" class="me-2" style="width: 18px;"></i> {{ session('error') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="alert alert-danger border-0 rounded-4 mb-4 shadow-sm animate__animated animate__fadeInDown">
+                    <ul class="mb-0 small fw-bold">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             @yield('content')
         </div>
     </div>
+
+    <!-- Floating Event Button -->
+    <a href="{{ route('events.show', 'ramadan') }}" class="floating-event-btn" id="event-btn">
+        <i data-lucide="moon"></i>
+        <div class="event-badge">LIVE</div>
+    </a>
 
     <!-- Bottom Nav (Mobile/Tablet Only) -->
     <nav class="bottom-nav d-lg-none">
@@ -434,19 +562,22 @@
         let currentRole = '{{ Auth::check() ? Auth::user()->role : 'donatur' }}';
         let isSidebarCollapsed = false;
 
-        const navConfig = {
-            donatur: [
-                { id: 'home', label: 'Home', icon: 'home', url: '{{ route('home') }}', active: {{ request()->routeIs('home') ? 'true' : 'false' }} },
-                { id: 'follow', label: 'Follow', icon: 'heart', url: '#', active: false },
-                { id: 'archive', label: 'Archive', icon: 'archive', url: '#', active: false }
-            ],
-            fundraiser: [
-                { id: 'home', label: 'Home', icon: 'home', url: '{{ route('home') }}', active: {{ request()->routeIs('home') ? 'true' : 'false' }} },
-                { id: 'follow', label: 'Follow', icon: 'heart', url: '#', active: false },
-                { id: 'campaign', label: 'Your Campaign', icon: 'layout-grid', url: '{{ route('campaigns.index') }}', active: {{ request()->routeIs('campaigns.*') ? 'true' : 'false' }} },
-                { id: 'archive', label: 'Archive', icon: 'archive', url: '#', active: false }
-            ]
-        };
+        const campaignUrl = '{{ route('campaigns.index') }}';
+        const isCampaignActive = {{ request()->routeIs('campaigns.*') ? 'true' : 'false' }};
+
+        const navItems = [
+            { id: 'home', label: 'Home', icon: 'home', url: '{{ route('home') }}', active: {{ request()->routeIs('home') ? 'true' : 'false' }} },
+            { id: 'follow', label: 'Follow', icon: 'heart', url: '{{ route('campaigns.followed') }}', active: {{ request()->routeIs('campaigns.followed') ? 'true' : 'false' }} },
+            { id: 'campaign', label: 'Your Campaign', icon: 'layout-grid', url: '{{ route('campaigns.index') }}', active: {{ request()->routeIs('campaigns.index') ? 'true' : 'false' }} },
+            { id: 'archive', label: 'Archive', icon: 'archive', url: '{{ route('profile.archived') }}', active: {{ request()->routeIs('profile.archived') ? 'true' : 'false' }} }
+        ];
+
+        @guest
+        const navConfig = { donatur: navItems, fundraiser: navItems };
+        @endguest
+        @auth
+        const navConfig = { donatur: navItems, fundraiser: navItems };
+        @endauth
 
         function renderNav() {
             const sidebar = document.getElementById('sidebar-nav-items');
@@ -490,17 +621,64 @@
 
         function switchRole() {
             currentRole = currentRole === 'donatur' ? 'fundraiser' : 'donatur';
-            const roleDisplay = document.getElementById('role-display');
-            const nextRoleLabel = document.getElementById('next-role-label');
-            roleDisplay.innerText = currentRole.charAt(0).toUpperCase() + currentRole.slice(1);
-            nextRoleLabel.innerText = currentRole === 'donatur' ? 'Switch to Fundraiser' : 'Switch to Donatur';
             renderNav();
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             renderNav();
+            
+            // ── Live Search Logic ──
+            const searchInput = document.getElementById('main-search-input');
+            const searchResults = document.getElementById('search-results');
+            let searchTimeout = null;
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const query = this.value.trim();
+                    clearTimeout(searchTimeout);
+
+                    if (query.length < 2) {
+                        searchResults.style.display = 'none';
+                        return;
+                    }
+
+                    searchTimeout = setTimeout(() => {
+                        fetch(`{{ route('api.campaigns.search') }}?query=${encodeURIComponent(query)}`)
+                            .then(res => res.json())
+                            .then(data => {
+                                if (data.length > 0) {
+                                    searchResults.innerHTML = data.map(item => `
+                                        <a href="/my-campaigns/${item.id}" class="search-result-item">
+                                            <div class="icon-box">
+                                                <i data-lucide="layout-grid" style="width:16px;"></i>
+                                            </div>
+                                            <div>
+                                                <div class="fw-bold small">${item.title}</div>
+                                                <div class="text-muted" style="font-size:10px;">${item.tag || 'No Category'}</div>
+                                            </div>
+                                        </a>
+                                    `).join('');
+                                    searchResults.style.display = 'block';
+                                    lucide.createIcons();
+                                } else {
+                                    searchResults.innerHTML = '<div class="p-3 text-center text-muted small">Tidak ada kampanye ditemukan.</div>';
+                                    searchResults.style.display = 'block';
+                                }
+                            });
+                    }, 300);
+                });
+
+                // Hide results on click away
+                document.addEventListener('click', (e) => {
+                    if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+                        searchResults.style.display = 'none';
+                    }
+                });
+            }
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    @stack('scripts')
+    @stack('modals')
 </body>
 </html>

@@ -28,67 +28,41 @@
     .btn-donasi:hover { background-color: #a89235; transform: scale(1.05); }
 </style>
 
-<!-- Recently Accessed -->
+<!-- Recently Updated -->
 <div class="mb-5">
     <div class="section-title mb-4">
         <h4 class="m-0 text-primary-custom">Akses Terakhir</h4>
-        <a href="#" class="text-secondary-custom text-decoration-none small fw-bold">Lihat Semua <i data-lucide="chevron-right" style="width: 14px;"></i></a>
+        @if($lastUpdatedCampaigns->count() > 0)
+            <a href="{{ route('campaigns.last-accessed') }}" class="text-secondary-custom text-decoration-none small fw-bold">Lihat Semua <i data-lucide="chevron-right" style="width: 14px;"></i></a>
+        @endif
     </div>
     <div class="row g-4">
-        <div class="col-12 col-md-6 col-xl-4">
-            <div class="dummy-card">
-                <img src="https://picsum.photos/seed/recent1/600/400" class="w-100" alt="Campaign">
-                <div class="p-3">
-                    <span class="badge mb-2" style="background-color: var(--bg-color); color: var(--secondary-color);">Pendidikan</span>
-                    <h5 class="fw-bold text-primary-custom mb-3">Bantu Renovasi Sekolah di Pelosok Sumsel</h5>
-                    <div class="progress mb-2" style="height: 8px; border-radius: 10px; background-color: #eee;">
-                        <div class="progress-bar" style="width: 75%; background-color: var(--secondary-color); border-radius: 10px;"></div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="small">
-                            <span class="fw-bold text-accent-custom">Rp 15.000.000</span> <span class="text-muted">/ Rp 20jt</span>
+        @forelse($lastUpdatedCampaigns as $campaign)
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{{ route('campaigns.show', $campaign->id) }}" class="text-decoration-none">
+                    <div class="dummy-card h-100">
+                        <img src="https://picsum.photos/seed/recent-{{ $campaign->id }}/600/400" class="w-100" alt="Campaign">
+                        <div class="p-3">
+                            <span class="badge mb-2" style="background-color: var(--bg-color); color: var(--secondary-color);">{{ $campaign->tag }}</span>
+                            <h5 class="fw-bold text-primary-custom mb-3">{{ $campaign->title }}</h5>
+                            <div class="progress mb-2" style="height: 8px; border-radius: 10px; background-color: #eee;">
+                                <div class="progress-bar" style="width: {{ $campaign->percentage }}%; background-color: var(--secondary-color); border-radius: 10px;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="small">
+                                    <span class="fw-bold text-accent-custom">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</span> <span class="text-muted">/ Rp {{ number_format($campaign->goal_amount / 1000000, 1) }}jt</span>
+                                </div>
+                                <span class="text-muted small fw-semibold">{{ $campaign->updated_at->diffForHumans() }}</span>
+                            </div>
                         </div>
-                        <span class="text-muted small fw-semibold">12 Hari Lagi</span>
                     </div>
-                </div>
+                </a>
             </div>
-        </div>
-        <div class="col-12 col-md-6 col-xl-4">
-            <div class="dummy-card">
-                <img src="https://picsum.photos/seed/recent2/600/400" class="w-100" alt="Campaign">
-                <div class="p-3">
-                    <span class="badge mb-2" style="background-color: var(--bg-color); color: var(--secondary-color);">Sosial</span>
-                    <h5 class="fw-bold text-primary-custom mb-3">Sembako untuk Lansia Dhuafa di Palembang</h5>
-                    <div class="progress mb-2" style="height: 8px; border-radius: 10px; background-color: #eee;">
-                        <div class="progress-bar" style="width: 40%; background-color: var(--secondary-color); border-radius: 10px;"></div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="small">
-                            <span class="fw-bold text-accent-custom">Rp 4.000.000</span> <span class="text-muted">/ Rp 10jt</span>
-                        </div>
-                        <span class="text-muted small fw-semibold">5 Hari Lagi</span>
-                    </div>
-                </div>
+        @empty
+            <div class="col-12 text-center py-4">
+                <p class="text-muted">Belum ada riwayat akses campaign.</p>
             </div>
-        </div>
-        <div class="col-12 col-md-6 col-xl-4 d-none d-xl-block">
-            <div class="dummy-card">
-                <img src="https://picsum.photos/seed/recent3/600/400" class="w-100" alt="Campaign">
-                <div class="p-3">
-                    <span class="badge mb-2" style="background-color: var(--bg-color); color: var(--secondary-color);">Kesehatan</span>
-                    <h5 class="fw-bold text-primary-custom mb-3">Operasi Bibir Sumbing Anak Kurang Mampu</h5>
-                    <div class="progress mb-2" style="height: 8px; border-radius: 10px; background-color: #eee;">
-                        <div class="progress-bar" style="width: 92%; background-color: var(--accent-color); border-radius: 10px;"></div>
-                    </div>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="small">
-                            <span class="fw-bold text-accent-custom">Rp 46.000.000</span> <span class="text-muted">/ Rp 50jt</span>
-                        </div>
-                        <span class="text-muted small fw-semibold">2 Hari Lagi</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        @endforelse
     </div>
 </div>
 
@@ -98,60 +72,75 @@
         <h4 class="m-0 text-primary-custom">Populer Sekarang</h4>
     </div>
     <div class="row g-4">
-        <div class="col-12 col-lg-4">
-            <div class="card border-0 shadow-sm p-2" style="background-color: var(--primary-color); border-radius: 28px; color: white;">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between mb-4">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                            <i data-lucide="flame" class="text-accent-custom"></i>
+        @forelse($popularCampaigns as $index => $campaign)
+            <div class="col-12 col-lg-4">
+                @php
+                    $colors = [
+                        'var(--primary-color)',
+                        'var(--secondary-color)',
+                        'var(--accent-color)'
+                    ];
+                    $bg = $colors[$index % 3];
+                @endphp
+                <div class="card border-0 shadow-sm p-2" style="background-color: {{ $bg }}; border-radius: 28px; color: white;">
+                    <div class="card-body p-4 d-flex flex-column h-100">
+                        <div class="d-flex justify-content-between mb-4">
+                            <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                <i data-lucide="{{ $index === 0 ? 'flame' : ($index === 1 ? 'droplets' : 'book-open') }}" class="text-primary-custom"></i>
+                            </div>
+                            <span class="badge" style="background-color: rgba(255,255,255,0.1); height: fit-content; padding: 8px 15px;">Trending #{{ $index + 1 }}</span>
                         </div>
-                        <span class="badge" style="background-color: rgba(255,255,255,0.1); height: fit-content; padding: 8px 15px;">Trending #1</span>
-                    </div>
-                    <h5 class="fw-bold mb-3">Emergency: Kebakaran Lahan Gambut</h5>
-                    <p class="small opacity-75 mb-4">Bantu tim relawan memadamkan api dan memberikan bantuan masker serta obat-obatan.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <div class="small fw-bold">12,5k Donasi</div>
-                        <button class="btn-donasi">Donasi Sekarang</button>
+                        <h5 class="fw-bold mb-3">{{ $campaign->title }}</h5>
+                        <p class="small opacity-75 mb-4 line-clamp-2">{{ Str::limit($campaign->description, 100) }}</p>
+                        <div class="d-flex justify-content-between align-items-center mt-auto">
+                            <div class="small fw-bold">{{ number_format($campaign->collected_amount / 1000, 1) }}k Donasi</div>
+                            <a href="{{ route('campaigns.show', $campaign->id) }}" class="btn-donasi text-decoration-none">Donasi Sekarang</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-lg-4">
-            <div class="card border-0 shadow-sm p-2" style="background-color: var(--secondary-color); border-radius: 28px; color: white;">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between mb-4">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                            <i data-lucide="droplets" class="text-primary-custom"></i>
-                        </div>
-                        <span class="badge" style="background-color: rgba(255,255,255,0.1); height: fit-content; padding: 8px 15px;">Trending #2</span>
-                    </div>
-                    <h5 class="fw-bold mb-3">Air Bersih untuk Desa Kekeringan</h5>
-                    <p class="small opacity-75 mb-4">Sumur bor untuk 3 desa di Ogan Ilir yang kesulitan air bersih saat musim kemarau tiba.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <div class="small fw-bold">8,2k Donasi</div>
-                        <button class="btn btn-light text-primary-custom fw-bold rounded-3 px-4">Donasi</button>
-                    </div>
-                </div>
+        @empty
+            <div class="col-12 text-center py-4">
+                <p class="text-muted">Belum ada kampanye populer.</p>
             </div>
-        </div>
-        <div class="col-12 col-lg-4">
-            <div class="card border-0 shadow-sm p-2" style="background-color: var(--accent-color); border-radius: 28px; color: white;">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between mb-4">
-                        <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
-                            <i data-lucide="book-open" class="text-primary-custom"></i>
+        @endforelse
+    </div>
+</div>
+
+<!-- Exploration Section -->
+<div class="mb-5">
+    <div class="section-title mb-4">
+        <h4 class="m-0 text-primary-custom">Eksplorasi</h4>
+        <p class="text-muted small m-0">Kampanye terbaru yang menunggumu</p>
+    </div>
+    <div class="row g-4">
+        @forelse($explorationCampaigns as $campaign)
+            <div class="col-12 col-md-6 col-xl-4">
+                <a href="{{ route('campaigns.show', $campaign->id) }}" class="text-decoration-none">
+                    <div class="dummy-card h-100">
+                        <img src="https://picsum.photos/seed/exp-{{ $campaign->id }}/600/400" class="w-100" alt="Campaign">
+                        <div class="p-3">
+                            <span class="badge mb-2" style="background-color: var(--bg-color); color: var(--secondary-color);">{{ $campaign->tag }}</span>
+                            <h5 class="fw-bold text-primary-custom mb-3">{{ $campaign->title }}</h5>
+                            <div class="progress mb-2" style="height: 8px; border-radius: 10px; background-color: #eee;">
+                                <div class="progress-bar" style="width: {{ $campaign->percentage }}%; background-color: var(--secondary-color); border-radius: 10px;"></div>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="small">
+                                    <span class="fw-bold text-accent-custom">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</span>
+                                </div>
+                                <span class="text-muted small fw-semibold">Aktif</span>
+                            </div>
                         </div>
-                        <span class="badge" style="background-color: rgba(255,255,255,0.1); height: fit-content; padding: 8px 15px;">Trending #3</span>
                     </div>
-                    <h5 class="fw-bold mb-3">Beasiswa Anak Marbot Masjid</h5>
-                    <p class="small opacity-75 mb-4">Membantu biaya kuliah 10 anak marbot masjid berprestasi agar bisa meraih cita-cita.</p>
-                    <div class="d-flex justify-content-between align-items-center mt-auto">
-                        <div class="small fw-bold">5,4k Donasi</div>
-                        <button class="btn btn-light text-primary-custom fw-bold rounded-3 px-4">Donasi</button>
-                    </div>
-                </div>
+                </a>
             </div>
-        </div>
+        @empty
+            <div class="col-12 text-center py-5">
+                <i data-lucide="layout-grid" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
+                <p class="text-muted">Mulai eksplorasi pertamamu.</p>
+            </div>
+        @endforelse
     </div>
 </div>
 

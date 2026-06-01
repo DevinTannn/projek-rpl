@@ -36,12 +36,27 @@ class User extends Authenticatable
 
     public function follows()
     {
-        return $this->hasMany(Follow::class);
+        return $this->hasMany(Follow::class, 'user_id');
+    }
+
+    public function recentViews()
+    {
+        return $this->hasMany(CampaignView::class)->orderBy('last_viewed_at', 'desc');
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class);
     }
 
     public function isFundraiser()
     {
         return $this->role === 'fundraiser';
+    }
+
+    public function isVerified()
+    {
+        return $this->verification && $this->verification->status === 'approved';
     }
 
     public function verification()

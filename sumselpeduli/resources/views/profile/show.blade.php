@@ -37,20 +37,27 @@
                 </div>
             </div>
 
-            @if($user->role === 'donatur')
                 <div class="mt-5 pt-4 border-top">
-                    <h6 class="fw-bold text-primary-custom mb-3">Ingin Menggalang Dana?</h6>
-                    <button class="btn btn-accent w-100 rounded-3 fw-bold py-2" data-bs-toggle="modal" data-bs-target="#upgradeModal">
-                        Upgrade ke Fundraiser
-                    </button>
+                    @if($user->isVerified())
+                        <div class="badge bg-success p-2 w-100 rounded-3 mb-2 shadow-sm">
+                            <i data-lucide="check-circle" class="me-1" style="width: 14px;"></i> Identitas Terverifikasi
+                        </div>
+                    @else
+                        <a href="{{ route('profile.verification') }}" class="btn btn-warning btn-sm w-100 rounded-3 mb-2 fw-bold shadow-sm">
+                            <i data-lucide="alert-triangle" class="me-1" style="width: 14px;"></i> Verifikasi Sekarang
+                        </a>
+                    @endif
+
+                    @if($user->role === 'fundraiser')
+                        <div class="badge bg-primary-custom p-2 w-100 rounded-3">
+                            <i data-lucide="award" class="me-1"></i> Official Fundraiser
+                        </div>
+                    @else
+                        <div class="badge bg-secondary p-2 w-100 rounded-3 text-white opacity-75">
+                            <i data-lucide="user" class="me-1"></i> Official Donatur
+                        </div>
+                    @endif
                 </div>
-            @else
-                <div class="mt-5 pt-4 border-top">
-                    <div class="badge bg-primary-custom p-2 w-100 rounded-3">
-                        <i data-lucide="award" class="me-1"></i> Official Fundraiser
-                    </div>
-                </div>
-            @endif
         </div>
     </div>
 
@@ -65,6 +72,11 @@
             <li class="nav-item">
                 <a class="nav-link border-0 px-0 pb-3" data-bs-toggle="tab" href="#followed">
                     <i data-lucide="heart" class="me-2" style="width: 18px;"></i> Diikuti <span class="badge bg-light text-dark rounded-pill ms-1">{{ $user->follows->count() }}</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link border-0 px-0 pb-3" href="{{ route('profile.archived') }}">
+                    <i data-lucide="history" class="me-2" style="width: 18px;"></i> Riwayat Donasi
                 </a>
             </li>
             @if($user->role === 'fundraiser')
@@ -144,69 +156,7 @@
     </div>
 </div>
 
-<!-- Upgrade Modal -->
-<div class="modal fade" id="upgradeModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
-            <div class="modal-header border-0 p-4">
-                <h4 class="fw-bold text-primary-custom m-0">🔥 Upgrade ke Fundraiser</h4>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="{{ route('profile.upgrade') }}" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-body p-4 pt-0">
-                    <p class="text-muted mb-4">Lengkapi data verifikasi untuk mulai menggalang dana bagi mereka yang membutuhkan.</p>
-                    
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">Nama Lengkap (Sesuai KTP)</label>
-                            <input type="text" name="full_name" class="form-control rounded-3" placeholder="Contoh: Budi Santoso" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label fw-bold">NIK KTP (16 Digit)</label>
-                            <input type="text" name="nik" class="form-control rounded-3" placeholder="1603xxxxxxxxxxxx" maxlength="16" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-bold">Nama Komunitas / Yayasan / Organisasi</label>
-                            <input type="text" name="organization_name" class="form-control rounded-3" placeholder="Contoh: Yayasan Peduli Sesama" required>
-                        </div>
-                        <div class="col-12">
-                            <label class="form-label fw-bold">Unggah Foto Identitas (KTP)</label>
-                            <div class="border-2 border-dashed rounded-4 p-5 text-center bg-white" 
-                                 onclick="document.getElementById('ktp_photo').click()"
-                                 style="border: 2px dashed var(--secondary-color); cursor: pointer;">
-                                <i data-lucide="upload-cloud" class="text-secondary-color mb-3" style="width: 48px; height: 48px;"></i>
-                                <h6>Klik untuk unggah atau Drag and Drop</h6>
-                                <p class="text-muted small">JPG atau PNG (Maks 5MB)</p>
-                                <input type="file" name="ktp_photo" id="ktp_photo" class="d-none" accept="image/*" required>
-                                <div id="file-name" class="mt-2 text-primary-custom fw-bold"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="form-check mt-4 p-3 rounded-3" style="background-color: var(--surface-color);">
-                        <input class="form-check-input ms-0 me-2" type="checkbox" name="statement" id="statement" required>
-                        <label class="form-check-label fw-semibold" for="statement" style="font-size: 13px;">
-                            Saya menyatakan bersedia mempertanggungjawabkan keaslian berkas dan siap menyajikan transparansi aliran dana publik secara penuh.
-                        </label>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 p-4">
-                    <button type="button" class="btn btn-light px-4 py-2" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Kirim Data Verifikasi</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
 <script>
-    document.getElementById('ktp_photo').addEventListener('change', function(e) {
-        if(e.target.files.length > 0) {
-            document.getElementById('file-name').innerText = 'File terpilih: ' + e.target.files[0].name;
-        }
-    });
-
     document.addEventListener('DOMContentLoaded', () => {
         lucide.createIcons();
     });

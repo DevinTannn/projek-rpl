@@ -11,6 +11,8 @@ class Campaign extends Model
 {
     use HasFactory;
 
+    protected $appends = ['percentage'];
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -19,6 +21,31 @@ class Campaign extends Model
     public function milestones()
     {
         return $this->hasMany(CampaignMilestone::class);
+    }
+
+    public function follows()
+    {
+        return $this->hasMany(Follow::class);
+    }
+
+    public function views()
+    {
+        return $this->hasMany(CampaignView::class);
+    }
+
+    public function media()
+    {
+        return $this->hasMany(CampaignMedia::class)->orderBy('sort_order');
+    }
+
+    public function updates()
+    {
+        return $this->hasMany(CampaignUpdate::class)->latest();
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class)->latest();
     }
 
     public function getPercentageAttribute()

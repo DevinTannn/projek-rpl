@@ -60,21 +60,6 @@
                         <label class="form-label fw-bold">Description / Bio</label>
                         <textarea name="description" rows="3" class="form-control @error('description') is-invalid @enderror">{{ old('description', $user->description) }}</textarea>
                     </div>
-
-                    <hr class="my-4 text-muted border-dashed">
-
-                    <h6 class="fw-bold text-primary-custom mb-3 mt-0">Change Password</h6>
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">New Password</label>
-                        <input type="password" name="password" class="form-control @error('password') is-invalid @enderror" placeholder="Leave blank to keep current">
-                        @error('password') <div class="invalid-feedback">{{ $message }}</div> @enderror
-                    </div>
-
-                    <div class="col-md-6">
-                        <label class="form-label fw-bold">Confirm New Password</label>
-                        <input type="password" name="password_confirmation" class="form-control" placeholder="Repeat new password">
-                    </div>
-
                 </div>
 
                 <div class="mt-5 d-flex gap-3">
