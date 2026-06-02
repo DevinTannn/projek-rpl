@@ -100,7 +100,7 @@
                     @endif
                 </div>
 
-                <p class="text-muted mb-5 lead">{{ $campaign->description }}</p>
+                <div class="text-muted mb-5 lead">{!! $campaign->description !!}</div>
 
                 <h5 class="fw-bold mb-4">Milestone Tracker</h5>
                 <div id="milestone-grid" class="row g-3 mb-5">
@@ -210,7 +210,8 @@
                 @if(Auth::id() != $campaign->user_id)
                     <button class="btn btn-secondary-color py-3 fw-bold rounded-pill shadow-sm text-white mb-1" 
                             style="background-color: var(--secondary-color);"
-                            data-bs-toggle="modal" data-bs-target="#donationModal">
+                            data-bs-toggle="modal" data-bs-target="#donationModal"
+                            onclick="setTimeout(() => updateFee(document.getElementById('donation-amount')?.value || 0), 200)">
                         Donasi Sekarang
                     </button>
                 @endif
@@ -276,146 +277,6 @@
 </div> {{-- col-lg-4 --}}
 </div> {{-- row --}}
 
-{{-- Share Modal --}}
-<div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: #f8f9fa;">
-            <div class="modal-header border-0 p-4 pb-0">
-                <h5 class="fw-bold m-0">Bagikan Kampanye</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body p-4">
-                <div class="d-flex justify-content-between text-center mb-4 overflow-auto pb-2 gap-3" id="social-share-list">
-                    @php 
-                        $shareUrl = urlencode(request()->fullUrl()); 
-                        $shareTitle = urlencode($campaign->title);
-                    @endphp
-                    <a href="https://api.whatsapp.com/send?text={{ $shareTitle }}%20{{ $shareUrl }}" target="_blank" class="text-decoration-none">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#25D366; color:white;">
-                            <i data-lucide="message-circle" style="width:24px;"></i>
-                        </div>
-                        <span class="small text-muted">WhatsApp</span>
-                    </a>
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ $shareUrl }}" target="_blank" class="text-decoration-none">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#1877F2; color:white;">
-                            <i data-lucide="facebook" style="width:24px;"></i>
-                        </div>
-                        <span class="small text-muted">Facebook</span>
-                    </a>
-                    <a href="https://twitter.com/intent/tweet?text={{ $shareTitle }}&url={{ $shareUrl }}" target="_blank" class="text-decoration-none">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#000000; color:white;">
-                            <i data-lucide="twitter" style="width:24px;"></i>
-                        </div>
-                        <span class="small text-muted">X</span>
-                    </a>
-                    <a href="mailto:?subject={{ $shareTitle }}&body=Check out this campaign: {{ $shareUrl }}" class="text-decoration-none">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#EA4335; color:white;">
-                            <i data-lucide="mail" style="width:24px;"></i>
-                        </div>
-                        <span class="small text-muted">Email</span>
-                    </a>
-                </div>
-
-                <div class="p-3 bg-white rounded-4 border">
-                    <div class="small fw-bold text-muted mb-2">Salin Tautan</div>
-                    <div class="input-group">
-                        <input type="text" id="share-link-input" class="form-control border-0 bg-light rounded-start-pill ps-3" value="{{ request()->fullUrl() }}" readonly>
-                        <button class="btn btn-primary rounded-end-pill px-4 fw-bold" onclick="copyShareLink()">Copy</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-{{-- Confirmation Modal --}}
-<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-sm modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 20px;">
-            <div class="modal-body p-4 text-center">
-                <i data-lucide="info" class="text-danger mb-3" style="width:48px;height:48px;"></i>
-                <h5 class="fw-bold mb-2">Hapus Media?</h5>
-                <p class="text-muted small mb-4">Apakah Anda yakin ingin menghapus media ini secara permanen?</p>
-                <div class="d-flex gap-2">
-                    <button type="button" class="btn btn-light w-100 rounded-pill" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" id="confirm-delete-btn" class="btn btn-danger w-100 rounded-pill fw-bold">Ya, Hapus</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-{{-- Settings Modal --}}
-<div class="modal fade" id="campaignSettingsModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
-            <div class="modal-header border-0 p-4 pb-0">
-                <div>
-                    <h4 class="fw-bold text-primary-custom m-0">Campaign Settings</h4>
-                    <p class="text-muted small m-0 mt-1">{{ $campaign->title }}</p>
-                </div>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <form action="{{ route('campaigns.update', $campaign->id) }}" method="POST">
-                @csrf
-                @method('PUT')
-                <div class="modal-body p-4">
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Judul Kampanye</label>
-                        <input type="text" name="title" class="form-control" value="{{ $campaign->title }}" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Deskripsi</label>
-                        <textarea name="description" class="form-control" rows="4" required>{{ $campaign->description }}</textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Kategori Kampanye</label>
-                        <select name="tag" class="form-select">
-                            <option value="">Pilih Kategori...</option>
-                            <option value="Sosial & Kemanusiaan" {{ $campaign->tag == 'Sosial & Kemanusiaan' ? 'selected' : '' }}>Sosial & Kemanusiaan</option>
-                            <option value="Pendidikan" {{ $campaign->tag == 'Pendidikan' ? 'selected' : '' }}>Pendidikan</option>
-                            <option value="Kesehatan" {{ $campaign->tag == 'Kesehatan' ? 'selected' : '' }}>Kesehatan</option>
-                            <option value="Bencana Alam" {{ $campaign->tag == 'Bencana Alam' ? 'selected' : '' }}>Bencana Alam</option>
-                            <option value="Lingkungan" {{ $campaign->tag == 'Lingkungan' ? 'selected' : '' }}>Lingkungan</option>
-                            <option value="Keagamaan" {{ $campaign->tag == 'Keagamaan' ? 'selected' : '' }}>Keagamaan</option>
-                            <option value="Pembangunan & Infrastruktur" {{ $campaign->tag == 'Pembangunan & Infrastruktur' ? 'selected' : '' }}>Pembangunan & Infrastruktur</option>
-                            <option value="Pemberdayaan Ekonomi Komunitas" {{ $campaign->tag == 'Pemberdayaan Ekonomi Komunitas' ? 'selected' : '' }}>Pemberdayaan Ekonomi Komunitas</option>
-                            <option value="Seni & Budaya" {{ $campaign->tag == 'Seni & Budaya' ? 'selected' : '' }}>Seni & Budaya</option>
-                            <option value="Penelitian & Inovasi" {{ $campaign->tag == 'Penelitian & Inovasi' ? 'selected' : '' }}>Penelitian & Inovasi</option>
-                            <option value="Animal Safety and Care" {{ $campaign->tag == 'Animal Safety and Care' ? 'selected' : '' }}>Animal Safety and Care</option>
-                        </select>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Target Dana</label>
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0">Rp</span>
-                            <input type="number" name="goal_amount" id="settings_goal_amount"
-                                   class="form-control border-start-0" value="{{ $campaign->goal_amount }}" required>
-                        </div>
-                    </div>
-                    <h6 class="fw-bold text-primary-custom mb-3">Milestone Rewards</h6>
-                    <div class="row g-3">
-                        @foreach($campaign->milestones->sortBy('percentage') as $milestone)
-                            <div class="col-12">
-                                <div class="p-3 bg-white rounded-3 d-flex align-items-center gap-3">
-                                    <div class="fw-bold text-accent-custom" style="width: 50px;">{{ $milestone->percentage }}%</div>
-                                    <div class="text-muted small flex-grow-1" style="min-width: 120px;">
-                                        Rp <span id="settings-milestone-{{ $milestone->percentage }}">{{ number_format($milestone->amount, 0, ',', '.') }}</span>
-                                    </div>
-                                    <input type="text" name="milestones[{{ $milestone->percentage }}]"
-                                           class="form-control flex-grow-1" value="{{ $milestone->badge_label }}" required>
-                                </div>
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Simpan Perubahan</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
 @push('scripts')
 <script>
@@ -436,11 +297,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // ── Drop Zone Logic ──
     if (dz) {
-        dz.onclick = () => realInput.click();
-        realInput.onchange = (e) => { addFiles(e.target.files); realInput.value = ''; };
-        dz.ondragover = dz.ondragenter = (e) => { e.preventDefault(); dz.style.background = '#edf5ef'; };
-        dz.ondragleave = (e) => { dz.style.background = '#fbfdfb'; };
-        dz.ondrop = (e) => { e.preventDefault(); dz.style.background = '#fbfdfb'; addFiles(e.dataTransfer.files); };
+        dz.addEventListener('click', () => realInput.click());
+        realInput.addEventListener('change', (e) => { addFiles(e.target.files); realInput.value = ''; });
+        dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.style.background = '#edf5ef'; });
+        dz.addEventListener('dragenter', (e) => { e.preventDefault(); dz.style.background = '#edf5ef'; });
+        dz.addEventListener('dragleave', (e) => { dz.style.background = '#fbfdfb'; });
+        dz.addEventListener('drop', (e) => { e.preventDefault(); dz.style.background = '#fbfdfb'; addFiles(e.dataTransfer.files); });
     }
 
     function addFiles(fileList) {
@@ -687,61 +549,104 @@ document.addEventListener('DOMContentLoaded', function() {
         // ... (existing)
     };
 
-    // ── Donation Logic ──
-    const amountChips = document.querySelectorAll('.amount-chip');
+    // ── Donation Modal Logic (Improved) ──
+    const donationModalEl = document.getElementById('donationModal');
     const donationInput = document.getElementById('donation-amount');
     const feeDisplay = document.getElementById('fee-display');
-    const donationForm = document.getElementById('donation-form');
-    const paymentOptions = document.querySelectorAll('.payment-option');
     const manualInfo = document.getElementById('manual-payment-info');
-    const submitBtn = document.getElementById('submit-donation-btn');
+    const submitDonationBtn = document.getElementById('submit-donation-btn');
+    const donationForm = document.getElementById('donation-form');
 
     function updateFee(amount) {
-        const fee = Math.floor(amount * 0.05);
+        if (!feeDisplay) return;
+        const num = parseFloat(amount) || 0;
+        const fee = Math.floor(num * 0.05);
         feeDisplay.textContent = fee.toLocaleString('id-ID');
     }
 
-    donationInput.oninput = () => updateFee(donationInput.value);
+    function selectPaymentOption(optEl) {
+        // Reset all
+        document.querySelectorAll('.payment-option').forEach(o => {
+            o.classList.remove('border-primary', 'bg-light');
+            const checkSpan = o.querySelector('.pay-check-icon');
+            if (checkSpan) checkSpan.style.display = 'none';
+        });
 
-    amountChips.forEach(chip => {
-        chip.onclick = () => {
-            donationInput.value = chip.dataset.amount;
-            updateFee(chip.dataset.amount);
-            amountChips.forEach(c => c.classList.replace('btn-primary', 'btn-outline-primary'));
-            chip.classList.replace('btn-outline-primary', 'btn-primary');
-        };
-    });
+        // Activate selected
+        optEl.classList.add('border-primary', 'bg-light');
+        const radio = optEl.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+        const checkSpan = optEl.querySelector('.pay-check-icon');
+        if (checkSpan) checkSpan.style.display = '';
 
-    paymentOptions.forEach(opt => {
-        opt.onclick = () => {
-            paymentOptions.forEach(o => {
-                o.classList.remove('border-primary', 'bg-light');
-                o.querySelector('.text-primary')?.classList.add('d-none');
+        // Toggle manual info section
+        if (optEl.id === 'opt-manual') {
+            manualInfo?.classList.remove('d-none');
+            const proofInput = document.getElementById('proof-input');
+            if (proofInput) proofInput.required = true;
+            if (submitDonationBtn) submitDonationBtn.innerText = 'Konfirmasi Transfer';
+        } else {
+            manualInfo?.classList.add('d-none');
+            const proofInput = document.getElementById('proof-input');
+            if (proofInput) proofInput.required = false;
+            if (submitDonationBtn) submitDonationBtn.innerText = 'Lanjut Bayar';
+        }
+    }
+
+    if (donationModalEl) {
+        // Handle Manual Input — real-time fee calculation
+        if (donationInput) {
+            donationInput.addEventListener('input', (e) => {
+                updateFee(e.target.value);
+                // Deselect chips when user types manually
+                document.querySelectorAll('.amount-chip').forEach(c => {
+                    c.classList.remove('btn-primary', 'text-white');
+                    c.classList.add('btn-outline-primary');
+                });
             });
-            opt.classList.add('border-primary', 'bg-light');
-            opt.querySelector('input').checked = true;
-            opt.querySelector('.text-primary')?.classList.remove('d-none');
-            
-            if (opt.id === 'opt-manual') {
-                manualInfo.classList.remove('d-none');
-                submitBtn.innerText = 'Konfirmasi Transfer';
-            } else {
-                manualInfo.classList.add('d-none');
-                submitBtn.innerText = 'Lanjut Bayar';
+        }
+
+        // Event Delegation — handles both chips and payment options
+        donationModalEl.addEventListener('click', (e) => {
+            // 1. Amount Chips
+            const chip = e.target.closest('.amount-chip');
+            if (chip) {
+                const amount = chip.getAttribute('data-amount');
+                if (donationInput) {
+                    donationInput.value = amount;
+                    updateFee(amount);
+                }
+                // UI: highlight selected chip
+                document.querySelectorAll('.amount-chip').forEach(c => {
+                    c.classList.remove('btn-primary', 'text-white');
+                    c.classList.add('btn-outline-primary');
+                });
+                chip.classList.remove('btn-outline-primary');
+                chip.classList.add('btn-primary', 'text-white');
+                return; // stop propagation handling
             }
-        };
-    });
+
+            // 2. Payment Options — use closest to handle clicks on child elements too
+            const opt = e.target.closest('.payment-option');
+            if (opt) {
+                selectPaymentOption(opt);
+            }
+        });
+    }
 
     if (donationForm) {
         donationForm.onsubmit = function(e) {
-            const method = document.querySelector('input[name="payment_method"]:checked').value;
-            if (method === 'Manual') return; // Let traditional form submit handle manual
+            const methodInput = document.querySelector('input[name="payment_method"]:checked');
+            const method = methodInput ? methodInput.value : 'Midtrans';
+            
+            // Manual flow is handled by controller redirect normally, 
+            // but if AJAX is used for everything, we handle it here.
+            if (method === 'Manual') return true; 
 
             e.preventDefault();
-            const btn = document.getElementById('submit-donation-btn');
-            const originalText = btn.innerText;
-            btn.disabled = true;
-            btn.innerText = 'Memproses...';
+            const originalText = submitDonationBtn.innerText;
+            submitDonationBtn.disabled = true;
+            submitDonationBtn.innerText = 'Memproses...';
 
             const formData = new FormData(this);
 
@@ -752,8 +657,8 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(r => r.json())
             .then(data => {
-                if (data.success) {
-                    bootstrap.Modal.getInstance(document.getElementById('donationModal')).hide();
+                if (data.success && data.snap_token) {
+                    bootstrap.Modal.getInstance(donationModalEl).hide();
                     window.snap.pay(data.snap_token, {
                         onSuccess: function(result){ location.reload(); },
                         onPending: function(result){ location.href = "{{ route('profile.archived') }}"; },
@@ -766,8 +671,8 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .catch(() => showAlert('danger', 'Terjadi kesalahan sistem.'))
             .finally(() => {
-                btn.disabled = false;
-                btn.innerText = originalText;
+                submitDonationBtn.disabled = false;
+                submitDonationBtn.innerText = originalText;
             });
         };
     }
@@ -795,7 +700,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     icon.classList.add('text-muted');
                     showAlert('info', 'Batal mengikuti campaign.');
                 }
-                lucide.createIcons();
+                if (typeof lucide !== 'undefined') lucide.createIcons();
             }
         })
         .catch(() => showAlert('danger', 'Gagal memproses permintaan.'));
@@ -803,6 +708,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.showAlert = function(type, msg) {
         const container = document.getElementById('alert-container');
+        if (!container) return;
         const div = document.createElement('div');
         div.className = `alert alert-${type} border-0 rounded-4 mb-4 shadow-sm animate__animated animate__fadeInDown`;
         div.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" style="width:16px" class="me-2"></i> ${msg}`;
@@ -811,7 +717,7 @@ document.addEventListener('DOMContentLoaded', function() {
             div.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
             setTimeout(() => div.remove(), 500);
         }, 4000);
-        lucide.createIcons();
+        if (typeof lucide !== 'undefined') lucide.createIcons();
     };
 });
 </script>
@@ -856,80 +762,69 @@ document.addEventListener('DOMContentLoaded', function() {
 {{-- Donation Modal --}}
 <div class="modal fade" id="donationModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: #f8f9fa;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
             <div class="modal-header border-0 p-4 pb-0">
-                <h5 class="fw-bold m-0">Donasi: {{ $campaign->title }}</h5>
+                <h4 class="fw-bold text-primary-custom m-0">Donasi Sekarang</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form id="donation-form" action="{{ route('campaigns.donate', $campaign->id) }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-body p-4">
-                    <div class="mb-4">
-                        <p class="text-muted small mb-0">{{ Str::limit($campaign->description, 100) }}</p>
-                    </div>
-
-                    <div class="d-flex flex-wrap gap-2 mb-4">
-                        @foreach([10000, 20000, 50000, 100000, 200000, 500000] as $amount)
-                            <button type="button" class="btn btn-outline-primary rounded-pill btn-sm px-3 amount-chip" data-amount="{{ $amount }}">
-                                Rp {{ number_format($amount, 0, ',', '.') }}
+                    {{-- Amount Chips --}}
+                    <label class="form-label fw-bold">Pilih Nominal</label>
+                    <div class="d-flex flex-wrap gap-2 mb-3">
+                        @foreach([50000, 100000, 200000, 500000] as $nominal)
+                            <button type="button" class="btn btn-outline-primary rounded-pill amount-chip" data-amount="{{ $nominal }}">
+                                Rp {{ number_format($nominal, 0, ',', '.') }}
                             </button>
                         @endforeach
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-muted">Nominal Donasi</label>
+                    {{-- Manual Input --}}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Atau masukkan nominal lain</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0" style="border-radius: 12px 0 0 12px;">Rp</span>
-                            <input type="number" name="amount" id="donation-amount" class="form-control border-start-0" 
-                                   placeholder="Min. 10.000" min="10000" style="border-radius: 0 12px 12px 0;" required>
-                        </div>
-                        <div class="d-flex justify-content-between mt-2 small px-1">
-                            <span class="text-muted">Biaya Operasional (5%)</span>
-                            <span class="fw-bold text-danger">Rp <span id="fee-display">0</span></span>
+                            <span class="input-group-text bg-white border-end-0">Rp</span>
+                            <input type="number" id="donation-amount" name="amount"
+                                   class="form-control border-start-0" placeholder="Contoh: 150000" min="10000" required>
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="form-label small fw-bold text-muted">Metode Pembayaran</label>
-                        <div class="d-grid gap-2">
-                            <div class="payment-option border rounded-4 p-3 d-flex align-items-center gap-3 cursor-pointer bg-white" id="opt-midtrans">
-                                <input type="radio" name="payment_method" value="Midtrans" checked class="d-none">
-                                <div class="bg-light rounded-circle p-2"><i data-lucide="zap" class="text-warning"></i></div>
-                                <div class="flex-grow-1">
-                                    <div class="fw-bold">Otomatis (Midtrans)</div>
-                                    <div class="small text-muted">BCA, Mandiri, QRIS, dll</div>
-                                </div>
-                                <i data-lucide="check-circle" class="text-primary d-none"></i>
-                            </div>
-                            <div class="payment-option border rounded-4 p-3 d-flex align-items-center gap-3 cursor-pointer bg-white" id="opt-manual">
-                                <input type="radio" name="payment_method" value="Manual" class="d-none">
-                                <div class="bg-light rounded-circle p-2"><i data-lucide="landmark" class="text-primary"></i></div>
-                                <div class="flex-grow-1">
-                                    <div class="fw-bold">Transfer Manual</div>
-                                    <div class="small text-muted">Rekening Yayasan</div>
-                                </div>
-                                <i data-lucide="check-circle" class="text-primary d-none"></i>
-                            </div>
+                    {{-- Fee Info --}}
+                    <div class="alert alert-light border rounded-3 small text-muted mb-3">
+                        Biaya layanan (5%): <strong>Rp <span id="fee-display">0</span></strong>
+                    </div>
+
+                    {{-- Payment Method --}}
+                    <label class="form-label fw-bold">Metode Pembayaran</label>
+                    <div class="d-flex flex-column gap-2 mb-3">
+                        <div class="payment-option border rounded-3 p-3 d-flex align-items-center gap-3 border-primary bg-light" id="opt-midtrans" style="cursor:pointer;">
+                            <input type="radio" name="payment_method" value="Midtrans" class="d-none" checked>
+                            <i data-lucide="credit-card" style="width:20px;"></i>
+                            <span class="fw-semibold">Transfer / E-Wallet (Midtrans)</span>
+                            <span class="ms-auto pay-check-icon" style="color:var(--primary-color); font-size:18px;">&#10003;</span>
+                        </div>
+                        <div class="payment-option border rounded-3 p-3 d-flex align-items-center gap-3" id="opt-manual" style="cursor:pointer;">
+                            <input type="radio" name="payment_method" value="Manual" class="d-none">
+                            <i data-lucide="landmark" style="width:20px;"></i>
+                            <span class="fw-semibold">Transfer Manual</span>
+                            <span class="ms-auto pay-check-icon" style="color:var(--primary-color); font-size:18px; display:none;">&#10003;</span>
                         </div>
                     </div>
 
-                    <div id="manual-payment-info" class="d-none animate__animated animate__fadeIn">
-                        <div class="p-3 bg-white rounded-4 border mb-4">
-                            <div class="small text-muted mb-2">Transfer ke Rekening Resmi:</div>
-                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                <span class="fw-bold">BCA - Yayasan Peduli</span>
-                                <span class="badge bg-light text-primary">8620-1234-567</span>
-                            </div>
-                            <div class="small text-muted" style="font-size: 10px;">Mohon transfer sesuai nominal + kode unik yang akan diinfokan.</div>
+                    {{-- Manual Payment Info --}}
+                    <div id="manual-payment-info" class="alert alert-info rounded-3 small d-none">
+                        <div class="mb-2">
+                            Transfer ke: <strong>BCA 1234567890 a.n. Yayasan Peduli</strong>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label class="form-label small fw-bold text-muted">Unggah Bukti Transfer</label>
-                            <input type="file" name="proof" class="form-control rounded-3" accept="image/*">
-                        </div>
+                        <label class="form-label fw-bold mb-1">Unggah Bukti Transfer</label>
+                        <input type="file" name="proof" id="proof-input" class="form-control form-control-sm" accept="image/*">
+                        <div class="text-xs mt-1 text-muted">Format: JPG, PNG (Maks 5MB)</div>
                     </div>
-
-                    <button type="submit" id="submit-donation-btn" class="btn btn-primary w-100 py-3 rounded-pill fw-bold shadow-sm">
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" id="submit-donation-btn" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow">
                         Lanjut Bayar
                     </button>
                 </div>
@@ -937,4 +832,146 @@ document.addEventListener('DOMContentLoaded', function() {
         </div>
     </div>
 </div>
+
+{{-- Share Modal --}}
+<div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: #f8f9fa;">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h5 class="fw-bold m-0">Bagikan Kampanye</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <div class="d-flex justify-content-between text-center mb-4 overflow-auto pb-2 gap-3" id="social-share-list">
+                    @php 
+                        $shareUrl = urlencode(request()->fullUrl()); 
+                        $shareTitle = urlencode($campaign->title);
+                    @endphp
+                    <a href="https://api.whatsapp.com/send?text={{ $shareTitle }}%20{{ $shareUrl }}" target="_blank" class="text-decoration-none">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#25D366; color:white;">
+                            <i data-lucide="message-circle" style="width:24px;"></i>
+                        </div>
+                        <span class="small text-muted">WhatsApp</span>
+                    </a>
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ $shareUrl }}" target="_blank" class="text-decoration-none">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#1877F2; color:white;">
+                            <i data-lucide="facebook" style="width:24px;"></i>
+                        </div>
+                        <span class="small text-muted">Facebook</span>
+                    </a>
+                    <a href="https://twitter.com/intent/tweet?text={{ $shareTitle }}&url={{ $shareUrl }}" target="_blank" class="text-decoration-none">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#000000; color:white;">
+                            <i data-lucide="twitter" style="width:24px;"></i>
+                        </div>
+                        <span class="small text-muted">X</span>
+                    </a>
+                    <a href="mailto:?subject={{ $shareTitle }}&body=Check out this campaign: {{ $shareUrl }}" class="text-decoration-none">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mb-2 mx-auto" style="width:50px; height:50px; background:#EA4335; color:white;">
+                            <i data-lucide="mail" style="width:24px;"></i>
+                        </div>
+                        <span class="small text-muted">Email</span>
+                    </a>
+                </div>
+
+                <div class="p-3 bg-white rounded-4 border">
+                    <div class="small fw-bold text-muted mb-2">Salin Tautan</div>
+                    <div class="input-group">
+                        <input type="text" id="share-link-input" class="form-control border-0 bg-light rounded-start-pill ps-3" value="{{ request()->fullUrl() }}" readonly>
+                        <button class="btn btn-primary rounded-end-pill px-4 fw-bold" onclick="copyShareLink()">Copy</button>
+                    </div>
+                </div> {{-- End modal-body --}}
+            </div> {{-- End modal-content --}}
+        </div> {{-- End modal-dialog --}}
+    </div> {{-- End modal --}}
+
+{{-- Confirmation Modal --}}
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content border-0 shadow" style="border-radius: 20px;">
+            <div class="modal-body p-4 text-center">
+                <i data-lucide="info" class="text-danger mb-3" style="width:48px;height:48px;"></i>
+                <h5 class="fw-bold mb-2">Hapus Media?</h5>
+                <p class="text-muted small mb-4">Apakah Anda yakin ingin menghapus media ini secara permanen?</p>
+                <div class="d-flex gap-2">
+                    <button type="button" class="btn btn-light w-100 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                    <button type="button" id="confirm-delete-btn" class="btn btn-danger w-100 rounded-pill fw-bold">Ya, Hapus</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{-- Settings Modal --}}
+<div class="modal fade" id="campaignSettingsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
+            <div class="modal-header border-0 p-4 pb-0">
+                <div>
+                    <h4 class="fw-bold text-primary-custom m-0">Campaign Settings</h4>
+                    <p class="text-muted small m-0 mt-1">{{ $campaign->title }}</p>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('campaigns.update', $campaign->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Judul Kampanye</label>
+                        <input type="text" name="title" class="form-control" value="{{ $campaign->title }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Deskripsi</label>
+                        <textarea name="description" class="form-control" rows="4" required>{{ $campaign->description }}</textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Kategori Kampanye</label>
+                        <select name="tag" class="form-select">
+                            <option value="">Pilih Kategori...</option>
+                            <option value="Sosial & Kemanusiaan" {{ $campaign->tag == 'Sosial & Kemanusiaan' ? 'selected' : '' }}>Sosial & Kemanusiaan</option>
+                            <option value="Pendidikan" {{ $campaign->tag == 'Pendidikan' ? 'selected' : '' }}>Pendidikan</option>
+                            <option value="Kesehatan" {{ $campaign->tag == 'Kesehatan' ? 'selected' : '' }}>Kesehatan</option>
+                            <option value="Bencana Alam" {{ $campaign->tag == 'Bencana Alam' ? 'selected' : '' }}>Bencana Alam</option>
+                            <option value="Lingkungan" {{ $campaign->tag == 'Lingkungan' ? 'selected' : '' }}>Lingkungan</option>
+                            <option value="Keagamaan" {{ $campaign->tag == 'Keagamaan' ? 'selected' : '' }}>Keagamaan</option>
+                            <option value="Pembangunan & Infrastruktur" {{ $campaign->tag == 'Pembangunan & Infrastruktur' ? 'selected' : '' }}>Pembangunan & Infrastruktur</option>
+                            <option value="Pemberdayaan Ekonomi Komunitas" {{ $campaign->tag == 'Pemberdayaan Ekonomi Komunitas' ? 'selected' : '' }}>Pemberdayaan Ekonomi Komunitas</option>
+                            <option value="Seni & Budaya" {{ $campaign->tag == 'Seni & Budaya' ? 'selected' : '' }}>Seni & Budaya</option>
+                            <option value="Penelitian & Inovasi" {{ $campaign->tag == 'Penelitian & Inovasi' ? 'selected' : '' }}>Penelitian & Inovasi</option>
+                            <option value="Animal Safety and Care" {{ $campaign->tag == 'Animal Safety and Care' ? 'selected' : '' }}>Animal Safety and Care</option>
+                        </select>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">Target Dana</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0">Rp</span>
+                            <input type="number" name="goal_amount" id="settings_goal_amount"
+                                   class="form-control border-start-0" value="{{ $campaign->goal_amount }}" required>
+                        </div>
+                    </div>
+                    <h6 class="fw-bold text-primary-custom mb-3">Milestone Rewards</h6>
+                    <div class="row g-3">
+                        @foreach($campaign->milestones->sortBy('percentage') as $milestone)
+                            <div class="col-12">
+                                <div class="p-3 bg-white rounded-3 d-flex align-items-center gap-3">
+                                    <div class="fw-bold text-accent-custom" style="width: 50px;">{{ $milestone->percentage }}%</div>
+                                    <div class="text-muted small flex-grow-1" style="min-width: 120px;">
+                                        Rp <span id="settings-milestone-{{ $milestone->percentage }}">{{ number_format($milestone->amount, 0, ',', '.') }}</span>
+                                    </div>
+                                    <input type="text" name="milestones[{{ $milestone->percentage }}]"
+                                           class="form-control flex-grow-1" value="{{ $milestone->badge_label }}" required>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Simpan Perubahan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 @endpush
+

@@ -50,7 +50,9 @@
                 <div id="dropdownMenu" class="{{ request()->is('admin/verifikasi/*') ? '' : 'hidden' }} flex flex-col space-y-1 ml-4 border-l border-white/20 pl-4">
                     <a href="/admin/verifikasi/kampanye" class="py-2 px-4 rounded-lg text-sm transition {{ request()->is('admin/verifikasi/kampanye') ? 'bg-white/10 text-white font-medium' : 'text-gray-400 hover:text-white' }}">Kampanye</a>
                     <a href="/admin/verifikasi/akun" class="py-2 px-4 rounded-lg text-sm transition {{ request()->is('admin/verifikasi/akun') ? 'bg-white/10 text-white font-medium' : 'text-gray-400 hover:text-white' }}">Akun</a>
+                    <a href="/admin/verifikasi/donasi" class="py-2 px-4 rounded-lg text-sm transition {{ request()->is('admin/verifikasi/donasi') ? 'bg-white/10 text-white font-medium' : 'text-gray-400 hover:text-white' }}">Donasi</a>
                 </div>
+
             </div>
 
             <a href="/admin/laporan" class="flex items-center gap-4 py-3 px-4 rounded-lg transition {{ request()->is('admin/laporan') ? 'bg-white/10 text-white' : 'text-gray-200 hover:bg-white/10' }}">

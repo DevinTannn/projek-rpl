@@ -38,9 +38,9 @@ class ProfileController extends Controller
 
         if ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {
-                Storage::delete($user->profile_photo);
+                Storage::disk('public')->delete($user->profile_photo);
             }
-            $data['profile_photo'] = $request->file('profile_photo')->store('profiles');
+            $data['profile_photo'] = $request->file('profile_photo')->store('profiles', 'public');
         }
 
         $user->update($data);
@@ -64,7 +64,7 @@ class ProfileController extends Controller
             'statement' => 'required|accepted',
         ]);
 
-        $path = $request->file('ktp_photo')->store('verifications');
+        $path = $request->file('ktp_photo')->store('verifications', 'public');
 
         FundraiserVerification::create([
             'user_id' => $user->id,
