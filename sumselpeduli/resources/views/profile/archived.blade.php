@@ -34,7 +34,7 @@
                                                 </p>
                                                 <div class="d-flex align-items-center gap-2 mt-2">
                                                     <span class="text-muted" style="font-size: 11px;">#{{ $donation->order_id }}</span>
-                                                    @if($donation->status === 'success')
+                                                    @if($donation->status === 'paid')
                                                         <span class="badge bg-success rounded-pill px-3" style="font-size: 10px;">Berhasil Terverifikasi</span>
                                                     @elseif($donation->status === 'pending')
                                                         <span class="badge bg-warning text-dark rounded-pill px-3" style="font-size: 10px;">Menunggu Verifikasi</span>
@@ -46,7 +46,7 @@
                                             <div class="text-end d-flex flex-column align-items-end gap-3">
                                                 <div class="fw-bold text-accent-custom h5 m-0">-Rp {{ number_format($donation->amount, 0, ',', '.') }}</div>
                                                 
-                                                @if($donation->status === 'success')
+                                                @if($donation->status === 'paid')
                                                     <a href="{{ route('donations.certificate', $donation->id) }}" 
                                                        class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-3"
                                                        style="font-size: 11px;">

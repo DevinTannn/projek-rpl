@@ -2,10 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\VerificationController;
 
 Route::prefix('admin')->group(function () {
-    Route::get('/', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+    Route::get('/', [DashboardController::class, 'index'])->name('admin.dashboard');
     
     // Verifikasi Kampanye
     Route::get('/verifikasi/kampanye', [VerificationController::class, 'campaignIndex'])->name('admin.verify.campaign.index');

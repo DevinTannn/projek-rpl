@@ -6,10 +6,18 @@ use App\Http\Controllers\Controller;
 use App\Models\Campaign;
 use App\Models\Donation;
 use App\Models\FundraiserVerification;
+use App\Services\MailService;
 use Illuminate\Http\Request;
 
 class VerificationController extends Controller
 {
+    protected $mailService;
+
+    public function __construct(MailService $mailService)
+    {
+        $this->mailService = $mailService;
+    }
+
     public function campaignIndex(Request $request)
     {
         $perPage = $request->get('per_page', 10);
@@ -26,6 +34,11 @@ class VerificationController extends Controller
         $status = $request->status; // 'active' or 'rejected'
         
         $campaign->update(['status' => $status]);
+
+        if ($status == 'active') {
+            // Send Email Notification via PHPMailer
+            $this->mailService->sendCampaignVerified($campaign->load('user'));
+        }
 
         return back()->with('success', "Kampanye berhasil " . ($status == 'active' ? 'disetujui' : 'ditolak'));
     }
@@ -50,6 +63,9 @@ class VerificationController extends Controller
 
         if ($status == 'approved') {
             $verification->user->update(['role' => 'fundraiser']);
+            
+            // Send Email Notification via PHPMailer
+            $this->mailService->sendAccountVerified($verification->load('user'));
         }
 
         return back()->with('success', "Verifikasi akun berhasil " . ($status == 'approved' ? 'disetujui' : 'ditolak'));
@@ -77,6 +93,9 @@ class VerificationController extends Controller
         if ($status == 'paid') {
             // Update collected amount in campaign
             $donation->campaign->increment('collected_amount', $donation->amount);
+            
+            // Send Email Notification via PHPMailer
+            $this->mailService->sendDonationVerified($donation->load(['user', 'campaign']));
         }
 
         return back()->with('success', "Donasi berhasil " . ($status == 'paid' ? 'diverifikasi' : 'ditolak'));
