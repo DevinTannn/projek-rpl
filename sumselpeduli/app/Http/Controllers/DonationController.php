@@ -84,8 +84,8 @@ class DonationController extends Controller
                     'gross_amount' => (int)$totalToPay,
                 ],
                 'customer_details' => [
-                    'first_name' => $user->username,
-                    'email' => $user->email,
+                    'first_name' => preg_replace('/[^a-zA-Z0-9\s]/', '', $user->username),
+                    'email' => filter_var($user->email, FILTER_VALIDATE_EMAIL) ? $user->email : 'donor@seluna.com',
                 ],
                 'callbacks' => [
                     'finish' => route('campaigns.show', $campaign->id)
@@ -96,6 +96,12 @@ class DonationController extends Controller
                 $snapToken = Snap::getSnapToken($params);
                 $paymentUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/" . $snapToken;
                 
+                // Save tokens for later retrieval
+                $donation->update([
+                    'snap_token' => $snapToken,
+                    'payment_url' => $paymentUrl
+                ]);
+
                 if ($request->ajax()) {
                     return response()->json([
                         'success' => true,
@@ -147,15 +153,19 @@ class DonationController extends Controller
 
     public function archive()
     {
-        $donations = Donation::with('campaign')
+        $allDonations = Donation::with('campaign')
             ->where('user_id', Auth::id())
             ->latest()
-            ->get()
+            ->get();
+
+        $unpaidDonations = $allDonations->where('status', 'pending')->where('payment_method', 'Midtrans');
+        
+        $paidDonations = $allDonations->where('status', 'paid')
             ->groupBy(function($item) {
                 return $item->created_at->format('l, d M Y');
             });
 
-        return view('profile.archived', compact('donations'));
+        return view('profile.archived', compact('paidDonations', 'unpaidDonations'));
     }
 
     public function downloadCertificate($id)

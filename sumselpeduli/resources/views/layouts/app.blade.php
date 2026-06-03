@@ -15,6 +15,8 @@
             src="https://app.sandbox.midtrans.com/snap/snap.js"
             data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     <style>
+        .transition-all { transition: all 0.3s ease; }
+        .hover-opacity:hover { opacity: 0.8; }
         :root {
             --primary-color: #1A2F28;
             --secondary-color: #6B8F71;
@@ -78,6 +80,12 @@
             white-space: nowrap;
             overflow: hidden;
             transition: all 0.3s;
+        }
+
+        .sidebar-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
         }
 
         .sidebar.collapsed .sidebar-brand {
@@ -413,7 +421,7 @@
         /* Floating Event Button */
         .floating-event-btn {
             position: fixed;
-            bottom: 30px;
+            bottom: 100px;
             right: 30px;
             width: 70px;
             height: 70px;
@@ -457,24 +465,45 @@
             50% { transform: scale(1.1); }
             100% { transform: scale(1); }
         }
+
+        /* Global Modal Styling */
+        .modal-content {
+            margin-top: 75px !important;
+            margin-bottom: 75px !important;
+        }
     </style>
 </head>
 <body>
 
     <!-- Mobile Header -->
-    <div class="mobile-header d-lg-none">
-        <h5 class="m-0 fw-bold">SELUNA</h5>
-        <div class="profile-area">
-            <i data-lucide="search" style="width: 22px;"></i>
-            <div class="avatar"></div>
+    <div class="mobile-header d-lg-none sticky-top" style="z-index: 1060;">
+        <a href="{{ route('home') }}" class="d-flex align-items-center gap-2 text-decoration-none text-white hover-opacity transition-all">
+            <img src="{{ asset('assets/images/seluna_logo_fit.png') }}" alt="Logo" style="height: 30px; object-fit: contain;">
+            <h5 class="m-0 fw-bold tracking-wider">SELUNA</h5>
+        </a>
+        <div class="profile-area gap-3">
+            <button class="btn btn-link p-0 text-white opacity-75" data-bs-toggle="modal" data-bs-target="#infoModal">
+                <i data-lucide="info" style="width: 22px;"></i>
+            </button>
+            @auth
+            <a href="{{ route('profile.show') }}">
+                <img src="{{ Auth::user()->profile_photo ? Storage::url(Auth::user()->profile_photo) : 'https://ui-avatars.com/api/?name='.Auth::user()->username.'&background=7CA982' }}" class="avatar shadow-sm" style="width: 35px; height: 35px;">
+            </a>
+            @else
+            <a href="{{ route('login') }}" class="text-white text-decoration-none small fw-bold">LOGIN</a>
+            @endauth
         </div>
     </div>
 
     <!-- Sidebar (Desktop Only) -->
     <aside id="sidebar" class="sidebar wide d-none d-lg-flex">
-        <div class="sidebar-brand">
-            <img src="{{ asset('assets/images/seluna-logo.png') }}" alt="Logo" class="sidebar-logo">
-        </div>
+        <a href="{{ route('home') }}" class="sidebar-brand text-decoration-none hover-opacity transition-all">
+            <img src="{{ asset('assets/images/seluna_logo_fit.png') }}" alt="Logo" class="sidebar-logo">
+            <div class="nav-label overflow-hidden">
+                <h1 class="sidebar-brand-text text-[#D4AF37] mb-0" style="font-size: 16px; letter-spacing: 1.5px; font-weight: 800;">SELUNA</h1>
+                <p class="text-gray-400 mb-0 opacity-60 text-nowrap" style="font-size: 8px; letter-spacing: 0.5px; text-transform: uppercase;">Cahaya untuk Setiap Harapan</p>
+            </div>
+        </a>
 
         <button onclick="toggleSidebar()" class="sidebar-toggle">
             <i data-lucide="menu"></i>
@@ -492,6 +521,17 @@
                     <span class="nav-label">Logout</span>
                 </button>
             </form>
+            
+            <div class="mt-4 px-3 pb-2 nav-label" style="font-size: 10px; opacity: 0.4;">
+                <p class="mb-1">&copy; SELUNA 2026</p>
+                <p class="mb-2">All rights reserved</p>
+                <div class="d-flex gap-2">
+                    <a href="https://doc-hosting.flycricket.io/seluna-privacy-policy/26c20c6d-945f-4cfb-a752-a4e69c511147/privacy" target="_blank" class="text-white text-decoration-none hover-white">Privacy Policy</a>
+                </div>
+                <div class="mt-1">
+                    <a href="https://doc-hosting.flycricket.io/seluna-terms-of-use/01968fad-012c-4ea3-af57-ba843e46d7e5/terms" target="_blank" class="text-white text-decoration-none hover-white">Terms of Use</a>
+                </div>
+            </div>
         </div>
     </aside>
 
@@ -555,11 +595,47 @@
         </div>
     </div>
 
-    <!-- Floating Event Button -->
+    <!-- Floating Event Button (Home Only) -->
+    @if(request()->routeIs('home'))
     <a href="{{ route('events.show', 'ramadan') }}" class="floating-event-btn" id="event-btn">
         <i data-lucide="moon"></i>
         <div class="event-badge">LIVE</div>
     </a>
+    @endif
+
+    <!-- Info Modal (Mobile & Small screens) -->
+    <div class="modal fade" id="infoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered mx-4">
+            <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background: linear-gradient(135deg, #ffffff 0%, #f9fbf9 100%);">
+                <div class="modal-body p-5 text-center">
+                    <div class="mb-4 d-inline-flex p-4 rounded-circle bg-primary-custom bg-opacity-10 text-primary-custom">
+                        <i data-lucide="info" style="width: 48px; height: 48px;"></i>
+                    </div>
+                    <h4 class="fw-black text-primary-custom mb-3">Informasi Legal</h4>
+                    <p class="text-muted small mb-5">Komitmen kami untuk melindungi privasi dan keamanan Anda dalam setiap kebaikan.</p>
+                    
+                    <div class="d-grid gap-3 mb-5">
+                        <a href="https://doc-hosting.flycricket.io/seluna-privacy-policy/26c20c6d-945f-4cfb-a752-a4e69c511147/privacy" target="_blank" 
+                           class="btn btn-light py-3 rounded-4 fw-bold border-0 d-flex align-items-center justify-content-center gap-2">
+                            <i data-lucide="lock" style="width: 18px;"></i> Privacy Policy
+                        </a>
+                        <a href="https://doc-hosting.flycricket.io/seluna-terms-of-use/01968fad-012c-4ea3-af57-ba843e46d7e5/terms" target="_blank" 
+                           class="btn btn-light py-3 rounded-4 fw-bold border-0 d-flex align-items-center justify-content-center gap-2">
+                            <i data-lucide="file-text" style="width: 18px;"></i> Terms of Use
+                        </a>
+                    </div>
+                    
+                    <div class="pt-4 border-top">
+                        <p class="mb-0 text-muted" style="font-size: 11px; font-weight: 700; letter-spacing: 1px;">
+                            &copy; SELUNA 2026 - ALL RIGHTS RESERVED
+                        </p>
+                    </div>
+                    
+                    <button type="button" class="btn btn-primary w-100 mt-5 rounded-pill py-3 fw-bold shadow-sm" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Bottom Nav (Mobile/Tablet Only) -->
     <nav class="bottom-nav d-lg-none">

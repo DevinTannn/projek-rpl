@@ -4,7 +4,7 @@
 <div class="p-8">
     <div class="mb-8">
         <h2 class="text-3xl font-black text-[#1B3022]">Dashboard Utama</h2>
-        <p class="text-gray-500">Ringkasan aktivitas platform SumselPeduli hari ini.</p>
+        <p class="text-gray-500">Ringkasan aktivitas platform SELUNA hari ini.</p>
     </div>
 
     {{-- Stats Grid --}}

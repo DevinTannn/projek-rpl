@@ -64,7 +64,7 @@ class CampaignController extends Controller
             }
         });
 
-        return redirect()->route('campaigns.my')->with('success', 'Kampanye berhasil dibuat! Silakan tunggu verifikasi dari admin.');
+        return redirect()->route('campaigns.index')->with('success', 'Kampanye berhasil dibuat! Silakan tunggu verifikasi dari admin.');
     }
 
     public function search(Request $request)

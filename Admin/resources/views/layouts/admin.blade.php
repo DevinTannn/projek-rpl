@@ -3,34 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Peduli</title>
+    <title>Admin Panel - SELUNA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .bg-peduli { background-color: #1B3022; }
         .heart-shape {
             position: relative; width: 20px; height: 20px;
-            background-color: #EAB308; transform: rotate(-45deg);
+            background-color: #D4AF37; transform: rotate(-45deg);
             margin-right: 15px; margin-left: 5px; display: inline-block;
         }
         .heart-shape::before, .heart-shape::after {
             content: ""; position: absolute; width: 20px; height: 20px;
-            background-color: #EAB308; border-radius: 50%;
+            background-color: #D4AF37; border-radius: 50%;
         }
         .heart-shape::before { top: -10px; left: 0; }
         .heart-shape::after { left: 10px; top: 0; }
+        .sidebar-logo {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            margin-right: 15px;
+        }
     </style>
 </head>
 <body class="bg-[#F0F4EF] min-h-screen">
 
 <div class="flex min-h-screen">
     <aside class="w-64 bg-peduli text-white flex flex-col py-8 px-6">
-        <div class="flex items-center mb-12 px-2">
-            <div class="heart-shape"></div>
-            <div>
-                <h1 class="text-xl font-bold tracking-wider">PEDULI</h1>
-                <p class="text-[10px] text-gray-400 uppercase tracking-widest">Admin Panel</p>
+        <a href="/admin" class="flex items-center mb-12 px-2 overflow-hidden gap-2 text-decoration-none hover:opacity-80 transition-opacity">
+            <img src="{{ asset('assets/images/seluna_logo_fit.png') }}" alt="Logo" class="sidebar-logo">
+            <div class="overflow-hidden">
+                <h1 class="text-lg font-black tracking-widest text-[#D4AF37] whitespace-nowrap leading-none mb-1">SELUNA</h1>
+                <p class="text-gray-400 uppercase tracking-widest whitespace-nowrap opacity-60 leading-none" style="font-size: 8px;">Admin Panel</p>
             </div>
-        </div>
+        </a>
 
         <nav class="space-y-4">
             <a href="/admin" class="flex items-center gap-4 py-3 px-4 rounded-lg transition {{ request()->is('admin') ? 'bg-white/10 text-white' : 'text-gray-200 hover:bg-white/10' }}">

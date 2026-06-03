@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ config('app.name', 'SumselPeduli') }} - Authentication</title>
+    <title>{{ config('app.name', 'SELUNA') }} - Authentication</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Google Fonts -->
@@ -103,8 +103,8 @@
 </head>
 <body>
     <div class="auth-card">
-        <div class="brand-logo">
-            <i data-lucide="heart" class="text-white" style="fill: var(--accent-color); width: 32px; height: 32px;"></i>
+        <div class="text-center mb-4">
+            <img src="{{ asset('assets/images/seluna_logo_fit.png') }}" alt="Logo" style="width: 80px; height: 80px; object-fit: contain;">
         </div>
         
         @yield('content')

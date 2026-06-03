@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <h2 class="fw-bold text-primary-custom">Your Campaign</h2>
-    <button class="btn btn-accent px-4 py-2 fw-bold d-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#createCampaignModal">
+    <button class="btn btn-accent px-4 py-2 fw-bold d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#createCampaignModal">
         <i data-lucide="plus-circle" style="width: 20px;"></i>
         Create a Campaign
     </button>
@@ -26,22 +26,22 @@
                     <a href="{{ route('campaigns.show', $campaign->id) }}" class="text-decoration-none">
                         @php $banner = $campaign->media->first(); @endphp
                         @if($banner)
-                            <img src="{{ $banner->url }}" class="w-100" style="height: 200px; object-fit: cover;">
+                            <img src="{{ $banner->url }}" class="w-100" style="height: 180px; object-fit: cover;">
                         @else
-                            <img src="https://picsum.photos/seed/campaign-{{ $campaign->id }}/600/400" class="w-100" style="height: 200px; object-fit: cover;">
+                            <img src="https://picsum.photos/seed/campaign-{{ $campaign->id }}/600/400" class="w-100" style="height: 180px; object-fit: cover;">
                         @endif
-                        <div style="position: absolute; top: 15px; left: 15px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
-                            <h5 class="fw-bold text-white m-0">{{ $campaign->title }}</h5>
-                            <div class="d-flex gap-2">
+                        <div style="position: absolute; top: 12px; left: 12px; right: 12px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                            <h5 class="fw-bold text-white m-0 text-truncate">{{ $campaign->title }}</h5>
+                            <div class="d-flex flex-wrap gap-1">
                                 @if($campaign->tag)
-                                    <span class="badge bg-accent-custom mt-2">{{ $campaign->tag }}</span>
+                                    <span class="badge bg-accent-custom mt-2" style="font-size: 10px;">{{ $campaign->tag }}</span>
                                 @endif
                                 @if($campaign->status === 'active')
-                                    <span class="badge bg-success mt-2">Aktif</span>
+                                    <span class="badge bg-success mt-2" style="font-size: 10px;">Aktif</span>
                                 @elseif($campaign->status === 'pending')
-                                    <span class="badge bg-warning mt-2">Menunggu Verifikasi</span>
+                                    <span class="badge bg-warning mt-2" style="font-size: 10px;">Menunggu Verifikasi</span>
                                 @elseif($campaign->status === 'rejected')
-                                    <span class="badge bg-danger mt-2">Ditolak</span>
+                                    <span class="badge bg-danger mt-2" style="font-size: 10px;">Ditolak</span>
                                 @endif
                             </div>
                         </div>
@@ -75,7 +75,7 @@
                 <div class="modal-body p-4">
                     <div class="mb-3">
                         <label class="form-label fw-bold required">Title</label>
-                        <input type="text" name="title" class="form-control" placeholder="Entah campaign name..." required>
+                        <input type="text" name="title" class="form-control" placeholder="Campaign name..." required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold required">Bio / Description</label>

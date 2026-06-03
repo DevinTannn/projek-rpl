@@ -129,6 +129,9 @@
                         <li class="nav-item">
                             <a class="nav-link rounded-pill px-4" data-bs-toggle="tab" href="#gallery">Gallery</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link rounded-pill px-4" data-bs-toggle="tab" href="#reports">Report</a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="updates">
