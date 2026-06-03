@@ -41,37 +41,47 @@ class DonationController extends Controller
 
         $amount = (float)$request->amount;
         $fee = floor($amount * 0.05); // 5% fee
-        $netAmount = $amount - $fee;
+        $totalToPay = $amount + $fee;
 
-        return DB::transaction(function () use ($request, $campaign, $user, $amount, $fee, $netAmount) {
-            $orderId = 'DON-' . time() . '-' . $user->id;
-            
-            $data = [
+        $orderId = 'DON-' . time() . '-' . $user->id;
+
+        if ($request->payment_method === 'Manual') {
+            return DB::transaction(function () use ($request, $campaign, $user, $amount, $fee, $orderId) {
+                $data = [
+                    'user_id' => $user->id,
+                    'campaign_id' => $campaign->id,
+                    'order_id' => $orderId,
+                    'amount' => $amount,
+                    'fee_amount' => $fee,
+                    'net_amount' => $amount, // For manual, donation is net
+                    'payment_method' => 'Manual',
+                    'status' => 'pending',
+                    'midtrans_status' => 'pending',
+                    'proof_path' => $request->file('proof')->store('proofs', 'public')
+                ];
+                Donation::create($data);
+                return redirect()->route('profile.archived')->with('success', 'Konfirmasi donasi manual berhasil dikirim. Tunggu verifikasi admin.');
+            });
+        }
+
+        // Midtrans Flow: Create record IMMEDIATELY
+        return DB::transaction(function() use ($request, $campaign, $user, $amount, $fee, $totalToPay, $orderId) {
+            $donation = Donation::create([
                 'user_id' => $user->id,
                 'campaign_id' => $campaign->id,
                 'order_id' => $orderId,
                 'amount' => $amount,
                 'fee_amount' => $fee,
-                'net_amount' => $netAmount,
-                'payment_method' => $request->payment_method,
+                'net_amount' => $amount,
+                'payment_method' => 'Midtrans',
                 'status' => 'pending',
                 'midtrans_status' => 'pending'
-            ];
+            ]);
 
-            if ($request->payment_method === 'Manual') {
-                $data['proof_path'] = $request->file('proof')->store('proofs', 'public');
-                $donation = Donation::create($data);
-
-                return redirect()->route('profile.archived')->with('success', 'Konfirmasi donasi manual berhasil dikirim. Tunggu verifikasi admin.');
-            }
-
-            $donation = Donation::create($data);
-
-            // Create Midtrans Transaction
             $params = [
                 'transaction_details' => [
                     'order_id' => $orderId,
-                    'gross_amount' => (int)$amount,
+                    'gross_amount' => (int)$totalToPay,
                 ],
                 'customer_details' => [
                     'first_name' => $user->username,
@@ -86,11 +96,6 @@ class DonationController extends Controller
                 $snapToken = Snap::getSnapToken($params);
                 $paymentUrl = "https://app.sandbox.midtrans.com/snap/v2/vtweb/" . $snapToken;
                 
-                $donation->update([
-                    'snap_token' => $snapToken,
-                    'payment_url' => $paymentUrl
-                ]);
-
                 if ($request->ajax()) {
                     return response()->json([
                         'success' => true,
@@ -99,14 +104,13 @@ class DonationController extends Controller
                         'message' => 'Token pembayaran berhasil dibuat.'
                     ]);
                 }
+                return redirect()->away($paymentUrl);
             } catch (\Exception $e) {
                 if ($request->ajax()) {
                     return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
                 }
                 return redirect()->back()->with('error', $e->getMessage());
             }
-
-            return redirect()->back()->with('success', 'Silahkan selesaikan pembayaran Anda.');
         });
     }
 
@@ -128,8 +132,14 @@ class DonationController extends Controller
         if ($donation) {
             $donation->update(['midtrans_status' => $transactionStatus]);
             
-            // Note: status 'success' and 'failed' are controlled by Admin in this flow,
-            // but we can update midtrans_status here.
+            if (in_array($transactionStatus, ['settlement', 'capture'])) {
+                if ($donation->status !== 'paid') {
+                    $donation->update(['status' => 'paid']);
+                    $donation->campaign->increment('collected_amount', $donation->amount);
+                }
+            } elseif (in_array($transactionStatus, ['deny', 'expire', 'cancel'])) {
+                $donation->update(['status' => 'failed']);
+            }
         }
 
         return response()->json(['message' => 'Notification processed']);
@@ -146,5 +156,24 @@ class DonationController extends Controller
             });
 
         return view('profile.archived', compact('donations'));
+    }
+
+    public function downloadCertificate($id)
+    {
+        $donation = Donation::with(['user', 'campaign'])->findOrFail($id);
+        
+        // Security check
+        if ($donation->user_id !== Auth::id()) {
+            abort(403);
+        }
+
+        if (!in_array($donation->status, ['paid', 'success', 'settlement'])) {
+            return redirect()->back()->with('error', 'Sertifikat hanya tersedia untuk donasi yang sudah terverifikasi.');
+        }
+
+        $pdf = Pdf::loadView('donations.certificate', compact('donation'))
+                  ->setPaper('a4', 'landscape');
+                  
+        return $pdf->download('Sertifikat-Donasi-' . $donation->order_id . '.pdf');
     }
 }

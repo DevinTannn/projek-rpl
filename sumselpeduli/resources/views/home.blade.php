@@ -4,28 +4,32 @@
 <style>
     .section-title h4 { font-weight: 800; letter-spacing: -0.5px; }
     .dummy-card { 
-        background-color: white; 
-        border: 1px solid rgba(0,0,0,0.03); 
-        border-radius: 24px; 
-        padding: 10px;
-        transition: all 0.3s ease;
+        background-color: var(--glass-bg); 
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255,255,255,0.4); 
+        border-radius: 30px; 
+        padding: 12px;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.03);
     }
     .dummy-card:hover { 
-        transform: translateY(-8px); 
-        box-shadow: 0 15px 35px rgba(36, 62, 54, 0.1);
+        transform: translateY(-10px); 
+        box-shadow: 0 25px 45px rgba(27, 47, 40, 0.12);
         border-color: var(--secondary-color);
     }
-    .dummy-card img { border-radius: 18px; height: 200px; object-fit: cover; }
+    .dummy-card img { border-radius: 24px; height: 220px; object-fit: cover; }
     .btn-donasi { 
-        background-color: var(--accent-color); 
+        background: linear-gradient(135deg, var(--accent-color) 0%, #B8860B 100%);
         color: white; 
         border-radius: 12px; 
         font-weight: 700;
-        padding: 8px 20px;
+        padding: 10px 24px;
         border: none;
-        transition: all 0.2s;
+        transition: all 0.3s;
+        box-shadow: 0 6px 15px rgba(212, 175, 55, 0.2);
     }
-    .btn-donasi:hover { background-color: #a89235; transform: scale(1.05); }
+    .btn-donasi:hover { transform: scale(1.08); box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35); color: white; }
 </style>
 
 <!-- Recently Updated -->

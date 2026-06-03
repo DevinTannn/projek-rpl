@@ -8,6 +8,10 @@
             <p class="text-sm text-gray-500 mt-1">Kelola dan verifikasi bukti transfer dari donatur.</p>
         </div>
         <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 rounded-full border border-green-100 animate-pulse">
+                <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                <span class="text-[10px] font-bold uppercase tracking-wider">Live Monitoring</span>
+            </div>
             <form action="{{ route('admin.verify.donation.index') }}" method="GET" class="flex items-center gap-2">
                 <label for="per_page" class="text-sm text-gray-600 font-medium">Tampilkan:</label>
                 <select name="per_page" id="per_page" onchange="this.form.submit()" class="text-sm border-gray-200 rounded-lg focus:ring-[#2D5A27] focus:border-[#2D5A27]">
@@ -119,3 +123,12 @@
 </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    // Auto refresh every 30 seconds
+    setTimeout(function(){
+       window.location.reload();
+    }, 30000);
+</script>
+@endpush

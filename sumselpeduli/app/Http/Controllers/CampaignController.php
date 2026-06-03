@@ -64,7 +64,7 @@ class CampaignController extends Controller
             }
         });
 
-        return redirect()->route('campaigns.index')->with('success', 'Campaign created successfully! You are now a fundraiser.');
+        return redirect()->route('campaigns.my')->with('success', 'Kampanye berhasil dibuat! Silakan tunggu verifikasi dari admin.');
     }
 
     public function search(Request $request)
@@ -103,10 +103,10 @@ class CampaignController extends Controller
     {
         $campaign = Campaign::with(['milestones', 'media', 'updates'])->findOrFail($id);
         
-        // Restrict access to pending campaigns
-        if ($campaign->status === 'pending') {
+        // Restrict access to non-active campaigns
+        if ($campaign->status !== 'active') {
             if (!Auth::check() || (Auth::user()->role !== 'admin' && Auth::id() !== $campaign->user_id)) {
-                return redirect()->route('home')->with('error', 'Campaign ini sedang dalam proses verifikasi oleh admin.');
+                return redirect()->route('home')->with('error', 'Kampanye ini belum aktif atau sedang dalam verifikasi admin.');
             }
         }
 
@@ -126,6 +126,34 @@ class CampaignController extends Controller
         }
 
         return view('campaigns.show', compact('campaign'));
+    }
+
+    public function syncStatus()
+    {
+        $user = Auth::user();
+        if (!$user) return response()->json(['success' => false]);
+
+        $latestDonation = \App\Models\Donation::where('user_id', $user->id)
+            ->whereIn('status', ['paid', 'success', 'settlement'])
+            ->latest()
+            ->first();
+
+        $verificationStatus = \App\Models\FundraiserVerification::where('user_id', $user->id)
+            ->latest()
+            ->first();
+
+        return response()->json([
+            'success' => true,
+            'donation' => $latestDonation ? [
+                'id' => $latestDonation->id,
+                'status' => $latestDonation->status,
+                'amount' => $latestDonation->amount
+            ] : null,
+            'verification' => $verificationStatus ? [
+                'status' => $verificationStatus->status
+            ] : null,
+            'role' => $user->role
+        ]);
     }
 
     public function toggleFollow($id)
@@ -236,7 +264,7 @@ class CampaignController extends Controller
 
         $request->validate([
             'media'   => 'required|array|min:1|max:10',
-            'media.*' => 'required|file|mimes:jpeg,jpg,png,gif,mp4,mov,avi,webm|max:102400',
+            'media.*' => 'required|file|mimes:jpeg,jpg,png,gif,mp4,mov,avi,webm,pdf,docx,xlsx|max:102400',
         ]);
 
         $files = $request->file('media');
@@ -250,7 +278,16 @@ class CampaignController extends Controller
             if (!$file || !$file->isValid()) continue;
 
             $mime = $file->getMimeType();
-            $type = str_starts_with($mime, 'video') ? 'video' : 'image';
+            $type = 'image';
+            if (str_starts_with($mime, 'video')) {
+                $type = 'video';
+            } elseif (in_array($mime, [
+                'application/pdf', 
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ])) {
+                $type = 'document';
+            }
             $path = $file->store("campaigns/{$campaign->id}/media", 'public');
 
             $m = CampaignMedia::create([
@@ -292,7 +329,7 @@ class CampaignController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'media' => 'nullable|file|mimes:jpeg,jpg,png,gif,mp4,mov,avi,webm|max:20480',
+            'media' => 'nullable|file|mimes:jpeg,jpg,png,gif,mp4,mov,avi,webm,pdf,docx,xlsx|max:20480',
         ]);
 
         $path = null;
@@ -301,7 +338,16 @@ class CampaignController extends Controller
         if ($request->hasFile('media')) {
             $file = $request->file('media');
             $mime = $file->getMimeType();
-            $type = str_starts_with($mime, 'video') ? 'video' : 'image';
+            $type = 'image';
+            if (str_starts_with($mime, 'video')) {
+                $type = 'video';
+            } elseif (in_array($mime, [
+                'application/pdf', 
+                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+            ])) {
+                $type = 'document';
+            }
             $path = $file->store("campaigns/{$campaign->id}/updates", 'public');
         }
 

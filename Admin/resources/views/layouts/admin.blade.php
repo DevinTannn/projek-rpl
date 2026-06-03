@@ -74,6 +74,27 @@
         menu.classList.toggle('hidden');
         chevron.classList.toggle('rotate-180');
     }
+
+    // ── Real-time Admin Sync Polling ──
+    let lastTotal = null;
+    function syncAdminData() {
+        fetch('{{ route('admin.api.sync') }}')
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) {
+                const currentTotal = data.summary.total;
+                if (lastTotal !== null && currentTotal > lastTotal) {
+                    // Alert or simple refresh
+                    console.log('New pending tasks detected, refreshing...');
+                    window.location.reload(); 
+                }
+                lastTotal = currentTotal;
+            }
+        }).catch(() => {});
+    }
+    
+    // Check every 15 seconds
+    setInterval(syncAdminData, 15000);
 </script>
 
 </body>

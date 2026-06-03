@@ -30,7 +30,7 @@ class FundraiserVerificationController extends Controller
             'full_name' => 'required|string|max:255',
             'nik' => 'required|string|size:16',
             'organization_name' => 'required|string|max:255',
-            'ktp_photo' => 'required|image|mimes:jpeg,png,jpg|max:5120',
+            'ktp_photo' => 'required|file|mimes:jpeg,png,jpg,pdf|max:5120',
             'agreement' => 'accepted'
         ]);
 

@@ -16,14 +16,29 @@
             data-client-key="{{ config('services.midtrans.client_key') }}"></script>
     <style>
         :root {
-            --primary-color: #243E36;
-            --secondary-color: #7CA982;
-            --accent-color: #C2A83E;
-            --bg-color: #F1F7ED;
-            --surface-color: #E0EEC6;
+            --primary-color: #1A2F28;
+            --secondary-color: #6B8F71;
+            --accent-color: #D4AF37;
+            --bg-color: #F8FAF7;
+            --glass-bg: rgba(255, 255, 255, 0.7);
             --sidebar-width-wide: 260px;
             --sidebar-width-collapsed: 80px;
-            --bottom-nav-height: 70px;
+            --bottom-nav-height: 75px;
+        }
+
+        .required::after {
+            content: " *";
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .sidebar-logo {
+            max-height: 32px;
+            object-fit: contain;
+        }
+
+        .sidebar.collapsed .sidebar-logo {
+            max-height: 24px;
         }
 
         body {
@@ -98,8 +113,8 @@
         }
 
         .sidebar-toggle:hover {
-            background: rgba(255,255,255,0.13);
-            color: #fff;
+            background: rgba(255,255,255,0.15);
+            color: var(--accent-color);
         }
 
         .nav-items {
@@ -184,17 +199,19 @@
         }
 
         .top-bar {
-            height: 80px;
-            background-color: rgba(255,255,255,0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            height: 90px;
+            background-color: var(--glass-bg);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid rgba(255,255,255,0.3);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px;
+            padding: 0 50px;
             position: sticky;
             top: 0;
             z-index: 1000;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
         }
 
         .search-container {
@@ -446,7 +463,7 @@
 
     <!-- Mobile Header -->
     <div class="mobile-header d-lg-none">
-        <h5 class="m-0 fw-bold">SumselPeduli</h5>
+        <h5 class="m-0 fw-bold">SELUNA</h5>
         <div class="profile-area">
             <i data-lucide="search" style="width: 22px;"></i>
             <div class="avatar"></div>
@@ -456,8 +473,7 @@
     <!-- Sidebar (Desktop Only) -->
     <aside id="sidebar" class="sidebar wide d-none d-lg-flex">
         <div class="sidebar-brand">
-            <i data-lucide="heart" style="width:28px;height:28px;fill:#f5a623;color:#f5a623;flex-shrink:0;"></i>
-            <h4 class="sidebar-brand-text">PEDULI</h4>
+            <img src="{{ asset('assets/images/seluna-logo.png') }}" alt="Logo" class="sidebar-logo">
         </div>
 
         <button onclick="toggleSidebar()" class="sidebar-toggle">
@@ -675,6 +691,34 @@
                     }
                 });
             }
+
+            // ── Real-time Status Sync Polling ──
+            @auth
+            const startSync = () => {
+                setInterval(() => {
+                    fetch('{{ route('api.sync') }}')
+                    .then(r => r.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Sync role if changed (e.g. admin approved fundraiser)
+                            if (data.role !== currentRole) {
+                                window.location.reload(); 
+                            }
+                            // Store last known donation ID to detect NEW ones
+                            const lastDonationId = localStorage.getItem('last_donation_id');
+                            if (data.donation && data.donation.id != lastDonationId) {
+                                localStorage.setItem('last_donation_id', data.donation.id);
+                                // If they are on archive page, refresh it
+                                if (window.location.pathname.includes('archive')) {
+                                    window.location.reload();
+                                }
+                            }
+                        }
+                    }).catch(() => {});
+                }, 15000); // Every 15s for optimization
+            };
+            startSync();
+            @endauth
         });
     </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

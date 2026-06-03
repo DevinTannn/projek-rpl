@@ -7,129 +7,171 @@
         @page { margin: 0; }
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            color: #243E36;
+            color: #1A2F28;
             margin: 0;
             padding: 0;
-            background: #F1F7ED;
+            background: #ffffff;
         }
         .container {
             width: 100%;
             height: 100%;
-            padding: 50px;
+            padding: 60px;
             box-sizing: border-box;
-            border: 20px solid #7CA982;
+            border: 25px solid #1A2F28;
             position: relative;
+        }
+        .inner-border {
+            width: 100%;
+            height: 100%;
+            border: 2px solid #D4AF37;
+            padding: 40px;
+            box-sizing: border-box;
         }
         .header {
             text-align: center;
-            margin-bottom: 50px;
+            margin-bottom: 40px;
         }
         .header h1 {
-            font-size: 48px;
+            font-size: 52px;
             margin: 0;
-            color: #243E36;
-            letter-spacing: 5px;
+            color: #1A2F28;
+            letter-spacing: 8px;
             text-transform: uppercase;
         }
         .header p {
-            font-size: 18px;
-            color: #7CA982;
-            margin-top: 10px;
+            font-size: 16px;
+            color: #D4AF37;
+            font-weight: bold;
+            margin-top: 5px;
+            letter-spacing: 2px;
+        }
+        .certificate-title {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: #1A2F28;
+            margin: 30px 0;
+            text-transform: uppercase;
+            border-bottom: 2px solid #D4AF37;
+            display: inline-block;
+            padding-bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            position: relative;
         }
         .content {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 30px;
         }
-        .content .proudly {
+        .proudly {
             font-style: italic;
-            font-size: 20px;
-            margin-bottom: 20px;
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #666;
         }
-        .content .name {
-            font-size: 36px;
+        .name {
+            font-size: 42px;
             font-weight: bold;
-            color: #C2A83E;
-            text-decoration: underline;
+            color: #1A2F28;
+            margin-bottom: 25px;
+            font-family: 'Georgia', serif;
+        }
+        .details {
+            font-size: 19px;
+            line-height: 1.8;
+            width: 85%;
+            margin: 0 auto 30px;
+            color: #333;
+        }
+        .amount-box {
+            font-size: 26px;
+            font-weight: bold;
+            color: #ffffff;
+            background: #1A2F28;
+            display: inline-block;
+            padding: 15px 40px;
+            border-radius: 4px;
             margin-bottom: 30px;
         }
-        .content .details {
-            font-size: 18px;
-            line-height: 1.6;
-            width: 80%;
-            margin: 0 auto 40px;
-        }
-        .content .amount {
-            font-size: 24px;
-            font-weight: bold;
-            color: #243E36;
-            background: #E0EEC6;
-            display: inline-block;
-            padding: 10px 30px;
-            border-radius: 50px;
-            margin-bottom: 40px;
-        }
         .footer {
-            position: absolute;
-            bottom: 80px;
-            left: 0;
-            right: 0;
-            text-align: center;
+            margin-top: 50px;
+            width: 100%;
+        }
+        .footer-table {
+            width: 100%;
+            border: none;
         }
         .signature {
-            margin-bottom: 20px;
+            text-align: center;
         }
         .signature-line {
-            width: 200px;
-            border-bottom: 2px solid #243E36;
+            width: 220px;
+            border-bottom: 1px solid #1A2F28;
             margin: 0 auto 10px;
         }
         .order-id {
             position: absolute;
-            bottom: 20px;
-            right: 20px;
-            font-size: 10px;
-            color: #aaa;
+            bottom: 40px;
+            right: 40px;
+            font-size: 11px;
+            color: #999;
         }
-        .decorative-heart {
-            color: #dc3545;
-            font-size: 40px;
-            margin-bottom: 20px;
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 120px;
+            opacity: 0.03;
+            color: #1A2F28;
+            z-index: -1;
+            white-space: nowrap;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>SumselPeduli</h1>
-            <p>Penyalur Kebaikan untuk Sumatera Selatan</p>
-        </div>
-
-        <div class="content">
-            <div class="decorative-heart">&hearts;</div>
-            <div class="proudly">Sertifikat Penghargaan Diberikan Kepada:</div>
-            <div class="name">{{ $donation->user->username }}</div>
+        <div class="inner-border">
+            <div class="watermark">SUMSELPEDULI</div>
             
-            <div class="details">
-                Terima kasih atas kontribusi tulus Anda dalam mendukung kampanye:<br>
-                <strong>"{{ $donation->campaign->title }}"</strong><br><br>
-                Donasi Anda membantu kami mewujudkan perubahan positif bagi mereka yang membutuhkan. 
-                Semoga kebaikan Anda dibalas dengan keberkahan yang melimpah.
+            <div class="header">
+                <h1>SUMSELPEDULI</h1>
+                <p>KEMANUSIAAN &bull; TRANSPARANSI &bull; KEBERKAHAN</p>
             </div>
 
-            <div class="amount">
-                Total Donasi: Rp {{ number_format($donation->amount, 0, ',', '.') }}
+            <div class="certificate-title">SERTIFIKAT PENGHARGAAN</div>
+
+            <div class="content">
+                <div class="proudly">Dengan apresiasi tulus, kami berikan kepada:</div>
+                <div class="name">{{ strtoupper($donation->user->username) }}</div>
+                
+                <div class="details">
+                    Atas kontribusi tulus dan kepedulian Anda dalam menyukseskan kampanye:<br>
+                    <span style="color: #1A2F28; font-weight: bold;">"{{ $donation->campaign->title }}"</span><br><br>
+                    Donasi Anda telah kami terima dan akan disalurkan sepenuhnya untuk membawa perubahan nyata bagi mereka yang membutuhkan di wilayah Sumatera Selatan.
+                </div>
+
+                <div class="amount-box">
+                    Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                </div>
             </div>
+
+            <div class="footer">
+                <table class="footer-table">
+                    <tr>
+                        <td width="33%"></td>
+                        <td width="33%" class="signature">
+                            <div class="signature-line"></div>
+                            <strong style="color: #1A2F28;">YAYASAN SUMSEL PEDULI</strong><br>
+                            <span style="font-size: 13px; color: #666;">Diterbitkan pada: {{ date('d F Y') }}</span>
+                        </td>
+                        <td width="33%"></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="order-id">ID Transaksi Resmi: {{ $donation->order_id }}</div>
         </div>
-
-        <div class="footer">
-            <div class="signature">
-                <div class="signature-line"></div>
-                <strong>Team SumselPeduli</strong>
-                <p style="font-size: 12px; margin-top: 5px;">{{ date('d F Y') }}</p>
-            </div>
-        </div>
-
-        <div class="order-id">ID Transaksi: {{ $donation->order_id }}</div>
     </div>
 </body>
 </html>

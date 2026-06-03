@@ -39,7 +39,7 @@
                     @csrf
                     
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted">NAMA LENGKAP (SESUAI KTP)</label>
+                        <label class="form-label fw-bold small text-muted required">NAMA LENGKAP (SESUAI KTP)</label>
                         <input type="text" name="full_name" class="form-control rounded-3 @error('full_name') is-invalid @enderror" 
                                value="{{ old('full_name', $verification->full_name ?? '') }}" 
                                {{ $user->isVerified() || ($verification && $verification->status === 'pending') ? 'disabled' : 'required' }}>
@@ -49,8 +49,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted">NOMOR INDUK KEPENDUDUKAN (NIK)</label>
-                        <input type="text" name="nik" class="form-control rounded-3 @error('nik') is-invalid @enderror" maxlength="16"
+                        <label class="form-label fw-bold small text-muted required">NOMOR INDUK KEPENDUDUKAN (NIK)</label>
+                        <input type="number" name="nik" class="form-control rounded-3 @error('nik') is-invalid @enderror" maxlength="16"
                                value="{{ old('nik', $verification->nik ?? '') }}" 
                                {{ $user->isVerified() || ($verification && $verification->status === 'pending') ? 'disabled' : 'required' }}>
                         @error('nik')
@@ -59,7 +59,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted">NAMA KOMUNITAS / YAYASAN / ORGANISASI</label>
+                        <label class="form-label fw-bold small text-muted required">NAMA KOMUNITAS / YAYASAN / ORGANISASI</label>
                         <input type="text" name="organization_name" class="form-control rounded-3 @error('organization_name') is-invalid @enderror" 
                                value="{{ old('organization_name', $verification->organization_name ?? '') }}" required>
                         @error('organization_name')
@@ -69,7 +69,7 @@
 
                     @if(!$user->isVerified())
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted">UNGGAH FOTO IDENTITAS (KTP)</label>
+                        <label class="form-label fw-bold small text-muted required">UNGGAH FOTO IDENTITAS (KTP / PDF)</label>
                         @if($verification && $verification->status === 'pending')
                             <div class="p-3 bg-light rounded-3 text-center border">
                                 <i data-lucide="image" class="text-muted mb-2"></i>
@@ -80,8 +80,8 @@
                             <div id="ktp-drop-zone" class="p-4 rounded-4 text-center @error('ktp_photo') border-danger @enderror" 
                                  style="border: 2px dashed var(--secondary-color); background: #fbfdfb; cursor: pointer;">
                                 <i data-lucide="camera" class="mb-2" style="color: var(--secondary-color);"></i>
-                                <div class="small fw-bold">Pilih atau Seret Foto KTP</div>
-                                <input type="file" name="ktp_photo" id="ktp-input" class="d-none" accept="image/*" required>
+                                <div class="small fw-bold">Pilih atau Seret Foto KTP / Berkas PDF</div>
+                                <input type="file" name="ktp_photo" id="ktp-input" class="d-none" accept="image/*,application/pdf" required>
                                 <div id="ktp-preview" class="mt-2 d-none">
                                     <img src="" class="img-fluid rounded-3 shadow-sm" style="max-height: 200px;">
                                 </div>
@@ -134,12 +134,22 @@
             input.onchange = (e) => {
                 const file = e.target.files[0];
                 if (file) {
-                    const reader = new FileReader();
-                    reader.onload = (re) => {
-                        previewImg.src = re.target.result;
+                    if (file.type.startsWith('image/')) {
+                        const reader = new FileReader();
+                        reader.onload = (re) => {
+                            previewImg.src = re.target.result;
+                            preview.innerHTML = `<img src="${re.target.result}" class="img-fluid rounded-3 shadow-sm" style="max-height: 200px;">`;
+                            preview.classList.remove('d-none');
+                        }
+                        reader.readAsDataURL(file);
+                    } else if (file.type === 'application/pdf') {
+                        preview.innerHTML = `<div class="p-3 bg-light rounded-3 d-flex align-items-center gap-3">
+                            <i data-lucide="file-text" class="text-primary"></i>
+                            <span class="small fw-bold text-truncate">${file.name}</span>
+                        </div>`;
                         preview.classList.remove('d-none');
+                        lucide.createIcons();
                     }
-                    reader.readAsDataURL(file);
                 }
             };
         }

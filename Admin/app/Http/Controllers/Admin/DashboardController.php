@@ -28,4 +28,21 @@ class DashboardController extends Controller
             'recentDonations'
         ));
     }
+
+    public function sync()
+    {
+        $pendingCampaigns = \App\Models\Campaign::where('status', 'pending')->count();
+        $pendingDonations = \App\Models\Donation::where('payment_method', 'Manual')->where('status', 'pending')->count();
+        $pendingAccounts = \App\Models\FundraiserVerification::where('status', 'pending')->count();
+
+        return response()->json([
+            'success' => true,
+            'summary' => [
+                'campaigns' => $pendingCampaigns,
+                'donations' => $pendingDonations,
+                'accounts' => $pendingAccounts,
+                'total' => $pendingCampaigns + $pendingDonations + $pendingAccounts
+            ]
+        ]);
+    }
 }

@@ -13,6 +13,7 @@ Route::get('/', HomeController::class)->name('home');
 
 Route::get('/search', [CampaignController::class, 'search'])->name('campaigns.search');
 Route::get('/api/search', [CampaignController::class, 'apiSearch'])->name('api.campaigns.search');
+Route::get('/api/sync-status', [CampaignController::class, 'syncStatus'])->name('api.sync');
 
 // Auth Routes
 Route::middleware('guest')->group(function () {

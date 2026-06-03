@@ -30,13 +30,13 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Username</label>
+                        <label class="form-label fw-bold required">Username</label>
                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username', $user->username) }}" required>
                         @error('username') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Email Address</label>
+                        <label class="form-label fw-bold required">Email Address</label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required>
                         @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>

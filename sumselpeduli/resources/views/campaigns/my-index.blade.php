@@ -74,11 +74,11 @@
                 @csrf
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Title</label>
+                        <label class="form-label fw-bold required">Title</label>
                         <input type="text" name="title" class="form-control" placeholder="Entah campaign name..." required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Bio / Description</label>
+                        <label class="form-label fw-bold required">Bio / Description</label>
                         <textarea name="description" id="description" class="form-control" rows="3" placeholder="Short campaign description"></textarea>
                     </div>
                     <div class="mb-3">
@@ -99,7 +99,7 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Goal Amount (Target)</label>
+                        <label class="form-label fw-bold required">Goal Amount (Target)</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">Rp</span>
                             <input type="number" name="goal_amount" id="create_goal_amount" class="form-control border-start-0" placeholder="5000000" required>
@@ -143,11 +143,11 @@
                 @method('PUT')
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Title</label>
+                        <label class="form-label fw-bold required">Title</label>
                         <input type="text" name="title" id="edit_title" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Bio / Description</label>
+                        <label class="form-label fw-bold required">Bio / Description</label>
                         <textarea name="description" id="edit_description" class="form-control" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
@@ -168,7 +168,7 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Goal Amount (Target)</label>
+                        <label class="form-label fw-bold required">Goal Amount (Target)</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">Rp</span>
                             <input type="number" name="goal_amount" id="edit_goal_amount" class="form-control border-start-0" required>

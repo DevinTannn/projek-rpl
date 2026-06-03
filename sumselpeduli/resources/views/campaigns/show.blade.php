@@ -737,17 +737,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 @csrf
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Judul Update</label>
+                        <label class="form-label fw-bold required">Judul Update</label>
                         <input type="text" name="title" class="form-control" placeholder="Contoh: Penyaluran Tahap 1 Selesai!" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Isi Berita</label>
+                        <label class="form-label fw-bold required">Isi Berita</label>
                         <textarea name="content" class="form-control" rows="6" placeholder="Ceritakan progres atau penggunaan dana..." required></textarea>
                     </div>
                     <div class="mb-0">
-                        <label class="form-label fw-bold">Media Pendukung (Opsional)</label>
-                        <input type="file" name="media" class="form-control" accept="image/*,video/*">
-                        <p class="text-muted small mt-1">Satu foto atau video progres terbaru.</p>
+                        <label class="form-label fw-bold">Media / Laporan (Opsional)</label>
+                        <input type="file" name="media" class="form-control" accept="image/*,video/*,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                        <p class="text-muted small mt-1">Foto, Video, GIF, atau Laporan (PDF, DOCX, XLSX).</p>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
@@ -771,7 +771,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 @csrf
                 <div class="modal-body p-4">
                     {{-- Amount Chips --}}
-                    <label class="form-label fw-bold">Pilih Nominal</label>
+                    <label class="form-label fw-bold required">Pilih Nominal</label>
                     <div class="d-flex flex-wrap gap-2 mb-3">
                         @foreach([50000, 100000, 200000, 500000] as $nominal)
                             <button type="button" class="btn btn-outline-primary rounded-pill amount-chip" data-amount="{{ $nominal }}">
@@ -782,7 +782,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     {{-- Manual Input --}}
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Atau masukkan nominal lain</label>
+                        <label class="form-label fw-bold required">Atau masukkan nominal lain</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">Rp</span>
                             <input type="number" id="donation-amount" name="amount"
@@ -796,7 +796,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
 
                     {{-- Payment Method --}}
-                    <label class="form-label fw-bold">Metode Pembayaran</label>
+                    <label class="form-label fw-bold required">Metode Pembayaran</label>
                     <div class="d-flex flex-column gap-2 mb-3">
                         <div class="payment-option border rounded-3 p-3 d-flex align-items-center gap-3 border-primary bg-light" id="opt-midtrans" style="cursor:pointer;">
                             <input type="radio" name="payment_method" value="Midtrans" class="d-none" checked>
@@ -917,11 +917,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 @method('PUT')
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Judul Kampanye</label>
+                        <label class="form-label fw-bold required">Judul Kampanye</label>
                         <input type="text" name="title" class="form-control" value="{{ $campaign->title }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Deskripsi</label>
+                        <label class="form-label fw-bold required">Deskripsi</label>
                         <textarea name="description" class="form-control" rows="4" required>{{ $campaign->description }}</textarea>
                     </div>
                     <div class="mb-3">
@@ -942,7 +942,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label fw-bold">Target Dana</label>
+                        <label class="form-label fw-bold required">Target Dana</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">Rp</span>
                             <input type="number" name="goal_amount" id="settings_goal_amount"

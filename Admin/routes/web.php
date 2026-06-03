@@ -20,6 +20,8 @@ Route::prefix('admin')->group(function () {
     Route::get('/verifikasi/donasi', [VerificationController::class, 'donationIndex'])->name('admin.verify.donation.index');
     Route::post('/verifikasi/donasi/{id}', [VerificationController::class, 'verifyDonation'])->name('admin.verify.donation.update');
     
+    Route::get('/api/sync', [DashboardController::class, 'sync'])->name('admin.api.sync');
+    
     // Laporan
     Route::get('/laporan', function () { return view('admin.laporan'); })->name('admin.laporan');
 });
