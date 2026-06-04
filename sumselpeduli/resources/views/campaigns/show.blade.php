@@ -7,6 +7,9 @@
     .update-card:hover { transform: translateY(-3px); }
     .update-media img, .update-media video { border-bottom: 1px solid #eee; }
     .fill-danger { fill: #dc3545 !important; }
+    
+    #follow-btn:active { transform: scale(0.9) !important; }
+    #follow-btn:hover { background-color: #fff !important; transform: scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important; }
 </style>
 @endpush
 
@@ -191,6 +194,107 @@
                                 @endforeach
                             </div>
                         </div>
+                        <div class="tab-pane fade" id="reports">
+                            @if(Auth::id() === $campaign->user_id)
+                                {{-- Fundraiser View: Manage Reports --}}
+                                <div class="bg-light rounded-4 p-4 mb-4">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h6 class="fw-bold m-0 text-primary-custom">Manage Reports</h6>
+                                        <button class="btn btn-sm btn-accent-custom rounded-pill px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#uploadReportModal">
+                                            <i data-lucide="plus" style="width:14px;" class="me-1"></i> Add New
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle">
+                                            <thead class="table-light">
+                                                <tr>
+                                                    <th class="small py-2 border-0">File</th>
+                                                    <th class="small py-2 border-0">Size</th>
+                                                    <th class="small py-2 border-0">Status</th>
+                                                    <th class="small py-2 border-0 text-end">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @forelse($campaign->reports as $report)
+                                                    <tr>
+                                                        <td class="small border-0">
+                                                            <div class="d-flex align-items-center gap-2">
+                                                                <i data-lucide="file-text" class="text-danger" style="width:16px;"></i>
+                                                                <span class="text-truncate" style="max-width: 150px;">{{ $report->original_name }}</span>
+                                                            </div>
+                                                        </td>
+                                                        <td class="small border-0">{{ $report->file_size_formatted }}</td>
+                                                        <td class="small border-0">
+                                                            @if($report->status === 'verified')
+                                                                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style="font-size: 9px;">Verified</span>
+                                                            @elseif($report->status === 'rejected')
+                                                                <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill" style="font-size: 9px;">Rejected</span>
+                                                            @else
+                                                                <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill" style="font-size: 9px;">Pending</span>
+                                                            @endif
+                                                        </td>
+                                                        <td class="small border-0 text-end">
+                                                            <div class="d-flex justify-content-end gap-1">
+                                                                <a href="{{ $report->url }}" target="_blank" class="btn btn-sm btn-light p-1" title="View Source">
+                                                                    <i data-lucide="external-link" style="width:14px;"></i>
+                                                                </a>
+                                                                <form action="{{ route('campaigns.reports.delete', $report->id) }}" method="POST" onsubmit="return confirm('Hapus laporan ini?')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="btn btn-sm btn-danger p-1" title="Delete">
+                                                                        <i data-lucide="trash-2" style="width:14px;"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                @empty
+                                                    <tr>
+                                                        <td colspan="4" class="text-center text-muted py-3 small">Belum ada laporan diupload.</td>
+                                                    </tr>
+                                                @endforelse
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            @endif
+
+                            {{-- Public View: List Verified Reports --}}
+                            <div class="verified-reports">
+                                @forelse($campaign->verified_reports as $report)
+                                    <div class="report-viewer-card mb-5 border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+                                        <div class="card-header bg-white border-0 p-4 pb-0 d-flex justify-content-between align-items-center">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="bg-danger bg-opacity-10 p-3 rounded-4">
+                                                    <i data-lucide="file-text" class="text-danger" style="width:24px; height:24px;"></i>
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold m-0">{{ $report->original_name }}</h6>
+                                                    <small class="text-muted">{{ $report->file_size_formatted }} • {{ $report->created_at->format('d M Y') }}</small>
+                                                </div>
+                                            </div>
+                                            <div class="d-flex gap-2">
+                                                <a href="{{ $report->url }}" download class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                                    <i data-lucide="download" style="width:14px;" class="me-1"></i> Download
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div class="card-body p-4">
+                                            <div class="ratio ratio-16x9 rounded-4 overflow-hidden border shadow-sm" style="height: 700px;">
+                                                <iframe src="{{ $report->google_viewer_url }}" frameborder="0"></iframe>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @empty
+                                    @if(Auth::id() !== $campaign->user_id)
+                                        <div class="text-center py-5 bg-light rounded-4">
+                                            <i data-lucide="file-x" class="text-muted mb-3" style="width: 40px; height: 40px;"></i>
+                                            <p class="text-muted">Laporan pertanggungjawaban belum tersedia.</p>
+                                        </div>
+                                    @endif
+                                @endforelse
+                            </div>
+                        </div>
                     </div> {{-- tab-content --}}
                 </div> {{-- tabs wrapper --}}
             </div> {{-- card-body --}}
@@ -218,10 +322,10 @@
                         Donasi Sekarang
                     </button>
                 @endif
-                <button class="btn btn-primary py-3 fw-bold rounded-pill shadow-sm" data-bs-toggle="modal" data-bs-target="#shareModal">
-                    <i data-lucide="share-2" style="width: 18px;" class="me-2"></i> Bagikan Kampanye
-                </button>
                 @if(Auth::id() == $campaign->user_id)
+                <button class="btn btn-primary py-3 fw-bold rounded-pill shadow-sm mb-2" data-bs-toggle="modal" data-bs-target="#uploadReportModal">
+                    <i data-lucide="file-text" style="width: 18px;" class="me-2"></i> Upload Laporan
+                </button>
                 <button class="btn btn-outline-secondary py-2 rounded-pill small fw-bold"
                         data-bs-toggle="modal" data-bs-target="#campaignSettingsModal">
                     <i data-lucide="settings" style="width: 16px;" class="me-2"></i> Campaign Settings
@@ -680,6 +784,36 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
+    // ── Milestone Calculation Logic ──
+    const goalInput = document.getElementById('settings_goal_amount');
+    if (goalInput) {
+        goalInput.addEventListener('input', function(e) {
+            const goal = parseFloat(e.target.value) || 0;
+            [25, 50, 75, 100].forEach(perc => {
+                const amount = Math.round(goal * (perc / 100));
+                const label = document.getElementById('settings-milestone-' + perc);
+                if (label) label.innerText = amount.toLocaleString('id-ID');
+            });
+        });
+    }
+
+    // ── TinyMCE Initialization ──
+    if (typeof tinymce !== 'undefined') {
+        tinymce.init({
+            selector: '#settings_description',
+            plugins: 'lists link code help wordcount',
+            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | help',
+            menubar: false,
+            height: 300,
+            branding: false,
+            setup: function (editor) {
+                editor.on('change', function () {
+                    tinymce.triggerSave();
+                });
+            }
+        });
+    }
+
     window.toggleFollow = function(id) {
         const btn = document.getElementById('follow-btn');
         const icon = document.getElementById('follow-icon');
@@ -729,7 +863,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 @push('modals')
 {{-- Add Update Modal --}}
-<div class="modal fade" id="addUpdateModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="addUpdateModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
             <div class="modal-header border-0 p-4 pb-0">
@@ -763,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function() {
 </div>
 
 {{-- Donation Modal --}}
-<div class="modal fade" id="donationModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="donationModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
             <div class="modal-header border-0 p-4 pb-0">
@@ -904,15 +1038,63 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
-{{-- Settings Modal --}}
-<div class="modal fade" id="campaignSettingsModal" tabindex="-1" aria-hidden="true">
+{{-- Upload Report Modal --}}
+<div class="modal fade" id="uploadReportModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h4 class="fw-bold text-primary-custom m-0">Upload Laporan</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form action="{{ route('campaigns.reports.store', $campaign->id) }}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="alert alert-info border-0 rounded-4 small mb-4" style="background-color: #eef3f0; color: #243e36;">
+                        <i data-lucide="info" class="me-2" style="width:16px;"></i>
+                        Unggah laporan pertanggungjawaban berupa file PDF, DOCX, XLSX, atau ZIP. Maksimal 50MB per file.
+                    </div>
+                    
+                    <div id="report-drop-zone" class="rounded-4 p-5 text-center mb-0"
+                         style="border: 2px dashed var(--secondary-color); cursor:pointer; background: white; transition: all 0.2s;"
+                         onclick="document.getElementById('report-file-input').click()">
+                        <div class="bg-secondary-color bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
+                            <i data-lucide="upload-cloud" style="width:32px; height:32px; color:var(--secondary-color);"></i>
+                        </div>
+                        <h6 class="fw-bold text-primary-custom mb-1">Klik atau seret file ke sini</h6>
+                        <p class="text-muted small mb-0">PDF, DOCX, XLSX, ZIP (Max. 50MB)</p>
+                        <input type="file" id="report-file-input" name="files[]" class="d-none" accept=".pdf,.docx,.xlsx,.zip" multiple onchange="updateReportFilename(this)">
+                    </div>
+                    <div id="report-filename-preview" class="mt-3 small text-primary-custom fw-bold text-center"></div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Upload Dokumen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updateReportFilename(input) {
+        const preview = document.getElementById('report-filename-preview');
+        if (input.files && input.files.length > 0) {
+            if (input.files.length === 1) {
+                preview.textContent = "Selected: " + input.files[0].name;
+            } else {
+                preview.textContent = "Selected: " + input.files.length + " files";
+            }
+        } else {
+            preview.textContent = "";
+        }
+    }
+</script>
+{{-- Campaign Settings Modal --}}
+<div class="modal fade" id="campaignSettingsModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
             <div class="modal-header border-0 p-4 pb-0">
-                <div>
-                    <h4 class="fw-bold text-primary-custom m-0">Campaign Settings</h4>
-                    <p class="text-muted small m-0 mt-1">{{ $campaign->title }}</p>
-                </div>
+                <h4 class="fw-bold text-primary-custom m-0">Campaign Settings</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="{{ route('campaigns.update', $campaign->id) }}" method="POST">
@@ -924,8 +1106,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="text" name="title" class="form-control" value="{{ $campaign->title }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold required">Deskripsi</label>
-                        <textarea name="description" class="form-control" rows="4" required>{{ $campaign->description }}</textarea>
+                        <label class="form-label fw-bold required">Bio / Deskripsi</label>
+                        <textarea name="description" id="settings_description" class="form-control" rows="4" required>{{ $campaign->description }}</textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Kategori Kampanye</label>
@@ -952,29 +1134,34 @@ document.addEventListener('DOMContentLoaded', function() {
                                    class="form-control border-start-0" value="{{ $campaign->goal_amount }}" required>
                         </div>
                     </div>
-                    <h6 class="fw-bold text-primary-custom mb-3">Milestone Rewards</h6>
+                    <h6 class="fw-bold text-primary-custom mb-3 mt-4">Milestone Rewards</h6>
                     <div class="row g-3">
                         @foreach($campaign->milestones->sortBy('percentage') as $milestone)
                             <div class="col-12">
-                                <div class="p-3 bg-white rounded-3 d-flex align-items-center gap-3">
+                                <div class="p-3 bg-white rounded-3 d-flex align-items-center gap-3 shadow-sm border border-light">
                                     <div class="fw-bold text-accent-custom" style="width: 50px;">{{ $milestone->percentage }}%</div>
                                     <div class="text-muted small flex-grow-1" style="min-width: 120px;">
                                         Rp <span id="settings-milestone-{{ $milestone->percentage }}">{{ number_format($milestone->amount, 0, ',', '.') }}</span>
                                     </div>
                                     <input type="text" name="milestones[{{ $milestone->percentage }}]"
-                                           class="form-control flex-grow-1" value="{{ $milestone->badge_label }}" required>
+                                           class="form-control flex-grow-1 border-0 bg-light" value="{{ $milestone->badge_label }}" placeholder="Badge label for {{ $milestone->percentage }}% milestone" required>
                                 </div>
                             </div>
                         @endforeach
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Simpan Perubahan</button>
+                    <button type="button" class="btn btn-light px-4 rounded-pill" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Save Changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 @endpush
+
+@push('scripts')
+<script src="https://cdn.tiny.cloud/1/uzyi3qni0rl59wmj5i3t38v3cebtp184ygnuw2vto9ugxut5/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+@endpush
+
 

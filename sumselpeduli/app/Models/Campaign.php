@@ -48,6 +48,16 @@ class Campaign extends Model
         return $this->hasMany(Donation::class)->latest();
     }
 
+    public function reports()
+    {
+        return $this->hasMany(CampaignReport::class)->latest();
+    }
+
+    public function verified_reports()
+    {
+        return $this->hasMany(CampaignReport::class)->where('status', 'verified')->latest();
+    }
+
     public function getPercentageAttribute()
     {
         if ($this->goal_amount <= 0) return 0;

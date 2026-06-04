@@ -6,23 +6,23 @@
     <title>Admin Panel - SELUNA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .bg-peduli { background-color: #1B3022; }
-        .heart-shape {
-            position: relative; width: 20px; height: 20px;
-            background-color: #D4AF37; transform: rotate(-45deg);
-            margin-right: 15px; margin-left: 5px; display: inline-block;
-        }
-        .heart-shape::before, .heart-shape::after {
-            content: ""; position: absolute; width: 20px; height: 20px;
-            background-color: #D4AF37; border-radius: 50%;
-        }
-        .heart-shape::before { top: -10px; left: 0; }
-        .heart-shape::after { left: 10px; top: 0; }
+        .bg-peduli { background-color: #243E36; }
+        .text-accent { color: #C2A83E; }
         .sidebar-logo {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+        .sidebar-logo-container {
             width: 40px;
             height: 40px;
-            object-fit: contain;
-            margin-right: 15px;
+            background: #7CA982;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
         }
     </style>
 </head>
@@ -30,11 +30,13 @@
 
 <div class="flex min-h-screen">
     <aside class="w-64 bg-peduli text-white flex flex-col py-8 px-6">
-        <a href="/admin" class="flex items-center mb-12 px-2 overflow-hidden gap-2 text-decoration-none hover:opacity-80 transition-opacity">
-            <img src="{{ asset('assets/images/seluna_logo_fit.png') }}" alt="Logo" class="sidebar-logo">
+        <a href="/admin" class="flex items-center mb-12 px-2 overflow-hidden gap-3 text-decoration-none hover:opacity-80 transition-opacity">
+            <div class="sidebar-logo-container">
+                <img src="{{ asset('assets/images/seluna_logo_fit.png') }}" alt="Logo" class="sidebar-logo">
+            </div>
             <div class="overflow-hidden">
-                <h1 class="text-lg font-black tracking-widest text-[#D4AF37] whitespace-nowrap leading-none mb-1">SELUNA</h1>
-                <p class="text-gray-400 uppercase tracking-widest whitespace-nowrap opacity-60 leading-none" style="font-size: 8px;">Admin Panel</p>
+                <h1 class="text-xl font-black tracking-widest text-accent whitespace-nowrap leading-none mb-1">SELUNA</h1>
+                <p class="text-gray-400 uppercase tracking-widest whitespace-nowrap opacity-60 leading-none" style="font-size: 8px; font-weight: 700;">Admin Panel</p>
             </div>
         </a>
 
@@ -61,9 +63,10 @@
 
             </div>
 
-            <a href="/admin/laporan" class="flex items-center gap-4 py-3 px-4 rounded-lg transition {{ request()->is('admin/laporan') ? 'bg-white/10 text-white' : 'text-gray-200 hover:bg-white/10' }}">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 20"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
-                Laporan
+            
+            <a href="{{ route('admin.verify.report.index') }}" class="flex items-center gap-4 py-3 px-4 rounded-lg transition {{ request()->routeIs('admin.verify.report.*') ? 'bg-white/10 text-white' : 'text-gray-200 hover:bg-white/10' }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                Laporan Kampanye
             </a>
         </nav>
     </aside>
@@ -104,4 +107,4 @@
 </script>
 
 </body>
-</html> 
+</html>

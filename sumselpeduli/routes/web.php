@@ -68,6 +68,10 @@ Route::middleware('auth')->group(function () {
         Route::post('/my-campaigns/{id}/media', [CampaignController::class, 'uploadMedia'])->name('campaigns.media.upload');
         Route::delete('/my-campaigns/{campaignId}/media/{mediaId}', [CampaignController::class, 'deleteMedia'])->name('campaigns.media.delete');
         Route::post('/my-campaigns/{id}/updates', [CampaignController::class, 'addUpdate'])->name('campaigns.updates.store');
+        
+        // Report Routes
+        Route::post('/my-campaigns/{campaign}/reports', [\App\Http\Controllers\CampaignReportController::class, 'store'])->name('campaigns.reports.store');
+        Route::delete('/reports/{report}', [\App\Http\Controllers\CampaignReportController::class, 'destroy'])->name('campaigns.reports.delete');
     });
 });
 

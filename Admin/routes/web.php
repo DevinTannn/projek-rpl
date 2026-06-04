@@ -22,6 +22,11 @@ Route::prefix('admin')->group(function () {
     
     Route::get('/api/sync', [DashboardController::class, 'sync'])->name('admin.api.sync');
     
+    // Verifikasi Laporan Kampanye
+    Route::get('/verifikasi/laporan', [\App\Http\Controllers\AdminReportController::class, 'index'])->name('admin.verify.report.index');
+    Route::post('/verifikasi/laporan/{report}/verify', [\App\Http\Controllers\AdminReportController::class, 'verify'])->name('admin.verify.report.verify');
+    Route::post('/verifikasi/laporan/{report}/reject', [\App\Http\Controllers\AdminReportController::class, 'reject'])->name('admin.verify.report.reject');
+    
     // Laporan
     Route::get('/laporan', function () { return view('admin.laporan'); })->name('admin.laporan');
 });
