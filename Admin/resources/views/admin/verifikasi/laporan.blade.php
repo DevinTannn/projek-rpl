@@ -1,10 +1,23 @@
 @extends('layouts.admin')
 
 @section('header')
-<div class="flex justify-between items-center">
+<div class="flex justify-between items-center px-8 pt-8 pb-4">
     <div>
-        <h2 class="text-2xl font-bold text-peduli">Verifikasi Laporan Kampanye</h2>
+        <h2 class="text-2xl font-bold text-[#1B3022]">Verifikasi Laporan Kampanye</h2>
         <p class="text-gray-500 text-sm">Review dan setujui laporan pertanggungjawaban dari fundraiser.</p>
+    </div>
+    <div class="flex items-center gap-3">
+        <form action="{{ route('admin.verify.report.index') }}" method="GET" class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+            <div class="flex items-center gap-2 pr-3">
+                <label for="sort" class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Urutan:</label>
+                <select name="sort" onchange="this.form.submit()" class="text-xs font-bold text-gray-700 bg-transparent border-none focus:ring-0 cursor-pointer">
+                    <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                    <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
+                    <option value="az" {{ request('sort') == 'az' ? 'selected' : '' }}>A-Z (Nama File)</option>
+                    <option value="za" {{ request('sort') == 'za' ? 'selected' : '' }}>Z-A (Nama File)</option>
+                </select>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

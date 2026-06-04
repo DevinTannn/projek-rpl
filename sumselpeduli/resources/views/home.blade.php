@@ -79,7 +79,7 @@
                             <div class="bg-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
                                 <i data-lucide="{{ $index === 0 ? 'flame' : ($index === 1 ? 'droplets' : 'book-open') }}" style="color: {{ $bg }}; width: 24px; height: 24px;"></i>
                             </div>
-                            <span class="badge px-3 py-2 rounded-pill" style="background-color: rgba(255,255,255,0.15); font-weight: 800; font-size: 10px; letter-spacing: 1px;">TRENDING #{{ $index + 1 }}</span>
+                            <span class="badge px-3 py-4 rounded-pill" style="background-color: rgba(255,255,255,0.15); font-weight: 800; font-size: 10px; letter-spacing: 1px;">TRENDING #{{ $index + 1 }}</span>
                         </div>
                         <h5 class="fw-bold mb-3" style="font-size: 18px; line-height: 1.4;">{{ $campaign->title }}</h5>
                         <p class="small opacity-75 mb-4 line-clamp-2">{{ Str::limit($campaign->description, 100) }}</p>

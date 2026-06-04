@@ -24,6 +24,23 @@
             transition: transform 0.3s ease;
             flex-shrink: 0;
         }
+        
+        /* ── Transitions & Ripples ── */
+        .ripple {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+        }
+        @keyframes ripple-animation {
+            to { transform: scale(4); opacity: 0; }
+        }
+        button, .btn, .nav-item { position: relative; overflow: hidden; }
+        
+        .hover-scale { transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .hover-scale:hover { transform: scale(1.02); }
+        .hover-scale:active { transform: scale(0.98); }
     </style>
 </head>
 <body class="bg-[#F0F4EF] min-h-screen">
@@ -72,6 +89,7 @@
     </aside>
 
     <main class="flex-1 overflow-y-auto">
+        @yield('header')
         @yield('content')
     </main>
 </div>
@@ -104,7 +122,25 @@
     
     // Check every 15 seconds
     setInterval(syncAdminData, 15000);
+    // ── Ripple Effect ──
+    function addRipple(e) {
+        const btn = e.currentTarget;
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        const rect = btn.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size/2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size/2) + 'px';
+        btn.appendChild(ripple);
+        setTimeout(() => ripple.remove(), 600);
+    }
+    
+    document.querySelectorAll('button, a.rounded-lg, .hover-scale').forEach(el => {
+        el.addEventListener('click', addRipple);
+    });
 </script>
+
 
 </body>
 </html>

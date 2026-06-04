@@ -18,11 +18,54 @@ class VerificationController extends Controller
         $this->mailService = $mailService;
     }
 
+    private function applySorting($query, Request $request, $type = 'campaign')
+    {
+        $sort = $request->get('sort', 'newest');
+        
+        switch ($sort) {
+            case 'newest': $query->latest(); break;
+            case 'oldest': $query->oldest(); break;
+            case 'az': 
+                $field = ($type === 'campaign') ? 'title' : (($type === 'account') ? 'id' : 'id'); 
+                // For account, maybe search by user name later, for now ID
+                $query->orderBy($field, 'asc'); 
+                break;
+            case 'za': 
+                $field = ($type === 'campaign') ? 'title' : (($type === 'account') ? 'id' : 'id');
+                $query->orderBy($field, 'desc'); 
+                break;
+            case 'amount_hi': 
+                $field = ($type === 'campaign') ? 'goal_amount' : 'amount';
+                $query->orderBy($field, 'desc'); 
+                break;
+            case 'amount_lo': 
+                $field = ($type === 'campaign') ? 'goal_amount' : 'amount';
+                $query->orderBy($field, 'asc'); 
+                break;
+            case 'collected_hi': 
+                if ($type === 'campaign') $query->orderBy('collected_amount', 'desc');
+                break;
+            case 'popular': 
+                if ($type === 'campaign') $query->withCount('follows')->orderBy('follows_count', 'desc');
+                break;
+            case 'completion': 
+                if ($type === 'campaign') $query->orderByRaw('(collected_amount / goal_amount) DESC');
+                break;
+        }
+
+        // Always prioritize pending at the top if sorting by newest/default
+        if ($sort === 'newest') {
+            $query->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END");
+        }
+
+        return $query;
+    }
+
     public function campaignIndex(Request $request)
     {
         $perPage = $request->get('per_page', 10);
-        $query = Campaign::orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
-            ->latest();
+        $query = Campaign::query();
+        $query = $this->applySorting($query, $request, 'campaign');
 
         $campaigns = ($perPage == 'all') ? $query->get() : $query->paginate($perPage);
         return view('admin.verifikasi.kampanye', compact('campaigns'));
@@ -36,7 +79,6 @@ class VerificationController extends Controller
         $campaign->update(['status' => $status]);
 
         if ($status == 'active') {
-            // Send Email Notification via PHPMailer
             $this->mailService->sendCampaignVerified($campaign->load('user'));
         }
 
@@ -46,9 +88,8 @@ class VerificationController extends Controller
     public function accountIndex(Request $request)
     {
         $perPage = $request->get('per_page', 10);
-        $query = FundraiserVerification::with('user')
-            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
-            ->latest();
+        $query = FundraiserVerification::with('user');
+        $query = $this->applySorting($query, $request, 'account');
 
         $verifications = ($perPage == 'all') ? $query->get() : $query->paginate($perPage);
         return view('admin.verifikasi.akun', compact('verifications'));
@@ -63,8 +104,6 @@ class VerificationController extends Controller
 
         if ($status == 'approved') {
             $verification->user->update(['role' => 'fundraiser']);
-            
-            // Send Email Notification via PHPMailer
             $this->mailService->sendAccountVerified($verification->load('user'));
         }
 
@@ -74,10 +113,8 @@ class VerificationController extends Controller
     public function donationIndex(Request $request)
     {
         $perPage = $request->get('per_page', 10);
-        // Show all donations, prioritize pending at the top
-        $query = Donation::with(['user', 'campaign'])
-            ->orderByRaw("CASE WHEN status = 'pending' THEN 0 ELSE 1 END")
-            ->latest();
+        $query = Donation::with(['user', 'campaign']);
+        $query = $this->applySorting($query, $request, 'donation');
 
         $donations = ($perPage == 'all') ? $query->get() : $query->paginate($perPage);
         return view('admin.verifikasi.donasi', compact('donations'));
@@ -91,10 +128,7 @@ class VerificationController extends Controller
         $donation->update(['status' => $status]);
         
         if ($status == 'paid') {
-            // Update collected amount in campaign
             $donation->campaign->increment('collected_amount', $donation->amount);
-            
-            // Send Email Notification via PHPMailer
             $this->mailService->sendDonationVerified($donation->load(['user', 'campaign']));
         }
 

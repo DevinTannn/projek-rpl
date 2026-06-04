@@ -7,9 +7,20 @@ use Illuminate\Http\Request;
 
 class AdminReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reports = CampaignReport::with('campaign')->latest()->get();
+        $query = CampaignReport::with('campaign');
+        
+        $sort = $request->get('sort', 'newest');
+        switch ($sort) {
+            case 'newest': $query->latest(); break;
+            case 'oldest': $query->oldest(); break;
+            case 'az': $query->orderBy('original_name', 'asc'); break;
+            case 'za': $query->orderBy('original_name', 'desc'); break;
+            default: $query->latest(); break;
+        }
+
+        $reports = $query->get();
         return view('admin.verifikasi.laporan', compact('reports'));
     }
 

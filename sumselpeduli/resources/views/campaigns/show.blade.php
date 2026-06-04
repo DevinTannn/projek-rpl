@@ -8,8 +8,26 @@
     .update-media img, .update-media video { border-bottom: 1px solid #eee; }
     .fill-danger { fill: #dc3545 !important; }
     
-    #follow-btn:active { transform: scale(0.9) !important; }
-    #follow-btn:hover { background-color: #fff !important; transform: scale(1.1); box-shadow: 0 5px 15px rgba(0,0,0,0.1) !important; }
+    #follow-btn {
+        background: white;
+        border: 1px solid rgba(0,0,0,0.05);
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    #follow-btn:hover {
+        transform: scale(1.15) rotate(5deg);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08) !important;
+    }
+    #follow-btn:active {
+        transform: scale(0.9);
+    }
+    .heart-pulse {
+        animation: heartPulse 0.4s ease;
+    }
+    @keyframes heartPulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.4); }
+        100% { transform: scale(1); }
+    }
 </style>
 @endpush
 
@@ -85,15 +103,21 @@
             <div class="card-body p-4 p-lg-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2 class="fw-bold text-primary-custom m-0">{{ $campaign->title }}</h2>
-                    @auth
-                        <button id="follow-btn" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
-                                style="width: 45px; height: 45px; transition: all 0.2s;"
-                                onclick="toggleFollow({{ $campaign->id }})">
-                            <i id="follow-icon" data-lucide="heart" 
-                               class="{{ $campaign->follows->where('user_id', Auth::id())->count() > 0 ? 'fill-danger text-danger' : 'text-muted' }}"
-                               style="width: 24px;"></i>
-                        </button>
-                    @endauth
+                    <div class="d-flex align-items-center gap-3">
+                        <div class="text-end d-none d-sm-block">
+                            <div class="fw-bold text-primary-custom" style="font-size: 14px;"><span id="follow-count">{{ $campaign->follows->count() }}</span></div>
+                            <div class="text-muted" style="font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase;">Followers</div>
+                        </div>
+                        @auth
+                            <button id="follow-btn" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
+                                    style="width: 50px; height: 50px;"
+                                    onclick="toggleFollow({{ $campaign->id }})">
+                                <i id="follow-icon" data-lucide="heart" 
+                                   class="{{ $campaign->follows->where('user_id', Auth::id())->count() > 0 ? 'fill-danger text-danger' : 'text-muted' }}"
+                                   style="width: 26px;"></i>
+                            </button>
+                        @endauth
+                    </div>
                 </div>
                 <div id="tag-container">
                     @if($campaign->tag)
@@ -281,7 +305,19 @@
                                         </div>
                                         <div class="card-body p-4">
                                             <div class="ratio ratio-16x9 rounded-4 overflow-hidden border shadow-sm" style="height: 700px;">
-                                                <iframe src="{{ $report->google_viewer_url }}" frameborder="0"></iframe>
+                                                @if(str_contains(request()->getHttpHost(), '127.0.0.1') || str_contains(request()->getHttpHost(), 'localhost'))
+                                                    <div class="d-flex flex-column align-items-center justify-content-center bg-light h-100 p-4 text-center">
+                                                        <i data-lucide="monitor-off" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
+                                                        <h5 class="fw-bold text-primary-custom">Preview tidak tersedia di Localhost</h5>
+                                                        <p class="text-muted small mb-4">Google Docs Viewer memerlukan URL publik untuk menampilkan file.<br>Gunakan tombol download atau akses secara langsung di bawah ini:</p>
+                                                        <div class="d-flex gap-2">
+                                                            <a href="{{ $report->url }}" download class="btn btn-primary rounded-pill px-4">Download File</a>
+                                                            <a href="{{ $report->url }}" target="_blank" class="btn btn-outline-primary rounded-pill px-4">View Direct</a>
+                                                        </div>
+                                                    </div>
+                                                @else
+                                                    <iframe src="{{ $report->google_viewer_url }}" frameborder="0"></iframe>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -314,6 +350,13 @@
             </div>
             
             <div class="d-grid gap-2">
+                {{-- Share Button --}}
+                <button class="btn btn-light py-3 fw-bold rounded-pill shadow-sm mb-1 d-flex align-items-center justify-content-center gap-2 border border-light-custom" 
+                        onclick="openShareModal()">
+                    <i data-lucide="share-2" style="width: 20px;"></i>
+                    Bagikan Campaign
+                </button>
+
                 @if(Auth::id() != $campaign->user_id)
                     <button class="btn btn-secondary-color py-3 fw-bold rounded-pill shadow-sm text-white mb-1" 
                             style="background-color: var(--secondary-color);"
@@ -323,9 +366,6 @@
                     </button>
                 @endif
                 @if(Auth::id() == $campaign->user_id)
-                <button class="btn btn-primary py-3 fw-bold rounded-pill shadow-sm mb-2" data-bs-toggle="modal" data-bs-target="#uploadReportModal">
-                    <i data-lucide="file-text" style="width: 18px;" class="me-2"></i> Upload Laporan
-                </button>
                 <button class="btn btn-outline-secondary py-2 rounded-pill small fw-bold"
                         data-bs-toggle="modal" data-bs-target="#campaignSettingsModal">
                     <i data-lucide="settings" style="width: 16px;" class="me-2"></i> Campaign Settings
@@ -378,14 +418,17 @@
                         @endforeach
                     </div> {{-- media-grid-sidebar --}}
                 </div> {{-- uploaded-media-container --}}
+            </div> {{-- border-top section --}}
             @endif
-        </div> {{-- card mt-4 wrapper? No, let's check --}}
-    </div> {{-- card side --}}
-</div> {{-- col-lg-4 --}}
+        </div> {{-- sticky card --}}
+    </div> {{-- col-lg-4 --}}
 </div> {{-- row --}}
 
 
+
 @push('scripts')
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // ── Global State ──
@@ -817,7 +860,12 @@ document.addEventListener('DOMContentLoaded', function() {
     window.toggleFollow = function(id) {
         const btn = document.getElementById('follow-btn');
         const icon = document.getElementById('follow-icon');
+        const countEl = document.getElementById('follow-count');
         
+        // Visual feedback immediate
+        icon.classList.add('heart-pulse');
+        setTimeout(() => icon.classList.remove('heart-pulse'), 400);
+
         fetch(`/campaigns/${id}/follow`, {
             method: 'POST',
             headers: {
@@ -825,22 +873,31 @@ document.addEventListener('DOMContentLoaded', function() {
                 'Accept': 'application/json'
             }
         })
-        .then(res => res.json())
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.json();
+        })
         .then(data => {
             if (data.success) {
+                const currentCount = parseInt(countEl.innerText);
                 if (data.status === 'followed') {
                     icon.classList.remove('text-muted');
                     icon.classList.add('fill-danger', 'text-danger');
+                    countEl.innerText = currentCount + 1;
                     showAlert('success', 'Berhasil mengikuti campaign!');
                 } else {
                     icon.classList.remove('fill-danger', 'text-danger');
                     icon.classList.add('text-muted');
+                    countEl.innerText = Math.max(0, currentCount - 1);
                     showAlert('info', 'Batal mengikuti campaign.');
                 }
                 if (typeof lucide !== 'undefined') lucide.createIcons();
             }
         })
-        .catch(() => showAlert('danger', 'Gagal memproses permintaan.'));
+        .catch(() => {
+            showAlert('danger', 'Harap login ulang atau periksa koneksi Anda.');
+            // Revert icon state if failed? Maybe not needed for simple toggle
+        });
     };
 
     window.showAlert = function(type, msg) {
@@ -859,6 +916,104 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 @endpush
+{{-- ── Share Modal ── --}}
+<div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 24px;">
+            <div class="modal-header border-0 px-4 pt-4">
+                <h5 class="modal-title fw-bold">Bagikan ke Sosial Media</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body px-4 pb-4">
+                <p class="text-muted small mb-4">Sebarkan kebaikan dengan membagikan kampanye ini ke teman dan keluarga Anda.</p>
+                
+                <div class="d-flex justify-content-between mb-5 overflow-auto pb-2 gap-3 no-scrollbar" style="scroll-snap-type: x mandatory;">
+                    {{-- WhatsApp --}}
+                    <a href="https://wa.me/?text={{ urlencode($campaign->title . ' - ' . url()->current()) }}" target="_blank" 
+                       class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
+                        <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
+                             style="width: 55px; height: 55px; transition: transform 0.2s;">
+                            <i data-lucide="message-circle" class="text-success" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <span class="small fw-bold text-muted">WhatsApp</span>
+                    </a>
+
+                    {{-- Facebook --}}
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{ urlencode(url()->current()) }}" target="_blank" 
+                       class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
+                        <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
+                             style="width: 55px; height: 55px; transition: transform 0.2s;">
+                            <i data-lucide="facebook" class="text-primary" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <span class="small fw-bold text-muted">Facebook</span>
+                    </a>
+
+                    {{-- Twitter / X --}}
+                    <a href="https://twitter.com/intent/tweet?text={{ urlencode($campaign->title) }}&url={{ urlencode(url()->current()) }}" target="_blank" 
+                       class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
+                        <div class="bg-dark bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
+                             style="width: 55px; height: 55px; transition: transform 0.2s;">
+                            <i data-lucide="twitter" class="text-dark" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <span class="small fw-bold text-muted">X / Twitter</span>
+                    </a>
+
+                    {{-- Telegram --}}
+                    <a href="https://t.me/share/url?url={{ urlencode(url()->current()) }}&text={{ urlencode($campaign->title) }}" target="_blank" 
+                       class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
+                        <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
+                             style="width: 55px; height: 55px; transition: transform 0.2s;">
+                            <i data-lucide="send" class="text-info" style="width: 28px; height: 28px;"></i>
+                        </div>
+                        <span class="small fw-bold text-muted">Telegram</span>
+                    </a>
+                </div>
+
+                <div class="bg-light p-2 rounded-4 d-flex align-items-center gap-2 border border-dashed">
+                    <input type="text" readonly value="{{ url()->current() }}" id="copyLinkInput" 
+                           class="form-control border-0 bg-transparent text-muted small py-2 px-3 fw-medium">
+                    <button class="btn btn-primary rounded-pill px-4 fw-bold shadow-sm" onclick="copyCampaignLink()">
+                        Salin
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .share-icon-btn { transition: all 0.2s ease; }
+    .share-icon-btn:hover { transform: translateY(-5px); }
+    .share-icon-btn:hover div { transform: scale(1.1); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+</style>
+
+<script>
+    function openShareModal() {
+        const modal = new bootstrap.Modal(document.getElementById('shareModal'));
+        modal.show();
+    }
+
+    function copyCampaignLink() {
+        const input = document.getElementById('copyLinkInput');
+        input.select();
+        input.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(input.value);
+        
+        const btn = event.currentTarget;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = 'Berhasil!';
+        btn.classList.replace('btn-primary', 'btn-success');
+        
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.classList.replace('btn-success', 'btn-primary');
+        }, 2000);
+        
+        if(typeof showAlert === 'function') showAlert('success', 'Link berhasil disalin ke clipboard!');
+    }
+</script>
 @endsection
 
 @push('modals')
@@ -970,7 +1125,12 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
+@endpush
+
+@push('modals')
+
 {{-- Share Modal --}}
+
 <div class="modal fade" id="shareModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: #f8f9fa;">
@@ -1016,10 +1176,11 @@ document.addEventListener('DOMContentLoaded', function() {
                         <input type="text" id="share-link-input" class="form-control border-0 bg-light rounded-start-pill ps-3" value="{{ request()->fullUrl() }}" readonly>
                         <button class="btn btn-primary rounded-end-pill px-4 fw-bold" onclick="copyShareLink()">Copy</button>
                     </div>
-                </div> {{-- End modal-body --}}
-            </div> {{-- End modal-content --}}
-        </div> {{-- End modal-dialog --}}
-    </div> {{-- End modal --}}
+                </div> {{-- End copy link div --}}
+            </div> {{-- End modal-body --}}
+        </div> {{-- End modal-content --}}
+    </div> {{-- End modal-dialog --}}
+</div> {{-- End shareModal --}}
 
 {{-- Confirmation Modal --}}
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
@@ -1075,6 +1236,10 @@ document.addEventListener('DOMContentLoaded', function() {
     </div>
 </div>
 
+@endpush
+
+@push('scripts')
+
 <script>
     function updateReportFilename(input) {
         const preview = document.getElementById('report-filename-preview');
@@ -1089,7 +1254,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 </script>
+
+@endpush
+
+@push('modals')
+
 {{-- Campaign Settings Modal --}}
+
 <div class="modal fade" id="campaignSettingsModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
@@ -1163,5 +1334,3 @@ document.addEventListener('DOMContentLoaded', function() {
 @push('scripts')
 <script src="https://cdn.tiny.cloud/1/uzyi3qni0rl59wmj5i3t38v3cebtp184ygnuw2vto9ugxut5/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
 @endpush
-
-

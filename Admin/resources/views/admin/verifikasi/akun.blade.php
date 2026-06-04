@@ -7,23 +7,36 @@
             <h2 class="text-2xl font-bold text-[#1B3022]">Verifikasi Akun Pengguna</h2>
             <p class="text-sm text-gray-500 mt-1">Verifikasi identitas pengguna untuk menjadi Fundraiser.</p>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3">
             <div class="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 rounded-full border border-green-100 animate-pulse">
                 <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                 <span class="text-[10px] font-bold uppercase tracking-wider">Live Monitoring</span>
             </div>
-            <form action="{{ route('admin.verify.account.index') }}" method="GET" class="flex items-center gap-2">
-                <label for="per_page" class="text-sm text-gray-600 font-medium">Tampilkan:</label>
-                <select name="per_page" id="per_page" onchange="this.form.submit()" class="text-sm border-gray-200 rounded-lg focus:ring-[#2D5A27] focus:border-[#2D5A27]">
-                    <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
-                    <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
-                    <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
-                    <option value="100" {{ request('per_page') == 100 ? 'selected' : '' }}>100</option>
-                    <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Tampilkan Semua</option>
-                </select>
+
+            <form action="{{ route('admin.verify.account.index') }}" method="GET" class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+                <div class="flex items-center gap-2 border-r border-gray-100 pr-3">
+                    <label for="sort" class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Urutan:</label>
+                    <select name="sort" onchange="this.form.submit()" class="text-xs font-bold text-gray-700 bg-transparent border-none focus:ring-0 cursor-pointer">
+                        <option value="newest" {{ request('sort') == 'newest' ? 'selected' : '' }}>Terbaru</option>
+                        <option value="oldest" {{ request('sort') == 'oldest' ? 'selected' : '' }}>Terlama</option>
+                        <option value="az" {{ request('sort') == 'az' ? 'selected' : '' }}>ID Terkecil</option>
+                        <option value="za" {{ request('sort') == 'za' ? 'selected' : '' }}>ID Terbesar</option>
+                    </select>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="per_page" class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Lihat:</label>
+                    <select name="per_page" onchange="this.form.submit()" class="text-xs font-bold text-gray-700 bg-transparent border-none focus:ring-0 cursor-pointer">
+                        <option value="10" {{ request('per_page') == 10 ? 'selected' : '' }}>10</option>
+                        <option value="20" {{ request('per_page') == 20 ? 'selected' : '' }}>20</option>
+                        <option value="50" {{ request('per_page') == 50 ? 'selected' : '' }}>50</option>
+                        <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
+                    </select>
+                </div>
             </form>
-            <span class="bg-[#2D5A27] text-white px-4 py-1.5 rounded-full text-sm font-medium shadow-sm">
-                {{ $verifications instanceof \Illuminate\Pagination\LengthAwarePaginator ? $verifications->total() : $verifications->count() }} Pengajuan
+
+            <span class="bg-[#2D5A27] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#2D5A27]/20 flex items-center gap-2">
+                <i data-lucide="users" class="w-4 h-4"></i>
+                {{ $verifications instanceof \Illuminate\Pagination\LengthAwarePaginator ? $verifications->total() : $verifications->count() }} Data
             </span>
         </div>
     </div>
