@@ -19,18 +19,14 @@
                     <!-- Photo Header -->
                     <div class="col-12 text-center mb-4">
                         <div class="position-relative d-inline-block">
-                            <img id="profile-preview" src="{{ $user->profile_photo ? Storage::url($user->profile_photo) : 'https://ui-avatars.com/api/?name='.$user->username.'&background=7CA982' }}" 
+                            <img src="{{ $user->profile_photo ? Storage::url($user->profile_photo) : 'https://ui-avatars.com/api/?name='.$user->username.'&background=7CA982' }}" 
                                  class="rounded-circle border border-4 border-white shadow-sm mb-3" 
                                  style="width: 120px; height: 120px; object-fit: cover;">
                             <label for="profile_photo" class="btn btn-sm btn-accent position-absolute bottom-0 start-50 translate-middle-x rounded-pill shadow-sm" style="margin-bottom: -10px;">
                                 <i data-lucide="camera" style="width: 14px;"></i> Edit
                             </label>
-                            <input type="file" name="profile_photo" id="profile_photo" class="d-none" accept=".png,.jpg,.jpeg,image/png,image/jpeg">
+                            <input type="file" name="profile_photo" id="profile_photo" class="d-none">
                         </div>
-                        <div id="profile-photo-error" class="text-danger small mt-2 d-none"></div>
-                        @error('profile_photo')
-                            <div class="text-danger small mt-2">{{ $message }}</div>
-                        @enderror
                     </div>
 
                     <div class="col-md-6">
@@ -74,49 +70,4 @@
         </div>
     </div>
 </div>
-
-@push('scripts')
-<script>
-    document.addEventListener('DOMContentLoaded', () => {
-        const input = document.getElementById('profile_photo');
-        const preview = document.getElementById('profile-preview');
-        const errorDiv = document.getElementById('profile-photo-error');
-
-        if (input && preview) {
-            input.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                errorDiv.classList.add('d-none');
-                errorDiv.textContent = '';
-
-                if (file) {
-                    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-                    const allowedExtensions = ['png', 'jpg', 'jpeg'];
-                    const fileExtension = file.name.split('.').pop().toLowerCase();
-
-                    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
-                        errorDiv.textContent = 'Hanya file gambar dengan format PNG, JPG, atau JPEG yang diperbolehkan.';
-                        errorDiv.classList.remove('d-none');
-                        input.value = ''; // Reset file input
-                        return;
-                    }
-
-                    // Client-side file size validation (max 2MB)
-                    if (file.size > 2 * 1024 * 1024) {
-                        errorDiv.textContent = 'Ukuran file gambar tidak boleh melebihi 2 MB.';
-                        errorDiv.classList.remove('d-none');
-                        input.value = ''; // Reset file input
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = function(re) {
-                        preview.src = re.target.result;
-                    };
-                    reader.readAsDataURL(file);
-                }
-            });
-        }
-    });
-</script>
-@endpush
 @endsection

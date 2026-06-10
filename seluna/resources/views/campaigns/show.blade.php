@@ -111,6 +111,7 @@
                         @auth
                             <button id="follow-btn" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
                                     style="width: 50px; height: 50px;"
+                                    data-seluna-btn data-action="update"
                                     onclick="toggleFollow({{ $campaign->id }})">
                                 <i id="follow-icon" data-lucide="heart" 
                                    class="{{ $campaign->follows->where('user_id', Auth::id())->count() > 0 ? 'fill-danger text-danger' : 'text-muted' }}"
@@ -262,13 +263,14 @@
                                                                 <a href="{{ $report->url }}" target="_blank" class="btn btn-sm btn-light p-1" title="View Source">
                                                                     <i data-lucide="external-link" style="width:14px;"></i>
                                                                 </a>
-                                                                <form action="{{ route('campaigns.reports.delete', $report->id) }}" method="POST" onsubmit="return confirm('Hapus laporan ini?')">
-                                                                    @csrf
-                                                                    @method('DELETE')
-                                                                    <button type="submit" class="btn btn-sm btn-danger p-1" title="Delete">
-                                                                        <i data-lucide="trash-2" style="width:14px;"></i>
-                                                                    </button>
-                                                                </form>
+                                                                <button type="button" class="btn btn-sm btn-danger p-1" title="Delete"
+                                                                        data-seluna-btn data-action="delete"
+                                                                        data-href="{{ route('campaigns.reports.delete', $report->id) }}"
+                                                                        data-confirm-title="Hapus laporan ini?"
+                                                                        data-confirm-body="Laporan akan dihapus secara permanen.">
+                                                                    <i data-lucide="trash-2" style="width:14px;"></i>
+                                                                </button>
+                                                                {{-- Hidden form for delete if needed, but the script handles direct navigation --}}
                                                             </div>
                                                         </td>
                                                     </tr>
@@ -379,7 +381,7 @@
                 <h6 class="fw-bold mb-1">Upload Bukti Lapangan</h6>
                 <p class="text-muted small mb-3">Tambahkan foto atau video dokumentasi terbaru.</p>
                 
-                <form id="media-upload-form" action="{{ route('campaigns.media.upload', $campaign->id) }}" method="POST" enctype="multipart/form-data">
+                <form id="media-upload-form" action="{{ route('campaigns.media.upload', $campaign->id) }}" method="POST" enctype="multipart/form-data" data-seluna>
                     @csrf
                     <input type="file" id="real-file-input" name="media[]" class="d-none" accept="image/*,video/*" multiple>
                     
@@ -412,6 +414,7 @@
                                     </div>
                                 @endif
                                 <button onclick="confirmDeleteMedia({{ $m->id }})" 
+                                        data-seluna-btn data-action="delete"
                                         class="btn btn-danger btn-sm p-0 position-absolute top-0 end-0 p-0 shadow-sm"
                                         style="width:20px;height:20px;border-radius:50%;font-size:10px;line-height:1;transform: translate(30%, -30%);">×</button>
                             </div>
@@ -1025,7 +1028,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h4 class="fw-bold text-primary-custom m-0">Buat Update Berita</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('campaigns.updates.store', $campaign->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('campaigns.updates.store', $campaign->id) }}" method="POST" enctype="multipart/form-data" data-seluna>
                 @csrf
                 <div class="modal-body p-4">
                     <div class="mb-3">
@@ -1059,7 +1062,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h4 class="fw-bold text-primary-custom m-0">Donasi Sekarang</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form id="donation-form" action="{{ route('campaigns.donate', $campaign->id) }}" method="POST" enctype="multipart/form-data">
+            <form id="donation-form" action="{{ route('campaigns.donate', $campaign->id) }}" method="POST" enctype="multipart/form-data" data-seluna>
                 @csrf
                 <div class="modal-body p-4">
                     {{-- Amount Chips --}}
@@ -1192,7 +1195,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <p class="text-muted small mb-4">Apakah Anda yakin ingin menghapus media ini secara permanen?</p>
                 <div class="d-flex gap-2">
                     <button type="button" class="btn btn-light w-100 rounded-pill" data-bs-dismiss="modal">Batal</button>
-                    <button type="button" id="confirm-delete-btn" class="btn btn-danger w-100 rounded-pill fw-bold">Ya, Hapus</button>
+                    <button type="button" id="confirm-delete-btn" class="btn btn-danger w-100 rounded-pill fw-bold" data-seluna-btn data-action="delete">Ya, Hapus</button>
                 </div>
             </div>
         </div>
@@ -1207,7 +1210,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h4 class="fw-bold text-primary-custom m-0">Upload Laporan</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('campaigns.reports.store', $campaign->id) }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('campaigns.reports.store', $campaign->id) }}" method="POST" enctype="multipart/form-data" data-seluna>
                 @csrf
                 <div class="modal-body p-4">
                     <div class="alert alert-info border-0 rounded-4 small mb-4" style="background-color: #eef3f0; color: #243e36;">
@@ -1268,7 +1271,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h4 class="fw-bold text-primary-custom m-0">Campaign Settings</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('campaigns.update', $campaign->id) }}" method="POST">
+            <form action="{{ route('campaigns.update', $campaign->id) }}" method="POST" data-seluna>
                 @csrf
                 @method('PUT')
                 <div class="modal-body p-4">

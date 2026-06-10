@@ -94,17 +94,17 @@
                     <td class="px-6 py-4 text-right">
                         @if($d->status == 'pending')
                         <div class="flex justify-end gap-2">
-                            <form action="{{ route('admin.verify.donation.update', $d->id) }}" method="POST">
+                            <form action="{{ route('admin.verify.donation.update', $d->id) }}" method="POST" data-seluna>
                                 @csrf
-                                <input type="hidden" name="status" value="paid">
-                                <button type="submit" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow-sm">
+                                <input type="hidden" name="status" value="approved">
+                                <button type="submit" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow-sm" data-action="update">
                                     Approve
                                 </button>
                             </form>
-                            <form action="{{ route('admin.verify.donation.update', $d->id) }}" method="POST">
+                            <form action="{{ route('admin.verify.donation.update', $d->id) }}" method="POST" data-seluna>
                                 @csrf
                                 <input type="hidden" name="status" value="rejected">
-                                <button type="submit" class="bg-white text-red-600 border border-red-100 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-red-50 transition">
+                                <button type="submit" class="bg-white text-red-600 border border-red-100 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-red-50 transition" data-action="update">
                                     Reject
                                 </button>
                             </form>

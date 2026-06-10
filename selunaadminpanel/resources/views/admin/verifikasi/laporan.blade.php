@@ -72,9 +72,9 @@
                     <td class="px-6 py-4">
                         @if($report->status === 'pending')
                         <div class="flex items-center gap-2">
-                            <form action="{{ route('admin.verify.report.verify', $report->id) }}" method="POST">
+                            <form action="{{ route('admin.verify.report.verify', $report->id) }}" method="POST" data-seluna>
                                 @csrf
-                                <button type="submit" class="px-3 py-1.5 text-xs font-bold text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors">
+                                <button type="submit" class="px-3 py-1.5 text-xs font-bold text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors" data-action="update">
                                     Setujui
                                 </button>
                             </form>
@@ -105,13 +105,13 @@
         <h3 class="text-xl font-bold text-gray-900 mb-2">Tolak Laporan</h3>
         <p class="text-gray-500 text-sm mb-6">Berikan alasan penolakan laporan ini agar fundraiser dapat memperbaikinya.</p>
         
-        <form id="rejectForm" method="POST">
+        <form id="rejectForm" method="POST" data-seluna>
             @csrf
             <textarea name="note" rows="4" class="w-full px-4 py-3 bg-gray-50 border border-gray-100 rounded-xl mb-6 focus:ring-2 focus:ring-rose-500 focus:outline-none transition-all" placeholder="Contoh: File tidak terbaca atau data tidak valid..."></textarea>
             
             <div class="flex gap-3">
                 <button type="button" onclick="closeRejectModal()" class="flex-1 py-3 text-sm font-bold text-gray-500 bg-gray-100 hover:bg-gray-200 rounded-xl transition-all">Batal</button>
-                <button type="submit" class="flex-1 py-3 text-sm font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-xl shadow-lg shadow-rose-200 transition-all">Konfirmasi Tolak</button>
+                <button type="submit" class="flex-1 py-3 text-sm font-bold text-white bg-rose-500 hover:bg-rose-600 rounded-xl shadow-lg shadow-rose-200 transition-all" data-action="update">Konfirmasi Tolak</button>
             </div>
         </form>
     </div>

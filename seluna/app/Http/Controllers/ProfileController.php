@@ -12,7 +12,7 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        $user = Auth::user()->load(['follows.campaign', 'campaigns', 'verification']);
+        $user = Auth::user()->load(['follows.campaign', 'campaigns']);
         return view('profile.show', compact('user'));
     }
 
@@ -31,7 +31,7 @@ class ProfileController extends Controller
             'date_of_birth' => 'nullable|date',
             'gender' => 'nullable|string|in:Male,Female,Other',
             'description' => 'nullable|string|max:500',
-            'profile_photo' => 'nullable|image|mimes:png,jpg,jpeg|max:2048',
+            'profile_photo' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->only('username', 'email', 'date_of_birth', 'gender', 'description');

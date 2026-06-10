@@ -95,17 +95,17 @@
 
             <div class="flex gap-3 mt-6 md:mt-0 w-full md:w-auto">
                 @if($c->status == 'pending')
-                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0">
+                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0" data-seluna>
                         @csrf
                         <input type="hidden" name="status" value="active">
-                        <button type="submit" class="w-full bg-[#2D5A27] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#1B3022] transition shadow-lg shadow-[#2D5A27]/20">
+                        <button type="submit" class="w-full bg-[#2D5A27] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#1B3022] transition shadow-lg shadow-[#2D5A27]/20" data-action="update">
                             Approve
                         </button>
                     </form>
-                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0">
+                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0" data-seluna>
                         @csrf
                         <input type="hidden" name="status" value="rejected">
-                        <button type="submit" class="w-full bg-white text-red-600 border border-red-100 px-8 py-3 rounded-xl font-bold hover:bg-red-50 transition">
+                        <button type="submit" class="w-full bg-white text-red-600 border border-red-100 px-8 py-3 rounded-xl font-bold hover:bg-red-50 transition" data-action="update">
                             Reject
                         </button>
                     </form>

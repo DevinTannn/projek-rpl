@@ -142,5 +142,6 @@
 </script>
 
 
+    <script src="{{ asset('js/seluna_action_loading.js') }}"></script>
 </body>
 </html>

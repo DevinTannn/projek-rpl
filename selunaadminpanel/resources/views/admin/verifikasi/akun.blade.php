@@ -88,17 +88,17 @@
                     <td class="px-6 py-4 text-right">
                         @if($v->status == 'pending')
                         <div class="flex justify-end gap-2">
-                            <form action="{{ route('admin.verify.account.update', $v->id) }}" method="POST">
+                            <form action="{{ route('admin.verify.account.update', $v->id) }}" method="POST" data-seluna>
                                 @csrf
                                 <input type="hidden" name="status" value="approved">
-                                <button type="submit" class="bg-[#2D5A27] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-[#1B3022] transition shadow-sm">
+                                <button type="submit" class="bg-[#2D5A27] text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-[#1B3022] transition shadow-sm" data-action="update">
                                     Approve
                                 </button>
                             </form>
-                            <form action="{{ route('admin.verify.account.update', $v->id) }}" method="POST">
+                            <form action="{{ route('admin.verify.account.update', $v->id) }}" method="POST" data-seluna>
                                 @csrf
                                 <input type="hidden" name="status" value="rejected">
-                                <button type="submit" class="bg-white text-red-600 border border-red-100 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-red-50 transition">
+                                <button type="submit" class="text-red-500 bg-red-50 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-red-100 transition" data-action="update">
                                     Reject
                                 </button>
                             </form>

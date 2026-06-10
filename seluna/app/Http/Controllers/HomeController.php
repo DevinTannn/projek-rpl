@@ -32,10 +32,17 @@ class HomeController extends Controller
         // Eksplorasi = Kampanye terbaru yang di-upload (Hanya yang Aktif)
         $explorationCampaigns = Campaign::where('status', 'active')->latest()->take(6)->get();
 
-        return view('home', [
-            'lastUpdatedCampaigns' => $lastAccessedCampaigns, // Still using the same variable name in view for compatibility
-            'popularCampaigns' => $popularCampaigns,
-            'explorationCampaigns' => $explorationCampaigns
-        ]);
+        if (auth()->check()) {
+            return view('home', [
+                'lastUpdatedCampaigns' => $lastAccessedCampaigns,
+                'popularCampaigns' => $popularCampaigns,
+                'explorationCampaigns' => $explorationCampaigns
+            ]);
+        } else {
+            return view('landing', [
+                'popularCampaigns' => $popularCampaigns,
+                'explorationCampaigns' => $explorationCampaigns
+            ]);
+        }
     }
 }
