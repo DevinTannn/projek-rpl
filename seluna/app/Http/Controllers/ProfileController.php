@@ -12,7 +12,9 @@ class ProfileController extends Controller
 {
     public function show()
     {
-        $user = Auth::user()->load(['follows.campaign', 'campaigns']);
+        $user = Auth::user()->load(['follows.campaign', 'campaigns', 'donations' => function($q) {
+            $q->with('campaign')->latest();
+        }]);
         return view('profile.show', compact('user'));
     }
 
@@ -28,15 +30,28 @@ class ProfileController extends Controller
         $request->validate([
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
-            'date_of_birth' => 'nullable|date',
+            'date_of_birth' => 'nullable|date|before_or_equal:today',
             'gender' => 'nullable|string|in:Male,Female,Other',
             'description' => 'nullable|string|max:500',
+            'cropped_image' => 'nullable|string',
             'profile_photo' => 'nullable|image|max:2048',
         ]);
 
         $data = $request->only('username', 'email', 'date_of_birth', 'gender', 'description');
 
-        if ($request->hasFile('profile_photo')) {
+        if ($request->filled('cropped_image')) {
+            $base64Image = $request->input('cropped_image');
+            $image_parts = explode(";base64,", $base64Image);
+            if (count($image_parts) > 1) {
+                $image_base64 = base64_decode($image_parts[1]);
+                $filename = 'profiles/' . uniqid() . '.jpg';
+                if ($user->profile_photo) {
+                    Storage::disk('public')->delete($user->profile_photo);
+                }
+                Storage::disk('public')->put($filename, $image_base64);
+                $data['profile_photo'] = $filename;
+            }
+        } elseif ($request->hasFile('profile_photo')) {
             if ($user->profile_photo) {
                 Storage::disk('public')->delete($user->profile_photo);
             }

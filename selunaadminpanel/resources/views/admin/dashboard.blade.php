@@ -74,7 +74,7 @@
                         <td class="px-6 py-4">
                             @if($d->status == 'pending')
                                 <span class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-amber-100 text-amber-700">Pending</span>
-                            @elseif($d->status == 'paid')
+                            @elseif($d->status == 'paid' || $d->status == 'approved')
                                 <span class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-700">Verified</span>
                             @else
                                 <span class="px-2 py-1 rounded-md text-[9px] font-black uppercase tracking-widest bg-red-100 text-red-700">Rejected</span>

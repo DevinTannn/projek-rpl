@@ -125,6 +125,10 @@ class VerificationController extends Controller
         $donation = Donation::findOrFail($id);
         $status = $request->status; // 'paid' or 'rejected'
         
+        if ($status === 'approved') {
+            $status = 'paid';
+        }
+        
         $donation->update(['status' => $status]);
         
         if ($status == 'paid') {

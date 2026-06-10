@@ -74,7 +74,7 @@
                     </td>
                     <td class="px-6 py-4 text-center">
                         @if($d->proof_path)
-                        <a href="http://127.0.0.1:8001/storage/{{ $d->proof_path }}" target="_blank" class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-100 transition border border-emerald-200">
+                        <a href="{{ env('SELUNA_MAIN_URL', 'http://127.0.0.1:8000') }}/storage/{{ $d->proof_path }}" target="_blank" class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-100 transition border border-emerald-200">
                             <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                             View Proof
                         </a>
@@ -85,7 +85,7 @@
                     <td class="px-6 py-4 text-center">
                         @if($d->status == 'pending')
                             <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-100 text-amber-700 border border-amber-200">Pending</span>
-                        @elseif($d->status == 'paid')
+                        @elseif($d->status == 'paid' || $d->status == 'approved')
                             <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-green-100 text-green-700 border border-green-200">Verified</span>
                         @else
                             <span class="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-100 text-red-700 border border-red-200">Rejected</span>
@@ -96,7 +96,7 @@
                         <div class="flex justify-end gap-2">
                             <form action="{{ route('admin.verify.donation.update', $d->id) }}" method="POST" data-seluna>
                                 @csrf
-                                <input type="hidden" name="status" value="approved">
+                                <input type="hidden" name="status" value="paid">
                                 <button type="submit" class="bg-emerald-600 text-white px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-emerald-700 transition shadow-sm" data-action="update">
                                     Approve
                                 </button>

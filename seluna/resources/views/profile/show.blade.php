@@ -79,6 +79,11 @@
                         </a>
                     </li>
                     @endif
+                    <li class="nav-item">
+                        <a class="nav-link border-0 bg-transparent fw-bold px-3 pb-2 text-muted text-nowrap" id="donations-tab" data-bs-toggle="tab" href="#donations">
+                            Riwayat <span class="ms-1 opacity-50">{{ $user->donations->count() }}</span>
+                        </a>
+                    </li>
                 </ul>
 
                 <div class="tab-content">
@@ -148,6 +153,90 @@
                         </div>
                     </div>
                     @endif
+
+                    {{-- Tab 4: Donations (Riwayat) --}}
+                    <div class="tab-pane fade" id="donations">
+                        <div class="d-flex flex-column gap-3">
+                            @forelse($user->donations as $donation)
+                                @php
+                                    $isPaid = in_array($donation->status, ['paid', 'success', 'settlement', 'approved']);
+                                    $isPending = $donation->status === 'pending';
+                                    $isFailed = in_array($donation->status, ['failed', 'rejected', 'expire', 'cancel']);
+                                @endphp
+                                <div class="card border-0 shadow-sm p-3 p-lg-4 rounded-4 position-relative overflow-hidden transition-all"
+                                     style="border-left: 5px solid {{ $isPaid ? '#2D5A27' : ($isPending ? '#FFC107' : '#DC3545') }} !important;">
+                                    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+                                        <div class="d-flex align-items-center gap-3">
+                                            <div class="rounded-circle d-flex align-items-center justify-content-center bg-opacity-10 p-2"
+                                                 style="width: 48px; height: 48px; flex-shrink: 0; background-color: {{ $isPaid ? '#2D5A27' : ($isPending ? '#FFC107' : '#DC3545') }}; color: {{ $isPaid ? '#2D5A27' : ($isPending ? '#B8860B' : '#DC3545') }};">
+                                                @if($isPaid)
+                                                    <i data-lucide="check-circle" style="width: 24px; height: 24px;"></i>
+                                                @elseif($isPending)
+                                                    <i data-lucide="clock" style="width: 24px; height: 24px;"></i>
+                                                @else
+                                                    <i data-lucide="x-circle" style="width: 24px; height: 24px;"></i>
+                                                @endif
+                                            </div>
+                                            <div class="overflow-hidden">
+                                                <h6 class="fw-bold mb-1 text-primary-custom text-truncate" style="font-size: 0.95rem;" title="{{ $donation->campaign->title }}">
+                                                    {{ $donation->campaign->title }}
+                                                </h6>
+                                                <div class="d-flex flex-wrap align-items-center gap-2 small mt-1">
+                                                    <span class="text-muted" style="font-size: 10px;">#{{ $donation->order_id }}</span>
+                                                    <span class="text-muted">•</span>
+                                                    <span class="text-muted" style="font-size: 10px;">{{ $donation->created_at->format('d M Y, H:i') }}</span>
+                                                    <span class="text-muted">•</span>
+                                                    <span class="badge bg-light text-secondary rounded-pill px-2 border" style="font-size: 9px;">{{ $donation->payment_method }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="d-flex flex-row flex-md-column align-items-center align-items-md-end justify-content-between justify-content-md-center gap-2">
+                                            <div class="fw-bold h5 m-0 {{ $isPaid ? 'text-success' : ($isPending ? 'text-warning-emphasis' : 'text-danger') }}" style="color: {{ $isPaid ? '#2D5A27 !important' : '' }}">
+                                                Rp {{ number_format($donation->amount, 0, ',', '.') }}
+                                            </div>
+                                            <div class="d-flex align-items-center gap-2">
+                                                @if($isPaid)
+                                                     <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700; color: #2D5A27 !important; background-color: rgba(45, 90, 39, 0.1) !important;">
+                                                         Berhasil
+                                                     </span>
+                                                     <a href="{{ route('donations.certificate', $donation->id) }}" 
+                                                        class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3 py-1 ms-2"
+                                                        style="font-size: 10px; border-color: #2D5A27; color: #2D5A27;">
+                                                         <i data-lucide="download" style="width: 12px;" class="me-1"></i> Sertifikat
+                                                     </a>
+                                                @elseif($isPending)
+                                                    @if($donation->payment_method === 'Manual')
+                                                        <span class="badge bg-warning bg-opacity-10 text-warning-emphasis rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700;">
+                                                            Verifikasi Admin
+                                                        </span>
+                                                    @else
+                                                        <span class="badge bg-warning bg-opacity-10 text-warning-emphasis rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700;">
+                                                            Pending
+                                                        </span>
+                                                        <button class="btn btn-primary btn-sm rounded-pill fw-bold px-3 py-1 shadow-sm ms-2"
+                                                                style="font-size: 10px;"
+                                                                onclick="payDonation('{{ $donation->snap_token }}')">
+                                                            Bayar
+                                                        </button>
+                                                    @endif
+                                                @else
+                                                    <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700;">
+                                                        Gagal
+                                                    </span>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="py-5 text-center bg-light rounded-4">
+                                    <i data-lucide="history" class="text-muted opacity-25 mb-2" style="width: 40px; height: 40px;"></i>
+                                    <p class="text-muted small m-0">Belum ada riwayat donasi.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -190,4 +279,22 @@
         .container-fluid { padding-bottom: 80px !important; }
     }
 </style>
+@endpush
+
+@push('scripts')
+<script src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key="{{ config('services.midtrans.client_key') }}"></script>
+<script>
+    function payDonation(token) {
+        if (!token) {
+            alert('Maaf, token pembayaran tidak ditemukan.');
+            return;
+        }
+        window.snap.pay(token, {
+            onSuccess: function(result){ location.reload(); },
+            onPending: function(result){ location.reload(); },
+            onError: function(result){ location.reload(); },
+            onClose: function(){ alert('Silakan selesaikan pembayaran nanti di halaman ini.'); }
+        });
+    }
+</script>
 @endpush

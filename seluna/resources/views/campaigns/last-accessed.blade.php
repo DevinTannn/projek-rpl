@@ -15,7 +15,10 @@
                         <div class="card border-0 shadow-sm overflow-hidden h-100" style="border-radius: 24px; transition: transform 0.2s;">
                             <img src="https://picsum.photos/seed/campaign-{{ $campaign->id }}/600/400" class="card-img-top" style="height: 200px; object-fit: cover;">
                             <div class="card-body p-4">
-                                <span class="badge mb-3" style="background-color: var(--bg-color); color: var(--secondary-color);">{{ $campaign->tag }}</span>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span class="badge" style="background-color: var(--bg-color); color: var(--secondary-color);">{{ $campaign->tag }}</span>
+                                    <span class="text-muted small fw-semibold" style="font-size: 10px;">{{ \Carbon\Carbon::parse($campaign->last_viewed_at)->diffForHumans() }}</span>
+                                </div>
                                 <h5 class="fw-bold text-primary-custom mb-3">{{ $campaign->title }}</h5>
                                 
                                 <div class="progress mb-3" style="height: 8px; border-radius: 10px; background-color: #eee;">

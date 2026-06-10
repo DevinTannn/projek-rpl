@@ -158,9 +158,9 @@ class DonationController extends Controller
             ->latest()
             ->get();
 
-        $unpaidDonations = $allDonations->where('status', 'pending')->where('payment_method', 'Midtrans');
+        $unpaidDonations = $allDonations->where('status', 'pending');
         
-        $paidDonations = $allDonations->where('status', 'paid')
+        $paidDonations = $allDonations->whereIn('status', ['paid', 'approved'])
             ->groupBy(function($item) {
                 return $item->created_at->format('l, d M Y');
             });
@@ -177,7 +177,7 @@ class DonationController extends Controller
             abort(403);
         }
 
-        if (!in_array($donation->status, ['paid', 'success', 'settlement'])) {
+        if (!in_array($donation->status, ['paid', 'success', 'settlement', 'approved'])) {
             return redirect()->back()->with('error', 'Sertifikat hanya tersedia untuk donasi yang sudah terverifikasi.');
         }
 

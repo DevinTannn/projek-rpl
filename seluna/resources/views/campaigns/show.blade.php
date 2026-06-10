@@ -1,6 +1,7 @@
 @extends('layouts.app')
 
 @push('styles')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 <style>
     .timeline { position: relative; padding-left: 0; }
     .update-card { transition: transform 0.2s; border: 1px solid #eee !important; }
@@ -27,6 +28,23 @@
         0% { transform: scale(1); }
         50% { transform: scale(1.4); }
         100% { transform: scale(1); }
+    }
+
+    /* Premium Donasi Sekarang Button Styles */
+    .btn-secondary-custom {
+        background-color: var(--secondary-color) !important;
+        border: none;
+        color: white !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        cursor: pointer;
+    }
+    .btn-secondary-custom:hover {
+        background-color: var(--primary-color) !important;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 12px 24px rgba(124, 169, 130, 0.25) !important;
+    }
+    .btn-secondary-custom:active {
+        transform: translateY(0) scale(0.98) !important;
     }
 </style>
 @endpush
@@ -360,10 +378,10 @@
                 </button>
 
                 @if(Auth::id() != $campaign->user_id)
-                    <button class="btn btn-secondary-color py-3 fw-bold rounded-pill shadow-sm text-white mb-1" 
-                            style="background-color: var(--secondary-color);"
+                    <button class="btn btn-secondary-custom py-3 fw-bold rounded-pill shadow-sm text-white mb-1 d-flex align-items-center justify-content-center gap-2 w-100" 
                             data-bs-toggle="modal" data-bs-target="#donationModal"
                             onclick="setTimeout(() => updateFee(document.getElementById('donation-amount')?.value || 0), 200)">
+                        <i data-lucide="heart" style="width: 20px; height: 20px;"></i>
                         Donasi Sekarang
                     </button>
                 @endif
@@ -936,7 +954,7 @@ document.addEventListener('DOMContentLoaded', function() {
                        class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
                         <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
                              style="width: 55px; height: 55px; transition: transform 0.2s;">
-                            <i data-lucide="message-circle" class="text-success" style="width: 28px; height: 28px;"></i>
+                            <i class="fa-brands fa-whatsapp text-success" style="font-size: 26px;"></i>
                         </div>
                         <span class="small fw-bold text-muted">WhatsApp</span>
                     </a>
@@ -946,7 +964,7 @@ document.addEventListener('DOMContentLoaded', function() {
                        class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
                         <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
                              style="width: 55px; height: 55px; transition: transform 0.2s;">
-                            <i data-lucide="facebook" class="text-primary" style="width: 28px; height: 28px;"></i>
+                            <i class="fa-brands fa-facebook text-primary" style="font-size: 26px;"></i>
                         </div>
                         <span class="small fw-bold text-muted">Facebook</span>
                     </a>
@@ -956,9 +974,20 @@ document.addEventListener('DOMContentLoaded', function() {
                        class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
                         <div class="bg-dark bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
                              style="width: 55px; height: 55px; transition: transform 0.2s;">
-                            <i data-lucide="twitter" class="text-dark" style="width: 28px; height: 28px;"></i>
+                            <i class="fa-brands fa-x-twitter text-dark" style="font-size: 26px;"></i>
                         </div>
                         <span class="small fw-bold text-muted">X / Twitter</span>
+                    </a>
+
+                    {{-- Instagram --}}
+                    <a href="https://www.instagram.com/" target="_blank" 
+                       onclick="copyCampaignLinkSilent()"
+                       class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
+                        <div class="rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
+                             style="width: 55px; height: 55px; transition: transform 0.2s; background-color: rgba(225, 48, 108, 0.1);">
+                            <i class="fa-brands fa-instagram" style="font-size: 26px; color: #E1306C;"></i>
+                        </div>
+                        <span class="small fw-bold text-muted">Instagram</span>
                     </a>
 
                     {{-- Telegram --}}
@@ -966,7 +995,7 @@ document.addEventListener('DOMContentLoaded', function() {
                        class="text-decoration-none text-center flex-shrink-0 share-icon-btn" style="width: 70px;">
                         <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" 
                              style="width: 55px; height: 55px; transition: transform 0.2s;">
-                            <i data-lucide="send" class="text-info" style="width: 28px; height: 28px;"></i>
+                            <i class="fa-brands fa-telegram text-info" style="font-size: 26px;"></i>
                         </div>
                         <span class="small fw-bold text-muted">Telegram</span>
                     </a>
@@ -1015,6 +1044,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
         
         if(typeof showAlert === 'function') showAlert('success', 'Link berhasil disalin ke clipboard!');
+    }
+
+    function copyCampaignLinkSilent() {
+        const input = document.getElementById('copyLinkInput');
+        navigator.clipboard.writeText(input.value);
+        if (typeof showAlert === 'function') {
+            showAlert('success', 'Link disalin! Silakan tempel di postingan, bio, atau cerita Instagram Anda.');
+        }
     }
 </script>
 @endsection

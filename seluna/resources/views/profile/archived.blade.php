@@ -35,13 +35,19 @@
                                                 </h6>
                                                 <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
                                                     <span class="text-muted" style="font-size: 10px;">#{{ $donation->order_id }}</span>
-                                                    <span class="badge bg-warning bg-opacity-25 text-warning-emphasis rounded-pill px-2" style="font-size: 9px;">Menunggu Pembayaran</span>
+                                                    @if($donation->payment_method === 'Manual')
+                                                        <span class="badge bg-info bg-opacity-25 text-info-emphasis rounded-pill px-2" style="font-size: 9px;">Transfer Manual</span>
+                                                        <span class="badge bg-warning bg-opacity-25 text-warning-emphasis rounded-pill px-2" style="font-size: 9px;">Menunggu Verifikasi Admin</span>
+                                                    @else
+                                                        <span class="badge bg-warning bg-opacity-25 text-warning-emphasis rounded-pill px-2" style="font-size: 9px;">Menunggu Pembayaran</span>
+                                                    @endif
                                                 </div>
                                             </div>
                                             <div class="text-end">
                                                 <div class="fw-bold text-dark h6 m-0">Rp {{ number_format($donation->amount, 0, ',', '.') }}</div>
                                             </div>
                                         </div>
+                                        @if($donation->payment_method !== 'Manual')
                                         <div class="mt-3 d-flex justify-content-end">
                                             <button class="btn btn-primary rounded-pill fw-bold px-4 py-2 w-100 w-sm-auto shadow-sm" 
                                                     style="font-size: 12px;"
@@ -49,6 +55,7 @@
                                                 Selesaikan Pembayaran
                                             </button>
                                         </div>
+                                        @endif
                                     </div>
                                 </div>
                             </div>

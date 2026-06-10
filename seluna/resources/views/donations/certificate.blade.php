@@ -4,174 +4,196 @@
     <meta charset="UTF-8">
     <title>Sertifikat Donasi - {{ $donation->order_id }}</title>
     <style>
-        @page { margin: 0; }
+        @page {
+            size: A4 landscape;
+            margin: 0;
+        }
         body {
-            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-family: 'Georgia', serif;
             color: #1A2F28;
             margin: 0;
             padding: 0;
             background: #ffffff;
-        }
-        .container {
-            width: 100%;
-            height: 100%;
-            padding: 60px;
+            width: 297mm;
+            height: 210mm;
             box-sizing: border-box;
-            border: 25px solid #1A2F28;
+        }
+        .certificate-wrapper {
             position: relative;
+            width: 297mm;
+            height: 210mm;
+            padding: 20mm;
+            box-sizing: border-box;
+            background-color: #faf8f5;
+        }
+        .outer-border {
+            position: absolute;
+            top: 10mm;
+            left: 10mm;
+            right: 10mm;
+            bottom: 10mm;
+            border: 8px double #1A2F28;
+            box-sizing: border-box;
         }
         .inner-border {
-            width: 100%;
-            height: 100%;
+            position: absolute;
+            top: 15mm;
+            left: 15mm;
+            right: 15mm;
+            bottom: 15mm;
             border: 2px solid #D4AF37;
-            padding: 40px;
             box-sizing: border-box;
-        }
-        .header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .header h1 {
-            font-size: 52px;
-            margin: 0;
-            color: #1A2F28;
-            letter-spacing: 8px;
-            text-transform: uppercase;
-        }
-        .header p {
-            font-size: 16px;
-            color: #D4AF37;
-            font-weight: bold;
-            margin-top: 5px;
-            letter-spacing: 2px;
-        }
-        .certificate-title {
-            text-align: center;
-            font-size: 28px;
-            font-weight: bold;
-            color: #1A2F28;
-            margin: 30px 0;
-            text-transform: uppercase;
-            border-bottom: 2px solid #D4AF37;
-            display: inline-block;
-            padding-bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            position: relative;
         }
         .content {
             text-align: center;
-            margin-top: 30px;
+            padding: 10mm 15mm;
         }
-        .proudly {
-            font-style: italic;
-            font-size: 22px;
-            margin-bottom: 15px;
-            color: #666;
-        }
-        .name {
-            font-size: 42px;
+        .logo {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 24px;
             font-weight: bold;
             color: #1A2F28;
-            margin-bottom: 25px;
-            font-family: 'Georgia', serif;
+            letter-spacing: 6px;
+            margin-bottom: 5px;
         }
-        .details {
-            font-size: 19px;
-            line-height: 1.8;
-            width: 85%;
-            margin: 0 auto 30px;
-            color: #333;
+        .tagline {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 9px;
+            color: #D4AF37;
+            letter-spacing: 3px;
+            margin-bottom: 25px;
+        }
+        .cert-title {
+            font-family: 'Georgia', serif;
+            font-size: 32px;
+            font-weight: normal;
+            color: #1A2F28;
+            letter-spacing: 4px;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
+        .award-to {
+            font-family: 'Georgia', serif;
+            font-style: italic;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 15px;
+        }
+        .name {
+            font-family: 'Georgia', serif;
+            font-size: 36px;
+            font-weight: bold;
+            color: #1A2F28;
+            border-bottom: 1px solid #D4AF37;
+            display: inline-block;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+        }
+        .description {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #4a4a4a;
+            max-width: 180mm;
+            margin: 0 auto 25px;
+        }
+        .campaign-title {
+            color: #1A2F28;
+            font-weight: bold;
+            font-style: italic;
         }
         .amount-box {
-            font-size: 26px;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 20px;
             font-weight: bold;
             color: #ffffff;
             background: #1A2F28;
             display: inline-block;
-            padding: 15px 40px;
+            padding: 10px 30px;
             border-radius: 4px;
-            margin-bottom: 30px;
+            margin-bottom: 25px;
         }
-        .footer {
-            margin-top: 50px;
-            width: 100%;
+        .footer-section {
+            position: absolute;
+            bottom: 25mm;
+            left: 25mm;
+            right: 25mm;
         }
         .footer-table {
             width: 100%;
-            border: none;
         }
-        .signature {
-            text-align: center;
+        .footer-table td {
+            vertical-align: bottom;
         }
         .signature-line {
-            width: 220px;
+            width: 180px;
             border-bottom: 1px solid #1A2F28;
-            margin: 0 auto 10px;
+            margin: 0 auto 8px;
         }
-        .order-id {
-            position: absolute;
-            bottom: 40px;
-            right: 40px;
+        .signer-title {
+            font-family: 'Helvetica', 'Arial', sans-serif;
             font-size: 11px;
-            color: #999;
-        }
-        .watermark {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(-45deg);
-            font-size: 120px;
-            opacity: 0.03;
+            font-weight: bold;
             color: #1A2F28;
-            z-index: -1;
-            white-space: nowrap;
+        }
+        .date {
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 10px;
+            color: #666;
+            margin-top: 4px;
+        }
+        .transaction-id {
+            position: absolute;
+            bottom: 18mm;
+            left: 25mm;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 9px;
+            color: #999;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="inner-border">
-            <div class="watermark">SUMSELPEDULI</div>
+    <div class="certificate-wrapper">
+        <div class="outer-border"></div>
+        <div class="inner-border"></div>
+        
+        <div class="content">
+            <div class="logo">SUMSELPEDULI</div>
+            <div class="tagline">KEMANUSIAAN &bull; TRANSPARANSI &bull; KEBERKAHAN</div>
             
-            <div class="header">
-                <h1>SUMSELPEDULI</h1>
-                <p>KEMANUSIAAN &bull; TRANSPARANSI &bull; KEBERKAHAN</p>
+            <div class="cert-title">Sertifikat Penghargaan</div>
+            
+            <div class="award-to">Dengan apresiasi setinggi-tingginya, penghargaan ini diberikan kepada:</div>
+            
+            <div class="name">{{ strtoupper($donation->user->username) }}</div>
+            
+            <div class="description">
+                Atas kebaikan hati, kedermawanan, dan kontribusi nyata dalam mendukung program sosial melalui kampanye:<br>
+                <span class="campaign-title">"{{ $donation->campaign->title }}"</span><br><br>
+                Donasi Anda telah resmi diterima dan disalurkan sepenuhnya untuk membantu sesama serta memberikan harapan baru bagi mereka yang membutuhkan di wilayah Sumatera Selatan.
             </div>
-
-            <div class="certificate-title">SERTIFIKAT PENGHARGAAN</div>
-
-            <div class="content">
-                <div class="proudly">Dengan apresiasi tulus, kami berikan kepada:</div>
-                <div class="name">{{ strtoupper($donation->user->username) }}</div>
-                
-                <div class="details">
-                    Atas kontribusi tulus dan kepedulian Anda dalam menyukseskan kampanye:<br>
-                    <span style="color: #1A2F28; font-weight: bold;">"{{ $donation->campaign->title }}"</span><br><br>
-                    Donasi Anda telah kami terima dan akan disalurkan sepenuhnya untuk membawa perubahan nyata bagi mereka yang membutuhkan di wilayah Sumatera Selatan.
-                </div>
-
-                <div class="amount-box">
-                    Rp {{ number_format($donation->amount, 0, ',', '.') }}
-                </div>
+            
+            <div class="amount-box">
+                Rp {{ number_format($donation->amount, 0, ',', '.') }}
             </div>
-
-            <div class="footer">
-                <table class="footer-table">
-                    <tr>
-                        <td width="33%"></td>
-                        <td width="33%" class="signature">
-                            <div class="signature-line"></div>
-                            <strong style="color: #1A2F28;">YAYASAN SUMSEL PEDULI</strong><br>
-                            <span style="font-size: 13px; color: #666;">Diterbitkan pada: {{ date('d F Y') }}</span>
-                        </td>
-                        <td width="33%"></td>
-                    </tr>
-                </table>
-            </div>
-
-            <div class="order-id">ID Transaksi Resmi: {{ $donation->order_id }}</div>
         </div>
+        
+        <div class="footer-section">
+            <table class="footer-table">
+                <tr>
+                    <td width="50%" style="text-align: left; vertical-align: bottom;">
+                        <span class="signer-title">SUMSELPEDULI Foundation</span><br>
+                        <span class="date">Diterbitkan pada: {{ date('d F Y') }}</span>
+                    </td>
+                    <td width="50%" style="text-align: right; vertical-align: bottom;">
+                        <div class="signature-line" style="margin-right: 0;"></div>
+                        <span class="signer-title">YAYASAN SUMSEL PEDULI</span>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        
+        <div class="transaction-id">ID Transaksi Resmi: {{ $donation->order_id }}</div>
     </div>
 </body>
 </html>

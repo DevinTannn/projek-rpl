@@ -12,7 +12,7 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalDonations = Donation::where('status', 'paid')->sum('amount');
+        $totalDonations = Donation::whereIn('status', ['paid', 'approved'])->sum('amount');
         $activeCampaigns = Campaign::where('status', 'active')->count();
         $totalFundraisers = User::where('role', 'fundraiser')->count();
         $pendingVerifications = Campaign::where('status', 'pending')->count();

@@ -43,7 +43,7 @@
                                     <span class="fw-bold text-accent-custom" style="font-size: 14px;">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</span>
                                     <span class="text-muted" style="font-size: 11px;"> / Rp {{ number_format($campaign->goal_amount / 1000000, 1) }}jt</span>
                                 </div>
-                                <span class="text-muted small fw-semibold" style="font-size: 10px;">{{ $campaign->updated_at->diffForHumans() }}</span>
+                                 <span class="text-muted small fw-semibold" style="font-size: 10px;">{{ \Carbon\Carbon::parse($campaign->last_viewed_at)->diffForHumans() }}</span>
                             </div>
                         </div>
                     </div>

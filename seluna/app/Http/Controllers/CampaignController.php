@@ -198,7 +198,7 @@ class CampaignController extends Controller
             ->where('campaign_views.user_id', $user->id)
             ->where('campaigns.status', 'active')
             ->orderBy('campaign_views.last_viewed_at', 'desc')
-            ->select('campaigns.*')
+            ->select('campaigns.*', 'campaign_views.last_viewed_at as last_viewed_at')
             ->take(12)
             ->get();
 
