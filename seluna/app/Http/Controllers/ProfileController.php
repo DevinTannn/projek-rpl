@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Services\ImageService;
 
 class ProfileController extends Controller
 {
@@ -35,7 +36,12 @@ class ProfileController extends Controller
             'description' => 'nullable|string|max:500',
             'cropped_image' => 'nullable|string',
             'profile_photo' => 'nullable|image|max:2048',
+            'locale' => 'nullable|string|in:id,en',
         ]);
+
+        if ($request->filled('locale')) {
+            session()->put('locale', $request->input('locale'));
+        }
 
         $data = $request->only('username', 'email', 'date_of_birth', 'gender', 'description');
 
@@ -55,12 +61,13 @@ class ProfileController extends Controller
             if ($user->profile_photo) {
                 Storage::disk('public')->delete($user->profile_photo);
             }
-            $data['profile_photo'] = $request->file('profile_photo')->store('profiles', 'public');
+            $result = ImageService::convertAndStore($request->file('profile_photo'), 'profiles');
+            $data['profile_photo'] = $result['path'];
         }
 
         $user->update($data);
 
-        return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');
+        return redirect()->route('profile.show')->with('success', __('Profile updated successfully!'));
     }
 
     public function upgrade(Request $request)

@@ -28,7 +28,7 @@
                 <a href="{{ route('campaigns.show', $campaign->id) }}" class="text-decoration-none">
                     <div class="campaign-card h-100">
                         <div class="card-img-container">
-                            <img src="https://picsum.photos/seed/recent-{{ $campaign->id }}/600/400" alt="Campaign">
+                            <img src="https://picsum.photos/seed/recent-{{ $campaign->id }}/600/400" alt="Campaign" loading="lazy">
                         </div>
                         <div class="p-4">
                             <span class="badge mb-3 px-3 py-2 rounded-pill" style="background-color: var(--bg-color); color: var(--secondary-color); font-weight: 700; font-size: 10px;">{{ strtoupper($campaign->tag) }}</span>
@@ -110,7 +110,7 @@
                 <a href="{{ route('campaigns.show', $campaign->id) }}" class="text-decoration-none">
                     <div class="campaign-card h-100">
                         <div class="card-img-container">
-                            <img src="https://picsum.photos/seed/exp-{{ $campaign->id }}/600/400" alt="Campaign">
+                            <img src="https://picsum.photos/seed/exp-{{ $campaign->id }}/600/400" alt="Campaign" loading="lazy">
                         </div>
                         <div class="p-4">
                             <span class="badge mb-3 px-3 py-2 rounded-pill" style="background-color: var(--bg-color); color: var(--secondary-color); font-weight: 700; font-size: 10px;">{{ strtoupper($campaign->tag) }}</span>

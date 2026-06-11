@@ -99,6 +99,42 @@
             text-decoration: none;
             font-weight: 700;
         }
+
+        /* Password show/hide wrapper */
+        .password-wrapper {
+            position: relative;
+        }
+
+        .password-wrapper .form-control {
+            padding-right: 48px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            color: #aab5ae;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+            z-index: 5;
+        }
+
+        .password-toggle:hover {
+            color: var(--secondary-color);
+        }
+
+        .password-toggle svg {
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -114,6 +150,17 @@
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
         });
+
+        function togglePassword(inputId, btn) {
+            const input = document.getElementById(inputId);
+            const isHidden = input.type === 'password';
+            input.type = isHidden ? 'text' : 'password';
+            // Swap the icon
+            btn.innerHTML = isHidden
+                ? '<i data-lucide="eye-off"></i>'
+                : '<i data-lucide="eye"></i>';
+            lucide.createIcons();
+        }
     </script>
 </body>
 </html>

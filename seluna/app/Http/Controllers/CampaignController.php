@@ -7,6 +7,7 @@ use App\Models\CampaignMedia;
 use App\Models\CampaignMilestone;
 use App\Models\Follow;
 use App\Models\CampaignView;
+use App\Services\ImageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -264,7 +265,7 @@ class CampaignController extends Controller
 
         $request->validate([
             'media'   => 'required|array|min:1|max:10',
-            'media.*' => 'required|file|mimes:jpeg,jpg,png,gif,mp4,mov,avi,webm,pdf,docx,xlsx|max:102400',
+            'media.*' => 'required|file|mimes:jpeg,jpg,png,gif,heic,heif,webp,mp4,mov,avi,webm,mkv|max:102400',
         ]);
 
         $files = $request->file('media');
@@ -277,24 +278,13 @@ class CampaignController extends Controller
         foreach ($files as $file) {
             if (!$file || !$file->isValid()) continue;
 
-            $mime = $file->getMimeType();
-            $type = 'image';
-            if (str_starts_with($mime, 'video')) {
-                $type = 'video';
-            } elseif (in_array($mime, [
-                'application/pdf', 
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            ])) {
-                $type = 'document';
-            }
-            $path = $file->store("campaigns/{$campaign->id}/media", 'public');
+            $result = ImageService::convertAndStore($file, "campaigns/{$campaign->id}/media");
 
             $m = CampaignMedia::create([
                 'campaign_id'   => $campaign->id,
-                'file_path'     => $path,
-                'file_type'     => $type,
-                'original_name' => $file->getClientOriginalName(),
+                'file_path'     => $result['path'],
+                'file_type'     => $result['type'],
+                'original_name' => $result['name'],
                 'sort_order'    => $campaign->media()->count(),
             ]);
             $newMedia[] = [
@@ -329,7 +319,7 @@ class CampaignController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'media' => 'nullable|file|mimes:jpeg,jpg,png,gif,mp4,mov,avi,webm,pdf,docx,xlsx|max:20480',
+            'media' => 'nullable|file|mimes:jpeg,jpg,png,gif,heic,heif,webp,mp4,mov,avi,webm,mkv|max:20480',
         ]);
 
         $path = null;
@@ -337,18 +327,9 @@ class CampaignController extends Controller
 
         if ($request->hasFile('media')) {
             $file = $request->file('media');
-            $mime = $file->getMimeType();
-            $type = 'image';
-            if (str_starts_with($mime, 'video')) {
-                $type = 'video';
-            } elseif (in_array($mime, [
-                'application/pdf', 
-                'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 
-                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-            ])) {
-                $type = 'document';
-            }
-            $path = $file->store("campaigns/{$campaign->id}/updates", 'public');
+            $result = ImageService::convertAndStore($file, "campaigns/{$campaign->id}/updates");
+            $path = $result['path'];
+            $type = $result['type'];
         }
 
         $campaign->updates()->create([
@@ -359,5 +340,49 @@ class CampaignController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Update berhasil ditambahkan!');
+    }
+
+    public function deleteUpdate($campaignId, $updateId)
+    {
+        $campaign = Campaign::where('user_id', Auth::id())->findOrFail($campaignId);
+        $update = $campaign->updates()->findOrFail($updateId);
+
+        if ($update->media_path) {
+            Storage::disk('public')->delete($update->media_path);
+        }
+        $update->delete();
+
+        return redirect()->back()->with('success', 'Update berita berhasil dihapus!');
+    }
+
+    public function updateUpdate(Request $request, $campaignId, $updateId)
+    {
+        $campaign = Campaign::where('user_id', Auth::id())->findOrFail($campaignId);
+        $update = $campaign->updates()->findOrFail($updateId);
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'content' => 'required|string',
+            'media' => 'nullable|file|mimes:jpeg,jpg,png,gif,heic,heif,webp,mp4,mov,avi,webm,mkv|max:20480',
+        ]);
+
+        $data = [
+            'title' => $request->input('title'),
+            'content' => $request->input('content'),
+        ];
+
+        if ($request->hasFile('media')) {
+            if ($update->media_path) {
+                Storage::disk('public')->delete($update->media_path);
+            }
+            $file = $request->file('media');
+            $result = ImageService::convertAndStore($file, "campaigns/{$campaign->id}/updates");
+            $data['media_path'] = $result['path'];
+            $data['media_type'] = $result['type'];
+        }
+
+        $update->update($data);
+
+        return redirect()->back()->with('success', 'Update berita berhasil diperbarui!');
     }
 }

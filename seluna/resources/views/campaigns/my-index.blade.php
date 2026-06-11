@@ -26,9 +26,9 @@
                     <a href="{{ route('campaigns.show', $campaign->id) }}" class="text-decoration-none">
                         @php $banner = $campaign->media->first(); @endphp
                         @if($banner)
-                            <img src="{{ $banner->url }}" class="w-100" style="height: 180px; object-fit: cover;">
+                            <img src="{{ $banner->url }}" class="w-100" style="height: 180px; object-fit: cover;" loading="lazy">
                         @else
-                            <img src="https://picsum.photos/seed/campaign-{{ $campaign->id }}/600/400" class="w-100" style="height: 180px; object-fit: cover;">
+                            <img src="https://picsum.photos/seed/campaign-{{ $campaign->id }}/600/400" class="w-100" style="height: 180px; object-fit: cover;" loading="lazy">
                         @endif
                         <div style="position: absolute; top: 12px; left: 12px; right: 12px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
                             <h5 class="fw-bold text-white m-0 text-truncate">{{ $campaign->title }}</h5>

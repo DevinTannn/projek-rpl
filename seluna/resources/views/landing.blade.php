@@ -288,7 +288,7 @@
                 </div>
             </div>
             <div class="col-12 col-lg-6 hero-image-wrapper">
-                <img src="{{ asset('assets/images/seluna_hero_banner.png') }}" alt="Seluna Illustration" class="hero-image">
+                <img src="{{ asset('assets/images/seluna_hero_banner.png') }}" alt="Seluna Illustration" class="hero-image" loading="lazy">
             </div>
         </div>
     </div>
@@ -421,7 +421,7 @@
                                 $fBanner = $fFirstMedia->url;
                             }
                         @endphp
-                        <img src="{{ $fBanner }}" alt="{{ $featured->title }}" class="featured-card-img">
+                        <img src="{{ $fBanner }}" alt="{{ $featured->title }}" class="featured-card-img" loading="lazy">
                         <div class="featured-card-body">
                             <div>
                                 <span class="badge mb-3 px-3 py-2 rounded-pill" style="background-color: var(--light-color); color: var(--secondary-color); font-weight: 700; font-size: 11px;">
@@ -463,7 +463,7 @@
                             }
                         @endphp
                         <a href="{{ route('campaigns.show', $c->id) }}" class="compact-card">
-                            <img src="{{ $cBanner }}" alt="{{ $c->title }}" class="compact-card-img">
+                            <img src="{{ $cBanner }}" alt="{{ $c->title }}" class="compact-card-img" loading="lazy">
                             <div class="compact-card-body">
                                 <div>
                                     <span class="text-muted fw-bold d-block mb-1" style="font-size: 10px; letter-spacing: 0.5px;">

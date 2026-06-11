@@ -1,12 +1,12 @@
 @extends('layouts.admin')
 
 @section('header')
-<div class="flex justify-between items-center px-8 pt-8 pb-4">
+<div class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center px-4 lg:px-8 pt-6 lg:pt-8 pb-4">
     <div>
         <h2 class="text-2xl font-bold text-[#1B3022]">Verifikasi Laporan Kampanye</h2>
         <p class="text-gray-500 text-sm">Review dan setujui laporan pertanggungjawaban dari fundraiser.</p>
     </div>
-    <div class="flex items-center gap-3">
+    <div class="flex flex-wrap items-center gap-3">
         <form action="{{ route('admin.verify.report.index') }}" method="GET" class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
             <div class="flex items-center gap-2 pr-3">
                 <label for="sort" class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Urutan:</label>
@@ -23,6 +23,7 @@
 @endsection
 
 @section('content')
+<div class="px-4 lg:px-8 pb-8">
 <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
     <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse">
@@ -72,7 +73,7 @@
                     <td class="px-6 py-4">
                         @if($report->status === 'pending')
                         <div class="flex items-center gap-2">
-                            <form action="{{ route('admin.verify.report.verify', $report->id) }}" method="POST" data-seluna>
+                            <form action="{{ route('admin.verify.report.verify', $report->id) }}" method="POST" data-confirm data-confirm-title="Setujui Laporan?" data-confirm-body="Anda akan menyetujui laporan ini. Tindakan ini tidak dapat dibatalkan." data-confirm-icon="✅" data-confirm-ok="Ya, Setujui">
                                 @csrf
                                 <button type="submit" class="px-3 py-1.5 text-xs font-bold text-white bg-emerald-500 hover:bg-emerald-600 rounded-lg transition-colors" data-action="update">
                                     Setujui
@@ -98,6 +99,7 @@
         </table>
     </div>
 </div>
+</div>{{-- end px wrapper --}}
 
 <!-- Reject Modal -->
 <div id="rejectModal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">

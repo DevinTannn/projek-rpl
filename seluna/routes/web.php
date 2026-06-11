@@ -19,9 +19,17 @@ Route::get('/api/sync-status', [CampaignController::class, 'syncStatus'])->name(
 Route::middleware('guest')->group(function () {
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register']);
-    
+
     Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
     Route::post('/login', [AuthController::class, 'login']);
+
+    // Forgot Password / OTP Flow
+    Route::get('/forgot-password',       [\App\Http\Controllers\ForgotPasswordController::class, 'showEmailForm'])->name('password.request');
+    Route::post('/forgot-password',      [\App\Http\Controllers\ForgotPasswordController::class, 'sendOtp'])->name('password.send-otp');
+    Route::get('/verify-otp',            [\App\Http\Controllers\ForgotPasswordController::class, 'showOtpForm'])->name('password.verify-otp');
+    Route::post('/verify-otp',           [\App\Http\Controllers\ForgotPasswordController::class, 'verifyOtp'])->name('password.do-verify-otp');
+    Route::get('/reset-password',        [\App\Http\Controllers\ForgotPasswordController::class, 'showResetForm'])->name('password.reset-form');
+    Route::post('/reset-password',       [\App\Http\Controllers\ForgotPasswordController::class, 'resetPassword'])->name('password.update');
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
@@ -68,6 +76,8 @@ Route::middleware('auth')->group(function () {
         Route::post('/my-campaigns/{id}/media', [CampaignController::class, 'uploadMedia'])->name('campaigns.media.upload');
         Route::delete('/my-campaigns/{campaignId}/media/{mediaId}', [CampaignController::class, 'deleteMedia'])->name('campaigns.media.delete');
         Route::post('/my-campaigns/{id}/updates', [CampaignController::class, 'addUpdate'])->name('campaigns.updates.store');
+        Route::post('/my-campaigns/{campaignId}/updates/{updateId}', [CampaignController::class, 'updateUpdate'])->name('campaigns.updates.update');
+        Route::delete('/my-campaigns/{campaignId}/updates/{updateId}', [CampaignController::class, 'deleteUpdate'])->name('campaigns.updates.delete');
         
         // Report Routes
         Route::post('/my-campaigns/{campaign}/reports', [\App\Http\Controllers\CampaignReportController::class, 'store'])->name('campaigns.reports.store');

@@ -64,11 +64,22 @@ class VerificationController extends Controller
     public function campaignIndex(Request $request)
     {
         $perPage = $request->get('per_page', 10);
+        $search  = $request->get('search', '');
+
         $query = Campaign::query();
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('title',       'LIKE', "%{$search}%")
+                  ->orWhere('description', 'LIKE', "%{$search}%")
+                  ->orWhere('tag',         'LIKE', "%{$search}%");
+            });
+        }
+
         $query = $this->applySorting($query, $request, 'campaign');
 
-        $campaigns = ($perPage == 'all') ? $query->get() : $query->paginate($perPage);
-        return view('admin.verifikasi.kampanye', compact('campaigns'));
+        $campaigns = ($perPage == 'all') ? $query->get() : $query->paginate($perPage)->withQueryString();
+        return view('admin.verifikasi.kampanye', compact('campaigns', 'search'));
     }
 
     public function verifyCampaign(Request $request, $id)
@@ -88,11 +99,22 @@ class VerificationController extends Controller
     public function accountIndex(Request $request)
     {
         $perPage = $request->get('per_page', 10);
+        $search  = $request->get('search', '');
+
         $query = FundraiserVerification::with('user');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('full_name', 'LIKE', "%{$search}%")
+                  ->orWhere('nik',     'LIKE', "%{$search}%")
+                  ->orWhereHas('user', fn($uq) => $uq->where('email', 'LIKE', "%{$search}%"));
+            });
+        }
+
         $query = $this->applySorting($query, $request, 'account');
 
-        $verifications = ($perPage == 'all') ? $query->get() : $query->paginate($perPage);
-        return view('admin.verifikasi.akun', compact('verifications'));
+        $verifications = ($perPage == 'all') ? $query->get() : $query->paginate($perPage)->withQueryString();
+        return view('admin.verifikasi.akun', compact('verifications', 'search'));
     }
 
     public function verifyAccount(Request $request, $id)
@@ -113,11 +135,22 @@ class VerificationController extends Controller
     public function donationIndex(Request $request)
     {
         $perPage = $request->get('per_page', 10);
+        $search  = $request->get('search', '');
+
         $query = Donation::with(['user', 'campaign']);
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', fn($uq) => $uq->where('username', 'LIKE', "%{$search}%")
+                                                    ->orWhere('email',   'LIKE', "%{$search}%"))
+                  ->orWhereHas('campaign', fn($cq) => $cq->where('title', 'LIKE', "%{$search}%"));
+            });
+        }
+
         $query = $this->applySorting($query, $request, 'donation');
 
-        $donations = ($perPage == 'all') ? $query->get() : $query->paginate($perPage);
-        return view('admin.verifikasi.donasi', compact('donations'));
+        $donations = ($perPage == 'all') ? $query->get() : $query->paginate($perPage)->withQueryString();
+        return view('admin.verifikasi.donasi', compact('donations', 'search'));
     }
 
     public function verifyDonation(Request $request, $id)

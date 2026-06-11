@@ -2,7 +2,130 @@
 
 @push('styles')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone.css" rel="stylesheet" />
 <style>
+    /* Custom Dropzone Styling */
+    .drop-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 1.5rem;
+      width: 100%;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      position: relative;
+    }
+
+    .seluna-dropzone {
+      border: 2px dashed #cbd5e1;
+      background: #f8fafc;
+      border-radius: 12px;
+      min-height: 130px;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: visible;
+    }
+    .seluna-dropzone:hover, .seluna-dropzone.dz-drag-hover {
+      border-color: var(--secondary-color) !important;
+      background: rgba(124, 169, 130, 0.05) !important;
+    }
+
+    .seluna-dropzone .dz-message {
+      text-align: center;
+      margin: 0 !important;
+      padding: 1.5rem;
+      align-self: center;
+      width: 100%;
+      display: block !important;
+    }
+    .seluna-dropzone .dz-message .icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.03);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      color: #64748b;
+      transition: all 0.3s ease;
+    }
+    .seluna-dropzone:hover .icon-wrap {
+      background: var(--secondary-color);
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+    .seluna-dropzone .dz-message svg {
+      width: 24px;
+      height: 24px;
+    }
+    .seluna-dropzone .dz-message h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 0.25rem;
+    }
+    .seluna-dropzone .dz-message p {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin-bottom: 1rem;
+    }
+    .seluna-btn-browse {
+      background: transparent;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      padding: 0.5rem 1.25rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .seluna-btn-browse:hover {
+      background: var(--primary-color);
+      color: #ffffff;
+      border-color: var(--primary-color);
+    }
+
+    /* Stats Panel */
+    .upload-stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+      padding-top: 1rem;
+      border-top: 1px solid #f1f5f9;
+      font-size: 0.8rem;
+    }
+    .upload-stats .stat-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .upload-stats .stat-item .label {
+      color: #64748b;
+      font-weight: 500;
+    }
+    .upload-stats .stat-item .val {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    .upload-stats .stat-item .val.success {
+      color: var(--secondary-color);
+    }
+    .upload-stats .stat-item .val.danger {
+      color: #ef4444;
+    }
+
+    /* When files are added, show the dropzone with content compactly */
+    .seluna-dropzone .dz-preview {
+        /* previews render inline — do not hide */
+    }
+
     .timeline { position: relative; padding-left: 0; }
     .update-card { transition: transform 0.2s; border: 1px solid #eee !important; }
     .update-card:hover { transform: translateY(-3px); }
@@ -54,16 +177,33 @@
 {{-- Real-time Alerts Container --}}
 <div id="alert-container">
     @if(session('success'))
-        <div class="alert alert-success border-0 rounded-4 mb-4 shadow-sm">
-            <i data-lucide="check-circle" style="width:16px" class="me-2"></i> {{ session('success') }}
+        <div class="alert alert-success border-0 rounded-4 mb-3 shadow-sm d-flex align-items-center gap-2 seluna-flash" role="alert">
+            <i data-lucide="check-circle" style="width:16px; flex-shrink:0;"></i>
+            <span class="flex-grow-1">{{ session('success') }}</span>
+            <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Close" onclick="this.closest('.seluna-flash').remove()"></button>
         </div>
     @endif
     @if(session('error'))
-        <div class="alert alert-danger border-0 rounded-4 mb-4 shadow-sm">
-            <i data-lucide="alert-circle" style="width:16px" class="me-2"></i> {{ session('error') }}
+        <div class="alert alert-danger border-0 rounded-4 mb-3 shadow-sm d-flex align-items-center gap-2 seluna-flash" role="alert">
+            <i data-lucide="alert-circle" style="width:16px; flex-shrink:0;"></i>
+            <span class="flex-grow-1">{{ session('error') }}</span>
+            <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Close" onclick="this.closest('.seluna-flash').remove()"></button>
         </div>
     @endif
 </div>
+<script>
+    // Auto-dismiss session flash alerts after 5s
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('.seluna-flash').forEach(function(el) {
+            setTimeout(function() {
+                el.style.transition = 'opacity 0.4s, transform 0.4s';
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-8px)';
+                setTimeout(function() { el.remove(); }, 420);
+            }, 5000);
+        });
+    });
+</script>
 
 <div class="row g-4">
     <!-- Main Content -->
@@ -116,7 +256,7 @@
         {{-- Campaign Info Card --}}
         <div class="card border-0 shadow-sm overflow-hidden mb-4" style="border-radius: 24px;">
             <div id="header-placeholder" class="{{ $campaign->media->count() > 0 ? 'd-none' : '' }}">
-                <img src="https://picsum.photos/seed/header-{{ $campaign->id }}/1200/500" class="w-100" style="height: 350px; object-fit: cover;">
+                <img src="https://picsum.photos/seed/header-{{ $campaign->id }}/1200/500" class="w-100" style="height: 350px; object-fit: cover;" loading="lazy">
             </div>
             <div class="card-body p-4 p-lg-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -129,7 +269,6 @@
                         @auth
                             <button id="follow-btn" class="btn btn-light rounded-circle shadow-sm d-flex align-items-center justify-content-center" 
                                     style="width: 50px; height: 50px;"
-                                    data-seluna-btn data-action="update"
                                     onclick="toggleFollow({{ $campaign->id }})">
                                 <i id="follow-icon" data-lucide="heart" 
                                    class="{{ $campaign->follows->where('user_id', Auth::id())->count() > 0 ? 'fill-danger text-danger' : 'text-muted' }}"
@@ -197,14 +336,33 @@
                                                 @if($update->media_type === 'video')
                                                     <video src="{{ $update->media_url }}" controls class="w-100" style="max-height: 400px; object-fit: contain; background: #000;"></video>
                                                 @else
-                                                    <img src="{{ $update->media_url }}" class="w-100" style="max-height: 400px; object-fit: cover;">
+                                                    <img src="{{ $update->media_url }}" class="w-100" style="max-height: 400px; object-fit: cover;" loading="lazy">
                                                 @endif
                                             </div>
                                         @endif
                                         <div class="p-4">
-                                            <div class="d-flex justify-content-between align-items-center mb-2">
-                                                <h5 class="fw-bold m-0 text-primary-custom">{{ $update->title }}</h5>
-                                                <small class="text-muted">{{ $update->created_at->diffForHumans() }}</small>
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <div>
+                                                    <h5 class="fw-bold m-0 text-primary-custom">{{ $update->title }}</h5>
+                                                    <small class="text-muted">{{ $update->created_at->diffForHumans() }}</small>
+                                                </div>
+                                                @if(Auth::id() === $campaign->user_id)
+                                                    <div class="d-flex gap-2">
+                                                        <button class="btn btn-sm btn-light border p-1 rounded-circle" 
+                                                                title="Edit Update"
+                                                                onclick="editUpdate({{ $update->id }}, '{{ addslashes($update->title) }}', '{{ addslashes($update->content) }}')">
+                                                            <i data-lucide="edit-3" style="width:14px;height:14px;"></i>
+                                                        </button>
+                                                        <button class="btn btn-sm btn-danger p-1 rounded-circle" 
+                                                                title="Hapus Update"
+                                                                data-seluna-btn data-action="delete"
+                                                                data-href="{{ route('campaigns.updates.delete', [$campaign->id, $update->id]) }}"
+                                                                data-confirm-title="Hapus Update Berita?"
+                                                                data-confirm-body="Update berita ini akan dihapus secara permanen.">
+                                                            <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                                                        </button>
+                                                    </div>
+                                                @endif
                                             </div>
                                             <p class="text-muted m-0" style="white-space: pre-line;">{{ $update->content }}</p>
                                         </div>
@@ -227,7 +385,7 @@
                                 @foreach($campaign->media as $m)
                                     <div class="gallery-item rounded-3 overflow-hidden shadow-sm" style="aspect-ratio:1;">
                                         @if($m->isImage())
-                                            <img src="{{ $m->url }}" style="width:100%; height:100%; object-fit:cover;">
+                                            <img src="{{ $m->url }}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">
                                         @else
                                             <div style="width:100%; height:100%; background:#1a1a2e; display:flex; align-items:center; justify-content:center;">
                                                 <i data-lucide="film" style="color:white; width:40px;"></i>
@@ -359,7 +517,14 @@
 
     <!-- Sidebar Info -->
     <div class="col-lg-4">
-        <div class="card border-0 shadow-sm p-4 sticky-top" style="border-radius: 24px; top: 100px;">
+        <div class="card border-0 shadow-sm p-4 sticky-top" style="
+            border-radius: 24px;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #e2e8f0 transparent;
+        ">
             <h5 class="fw-bold mb-4">Donation Progress</h5>
             <div class="d-flex justify-content-between mb-2">
                 <span id="collected-label" class="h4 fw-bold m-0 text-accent-custom">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</span>
@@ -399,25 +564,45 @@
                 <h6 class="fw-bold mb-1">Upload Bukti Lapangan</h6>
                 <p class="text-muted small mb-3">Tambahkan foto atau video dokumentasi terbaru.</p>
                 
-                <form id="media-upload-form" action="{{ route('campaigns.media.upload', $campaign->id) }}" method="POST" enctype="multipart/form-data" data-seluna>
-                    @csrf
-                    <input type="file" id="real-file-input" name="media[]" class="d-none" accept="image/*,video/*" multiple>
-                    
-                    <div id="drop-zone" class="rounded-4 p-4 text-center mb-3"
-                         style="border: 2px dashed var(--secondary-color); cursor:pointer; background: #fbfdfb; transition: all 0.2s;">
-                        <i data-lucide="plus-square" style="width:32px; height:32px; color:var(--secondary-color);" class="mb-2"></i>
-                        <div class="fw-bold small">Pilih File</div>
-                        <div class="text-muted" style="font-size:10px;">Bisa pilih per satu • Maks 10 file • 7MB/file</div>
+                <div class="drop-card p-0 border-0 shadow-none">
+                    <div id="media-dropzone" class="seluna-dropzone" style="
+                        min-height: 130px;
+                        padding: 12px;
+                        display: flex;
+                        flex-direction: column;
+                        align-items: stretch;
+                    ">
+                        <div class="dz-message" style="text-align:center; padding: 20px 0;">
+                            <div class="icon-wrap mb-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" /></svg>
+                            </div>
+                            <h3 style="font-size:1rem;">Pilih File</h3>
+                            <p class="small text-muted" style="font-size:0.75rem;">Maks 10 file • 7MB/file</p>
+                            <button type="button" class="seluna-btn-browse py-1 px-3" style="font-size:0.75rem;">Browse</button>
+                        </div>
+                        {{-- Previews render here, inline --}}
+                        <div id="media-thumb-grid" style="display:flex; flex-wrap:wrap; gap:4px; padding: 0 2px;"></div>
                     </div>
 
-                    <div id="preview-container" class="mb-3" style="display:grid; grid-template-columns: repeat(auto-fill, 64px); gap: 8px;"></div>
-                    <div id="upload-error" class="alert alert-danger p-2 small d-none mb-3"></div>
-
-                    <button type="submit" id="submit-media-btn" class="btn btn-primary w-100 rounded-pill fw-bold d-none">
-                        <span id="btn-text"><i data-lucide="upload" style="width:16px;" class="me-2"></i> Upload (<span id="total-selected">0</span>)</span>
-                        <div id="btn-spinner" class="spinner-border spinner-border-sm d-none" role="status"></div>
+                    <div class="upload-stats" style="font-size: 0.75rem;">
+                        <div class="stat-item">
+                            <span class="label">Total File</span>
+                            <span class="val" id="media-stat-total" style="font-size:0.95rem;">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Berhasil</span>
+                            <span class="val success" id="media-stat-success" style="font-size:0.95rem;">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Gagal</span>
+                            <span class="val danger" id="media-stat-error" style="font-size:0.95rem;">0</span>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="btn-upload-media" class="btn btn-primary w-100 rounded-pill fw-bold mt-3 d-none">
+                        Upload Media
                     </button>
-                </form>
+                </div>
 
                 <div id="uploaded-media-container" class="mt-4 {{ $campaign->media->count() === 0 ? 'd-none' : '' }}">
                     <h6 class="fw-bold small text-muted mb-3">Media Terunggah (<span id="media-count">{{ $campaign->media->count() }}</span>)</h6>
@@ -425,7 +610,7 @@
                         @foreach($campaign->media as $m)
                             <div class="position-relative media-item-sidebar" id="sidebar-media-{{ $m->id }}" style="width:60px; height:60px;">
                                 @if($m->isImage())
-                                    <img src="{{ $m->url }}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;">
+                                    <img src="{{ $m->url }}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;" loading="lazy">
                                 @else
                                     <div style="width:60px;height:60px;border-radius:10px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;">
                                         <i data-lucide="film" style="width:24px;color:white;"></i>
@@ -448,147 +633,277 @@
 
 
 @push('scripts')
-
-
+<script src="https://unpkg.com/dropzone@6.0.0-beta.1/dist/dropzone-min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // ── Global State ──
-    const MAX_MEDIA = 10;
-    const MAX_FILE_SIZE = 7 * 1024 * 1024; 
-    let pendingFiles = new DataTransfer();
+    Dropzone.autoDiscover = false;
+
+    // Helper to update stats
+    function updateStats(dz, prefix) {
+        const total = dz.files.length;
+        const success = dz.getAcceptedFiles().filter(f => f.status === Dropzone.SUCCESS).length;
+        const error = dz.getRejectedFiles().length + dz.files.filter(f => f.status === Dropzone.ERROR).length;
+        
+        document.getElementById(prefix + "-stat-total").innerText = total;
+        document.getElementById(prefix + "-stat-success").innerText = success;
+        document.getElementById(prefix + "-stat-error").innerText = error;
+    }
+
+    // Initialize Report Dropzone
+    const reportDropzoneEl = document.getElementById('report-dropzone');
+    if (reportDropzoneEl) {
+        const reportDzMessage = reportDropzoneEl.querySelector('.dz-message');
+        new Dropzone("#report-dropzone", {
+            url: "{{ route('campaigns.reports.store', $campaign->id) }}",
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
+            maxFiles: 10,
+            maxFilesize: 50, // MB
+            acceptedFiles: ".pdf,.docx,.xlsx,.zip",
+            paramName: "files",
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            previewTemplate: `
+                <div class="dz-preview dz-file-preview" style="
+                    display:flex; align-items:center; gap:10px;
+                    background:#f8fafc; border:1px solid #e2e8f0;
+                    border-radius:10px; padding:10px 12px; margin:6px 8px;
+                ">
+                  <div style="width:38px; height:38px; border-radius:8px; background:#e8f0fe;
+                              flex-shrink:0; display:flex; align-items:center; justify-content:center;">
+                    <svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' fill='none'
+                         stroke='#243E36' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'
+                         viewBox='0 0 24 24'>
+                      <path d='M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z'/>
+                      <polyline points='14 2 14 8 20 8'/>
+                    </svg>
+                  </div>
+                  <div style="flex:1; min-width:0;">
+                    <div style="font-size:12px; font-weight:700; color:#243E36;
+                                white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"
+                         data-dz-name></div>
+                    <div style="font-size:10px; color:#888; margin-top:2px;" data-dz-size></div>
+                    <div style="height:3px; background:#e2e8f0; border-radius:2px; overflow:hidden; margin-top:5px;">
+                      <span data-dz-uploadprogress
+                            style="display:block; height:100%; background:#7CA982; width:0; transition:width 0.2s;"></span>
+                    </div>
+                    <div class="dz-error-message" data-dz-errormessage
+                         style="font-size:10px; color:#e74c3c; margin-top:3px;"></div>
+                  </div>
+                  <button type="button" data-dz-remove
+                          style="background:none; border:none; cursor:pointer; padding:0; color:#aaa; flex-shrink:0;">
+                    <svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none'
+                         stroke='currentColor' stroke-width='2' stroke-linecap='round'
+                         stroke-linejoin='round' viewBox='0 0 24 24'>
+                      <circle cx='12' cy='12' r='10'/><line x1='15' y1='9' x2='9' y2='15'/>
+                      <line x1='9' y1='9' x2='15' y2='15'/>
+                    </svg>
+                  </button>
+                </div>
+            `,
+            init: function() {
+                const dz = this;
+
+                dz.on("addedfile", function() {
+                    updateStats(dz, "report");
+                    if (reportDzMessage) reportDzMessage.style.display = 'none';
+                });
+                dz.on("removedfile", function() {
+                    updateStats(dz, "report");
+                    if (dz.files.length === 0 && reportDzMessage)
+                        reportDzMessage.style.display = '';
+                });
+                dz.on("successmultiple", function() {
+                    updateStats(dz, "report");
+                    if (typeof showAlert === 'function') showAlert('success', 'Laporan berhasil diupload!');
+                    setTimeout(() => { window.location.reload(); }, 1000);
+                });
+                dz.on("errormultiple", function(files, response) {
+                    updateStats(dz, "report");
+                    if (typeof showAlert === 'function') showAlert('danger', response.message || 'Gagal mengunggah file.');
+                });
+                dz.on("error", function() {
+                    updateStats(dz, "report");
+                });
+
+                const uploadBtn = document.getElementById("btn-upload-reports");
+                if (uploadBtn) {
+                    uploadBtn.addEventListener("click", function() {
+                        if (dz.getQueuedFiles().length > 0) {
+                            dz.processQueue();
+                        } else {
+                            if (typeof showAlert === 'function') showAlert('warning', 'Pilih file terlebih dahulu.');
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    // Initialize Media (Bukti Lapangan) Dropzone
+    const mediaDropzoneEl = document.getElementById('media-dropzone');
+    if (mediaDropzoneEl) {
+        const mediaDzMessage = mediaDropzoneEl.querySelector('.dz-message');
+        new Dropzone("#media-dropzone", {
+            url: "{{ route('campaigns.media.upload', $campaign->id) }}",
+            autoProcessQueue: false,
+            uploadMultiple: true,
+            parallelUploads: 10,
+            maxFiles: 10,
+            maxFilesize: 7, // MB
+            acceptedFiles: "image/png,image/jpeg,image/gif,image/heic,image/heif,video/*",
+            paramName: "media",
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            createImageThumbnails: true,
+            thumbnailWidth: 140,
+            thumbnailHeight: 140,
+            previewContainer: "#media-thumb-grid",
+            previewTemplate: `
+                <div class="dz-preview" style="
+                    display:inline-block; vertical-align:top;
+                    width:72px; height:72px; margin:4px;
+                    position:relative; border-radius:10px; overflow:hidden;
+                    border:2px solid #e2e8f0; background:#f1f5f9;
+                ">
+                  <img data-dz-thumbnail style="
+                    width:100%; height:100%; object-fit:cover;
+                    display:block;
+                  " />
+                  <div style="
+                    position:absolute; inset:0; background:rgba(0,0,0,0.45);
+                    display:flex; flex-direction:column;
+                    align-items:center; justify-content:center;
+                    opacity:0; transition:opacity 0.2s;
+                  " class="dz-hover-overlay">
+                    <button type="button" data-dz-remove style="
+                      background:rgba(231,76,60,0.9); border:none;
+                      border-radius:50%; width:24px; height:24px;
+                      cursor:pointer; color:#fff; font-size:14px;
+                      line-height:1; display:flex; align-items:center; justify-content:center;
+                    ">×</button>
+                  </div>
+                  <div class="dz-progress" style="
+                    position:absolute; bottom:0; left:0; right:0;
+                    height:3px; background:rgba(255,255,255,0.3);
+                  ">
+                    <span data-dz-uploadprogress style="
+                      display:block; height:100%;
+                      background:#7CA982; width:0; transition:width 0.2s;
+                    "></span>
+                  </div>
+                  <div class="dz-error-message" data-dz-errormessage style="
+                    position:absolute; bottom:0; left:0; right:0;
+                    background:rgba(231,76,60,0.85); color:#fff;
+                    font-size:8px; padding:2px 4px; text-align:center;
+                    display:none;
+                  "></div>
+                  <div class="dz-success-mark" style="display:none; position:absolute; top:2px; right:2px;
+                    width:16px; height:16px; background:#7CA982; border-radius:50%;
+                    align-items:center; justify-content:center; color:#fff; font-size:10px;">✓</div>
+                  <div class="dz-error-mark" style="display:none; position:absolute; top:2px; right:2px;
+                    width:16px; height:16px; background:#e74c3c; border-radius:50%;
+                    align-items:center; justify-content:center; color:#fff; font-size:10px;">✕</div>
+                </div>
+            `,
+            init: function() {
+                const dz = this;
+
+                // Show thumbnail overlay on hover
+                dz.on("addedfile", function(file) {
+                    updateStats(dz, "media");
+                    document.getElementById("btn-upload-media").classList.remove("d-none");
+                    if (mediaDzMessage) mediaDzMessage.style.display = 'none';
+
+                    // Hover effect on preview
+                    if (file.previewElement) {
+                        const overlay = file.previewElement.querySelector('.dz-hover-overlay');
+                        if (overlay) {
+                            file.previewElement.addEventListener('mouseenter', () => overlay.style.opacity = '1');
+                            file.previewElement.addEventListener('mouseleave', () => overlay.style.opacity = '0');
+                        }
+                    }
+                });
+
+                dz.on("thumbnail", function(file) {
+                    // For video files show a play icon instead
+                    if (file.type.startsWith('video/') && file.previewElement) {
+                        const img = file.previewElement.querySelector('img[data-dz-thumbnail]');
+                        if (img) {
+                            img.style.display = 'none';
+                            const icon = document.createElement('div');
+                            icon.style.cssText = 'width:100%;height:100%;background:#1a1a2e;display:flex;align-items:center;justify-content:center;';
+                            icon.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>';
+                            img.parentNode.insertBefore(icon, img);
+                        }
+                    }
+                });
+
+                dz.on("success", function(file) {
+                    if (file.previewElement) {
+                        const mark = file.previewElement.querySelector('.dz-success-mark');
+                        if (mark) mark.style.display = 'flex';
+                    }
+                });
+
+                dz.on("error", function(file, msg) {
+                    updateStats(dz, "media");
+                    if (file.previewElement) {
+                        const mark = file.previewElement.querySelector('.dz-error-mark');
+                        if (mark) mark.style.display = 'flex';
+                        const errDiv = file.previewElement.querySelector('.dz-error-message');
+                        if (errDiv) { errDiv.style.display = 'block'; errDiv.textContent = typeof msg === 'string' ? msg : 'Error'; }
+                    }
+                });
+
+                dz.on("removedfile", function() {
+                    updateStats(dz, "media");
+                    if (dz.files.length === 0) {
+                        document.getElementById("btn-upload-media").classList.add("d-none");
+                        if (mediaDzMessage) mediaDzMessage.style.display = '';
+                    }
+                });
+
+                dz.on("successmultiple", function(files, response) {
+                    updateStats(dz, "media");
+                    if (typeof showAlert === 'function') showAlert('success', 'Media berhasil diupload!');
+                    if (response.success) {
+                        response.media.forEach(m => appendMediaToUI(m));
+                        dz.removeAllFiles();
+                    }
+                });
+                dz.on("errormultiple", function(files, response) {
+                    updateStats(dz, "media");
+                    if (typeof showAlert === 'function') showAlert('danger', response.message || 'Gagal mengunggah file.');
+                });
+
+                const uploadBtn = document.getElementById("btn-upload-media");
+                if (uploadBtn) {
+                    uploadBtn.addEventListener("click", function() {
+                        if (dz.getQueuedFiles().length > 0) {
+                            dz.processQueue();
+                        }
+                    });
+                }
+            }
+        });
+    }
+
+    const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
     let deleteTargetId = null;
 
-    const dz = document.getElementById('drop-zone');
-    const realInput = document.getElementById('real-file-input');
-    const previewGrid = document.getElementById('preview-container');
-    const submitBtn = document.getElementById('submit-media-btn');
-    const totalLabel = document.getElementById('total-selected');
-    const errorLabel = document.getElementById('upload-error');
-    const deleteModal = new bootstrap.Modal(document.getElementById('confirmDeleteModal'));
-
-    // ── Drop Zone Logic ──
-    if (dz) {
-        dz.addEventListener('click', () => realInput.click());
-        realInput.addEventListener('change', (e) => { addFiles(e.target.files); realInput.value = ''; });
-        dz.addEventListener('dragover', (e) => { e.preventDefault(); dz.style.background = '#edf5ef'; });
-        dz.addEventListener('dragenter', (e) => { e.preventDefault(); dz.style.background = '#edf5ef'; });
-        dz.addEventListener('dragleave', (e) => { dz.style.background = '#fbfdfb'; });
-        dz.addEventListener('drop', (e) => { e.preventDefault(); dz.style.background = '#fbfdfb'; addFiles(e.dataTransfer.files); });
-    }
-
-    function addFiles(fileList) {
-        errorLabel.classList.add('d-none');
-        let addedCount = 0;
-        Array.from(fileList).forEach(file => {
-            if (pendingFiles.items.length >= MAX_MEDIA) {
-                errorLabel.innerText = "Maksimum 10 file.";
-                errorLabel.classList.remove('d-none');
-                return;
-            }
-            if (file.size > MAX_FILE_SIZE) {
-                errorLabel.innerText = `${file.name} > 7MB.`;
-                errorLabel.classList.remove('d-none');
-                return;
-            }
-            pendingFiles.items.add(file);
-            addedCount++;
-        });
-        if (addedCount > 0) renderPreviews();
-    }
-
-    function renderPreviews() {
-        previewGrid.innerHTML = '';
-        const files = pendingFiles.files;
-        submitBtn.classList.toggle('d-none', files.length === 0);
-        totalLabel.innerText = files.length;
-        Array.from(files).forEach((file, index) => {
-            const div = document.createElement('div');
-            div.className = 'position-relative';
-            div.style.width = '64px'; div.style.height = '64px';
-            const content = document.createElement('div');
-            content.style.width = '64px'; content.style.height = '64px'; content.style.borderRadius = '10px'; content.style.overflow = 'hidden';
-            if (file.type.startsWith('image/')) {
-                const img = document.createElement('img'); img.src = URL.createObjectURL(file); img.style.width = '100%'; img.style.height = '100%'; img.style.objectFit = 'cover';
-                content.appendChild(img);
-            } else {
-                content.style.background = '#1a1a2e'; content.style.display = 'flex'; content.style.alignItems = 'center'; content.style.justifyContent = 'center';
-                content.innerHTML = '<i data-lucide="video" style="color:white; width:24px;"></i>';
-            }
-            const rmBtn = document.createElement('button');
-            rmBtn.className = 'btn btn-danger btn-sm p-0 position-absolute top-0 end-0';
-            rmBtn.style.width = '18px'; rmBtn.style.height = '18px'; rmBtn.style.borderRadius = '50%'; rmBtn.style.transform = 'translate(30%, -30%)';
-            rmBtn.innerText = '×';
-            rmBtn.type = 'button';
-            rmBtn.onclick = () => removePendingFile(index);
-            div.appendChild(content); div.appendChild(rmBtn);
-            previewGrid.appendChild(div);
-        });
-        lucide.createIcons();
-    }
-
-    window.removePendingFile = function(index) {
-        const nextDT = new DataTransfer();
-        Array.from(pendingFiles.files).forEach((file, i) => { if (i !== index) nextDT.items.add(file); });
-        pendingFiles = nextDT;
-        renderPreviews();
+    window.editUpdate = function(id, title, content) {
+        const form = document.getElementById('edit-update-form');
+        form.action = `/my-campaigns/{{ $campaign->id }}/updates/${id}`;
+        document.getElementById('edit-update-title').value = title;
+        document.getElementById('edit-update-content').value = content;
+        const modal = new bootstrap.Modal(document.getElementById('editUpdateModal'));
+        modal.show();
     };
-
-    // ── Real-time AJAX Upload ──
-    const uploadForm = document.getElementById('media-upload-form');
-    if (uploadForm) {
-        uploadForm.onsubmit = function(e) {
-            e.preventDefault();
-            const formData = new FormData(this);
-            formData.delete('media[]');
-            Array.from(pendingFiles.files).forEach(file => formData.append('media[]', file));
-
-            const btnText = document.getElementById('btn-text');
-            const btnSpinner = document.getElementById('btn-spinner');
-            btnText.classList.add('d-none');
-            btnSpinner.classList.remove('d-none');
-            submitBtn.disabled = true;
-
-            fetch(this.action, {
-                method: 'POST',
-                body: formData,
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    data.media.forEach(m => appendMediaToUI(m));
-                    pendingFiles = new DataTransfer();
-                    renderPreviews();
-                    
-                    // ── Real-time Sync ──
-                    const firstMedia = document.querySelector('.thumb-item');
-                    if (firstMedia) {
-                        const syncData = {
-                            id: {{ $campaign->id }},
-                            banner_url: firstMedia.dataset.url,
-                            timestamp: Date.now()
-                        };
-                        // Use BroadcastChannel (Modern)
-                        try {
-                            new BroadcastChannel('campaign_sync').postMessage(syncData);
-                        } catch(e) {}
-                        // Fallback to LocalStorage (Legacy)
-                        localStorage.setItem('campaign_update', JSON.stringify(syncData));
-                    }
-                    
-                    showAlert('success', 'Media berhasil diupload secara real-time!');
-                } else {
-                    showAlert('danger', data.message || 'Upload gagal.');
-                }
-            })
-            .catch(() => showAlert('danger', 'Terjadi kesalahan sistem.'))
-            .finally(() => {
-                btnText.classList.remove('d-none');
-                btnSpinner.classList.add('d-none');
-                submitBtn.disabled = false;
-            });
-        };
-    }
 
     function appendMediaToUI(media) {
         const wrapper = document.getElementById('gallery-wrapper');
@@ -617,7 +932,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (media.type === 'video') {
             thumb.innerHTML = `<video src="${media.url}" muted style="width:100%; height:100%; object-fit:cover;"></video><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.35);"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="white" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div>`;
         } else {
-            thumb.innerHTML = `<img src="${media.url}" style="width:100%; height:100%; object-fit:cover;">`;
+            thumb.innerHTML = `<img src="${media.url}" style="width:100%; height:100%; object-fit:cover;" loading="lazy">`;
         }
         strip.appendChild(thumb);
 
@@ -627,7 +942,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const sideItem = document.createElement('div');
         sideItem.className = 'position-relative'; sideItem.id = `sidebar-media-${media.id}`; sideItem.style.width = '60px'; sideItem.style.height = '60px';
         if (media.type === 'image') {
-            sideItem.innerHTML = `<img src="${media.url}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;">`;
+            sideItem.innerHTML = `<img src="${media.url}" style="width:60px;height:60px;object-fit:cover;border-radius:10px;" loading="lazy">`;
         } else {
             sideItem.innerHTML = `<div style="width:60px;height:60px;border-radius:10px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;"><i data-lucide="film" style="width:24px;color:white;"></i></div>`;
         }
@@ -883,6 +1198,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const icon = document.getElementById('follow-icon');
         const countEl = document.getElementById('follow-count');
         
+        if (btn.disabled) return;
+        btn.disabled = true;
+        btn.style.opacity = '0.6';
+        
         // Visual feedback immediate
         icon.classList.add('heart-pulse');
         setTimeout(() => icon.classList.remove('heart-pulse'), 400);
@@ -917,21 +1236,39 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .catch(() => {
             showAlert('danger', 'Harap login ulang atau periksa koneksi Anda.');
-            // Revert icon state if failed? Maybe not needed for simple toggle
+        })
+        .finally(() => {
+            btn.disabled = false;
+            btn.style.opacity = '1';
         });
     };
 
     window.showAlert = function(type, msg) {
         const container = document.getElementById('alert-container');
         if (!container) return;
+
         const div = document.createElement('div');
-        div.className = `alert alert-${type} border-0 rounded-4 mb-4 shadow-sm animate__animated animate__fadeInDown`;
-        div.innerHTML = `<i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" style="width:16px" class="me-2"></i> ${msg}`;
+        div.className = `alert alert-${type} border-0 rounded-4 mb-3 shadow-sm d-flex align-items-center gap-2 animate__animated animate__fadeInDown seluna-flash`;
+        div.innerHTML = `
+            <i data-lucide="${type === 'success' ? 'check-circle' : 'alert-circle'}" style="width:16px; flex-shrink:0;"></i>
+            <span class="flex-grow-1">${msg}</span>
+            <button type="button" class="btn-close btn-close-sm ms-2" aria-label="Close"></button>
+        `;
+        // Close button
+        div.querySelector('.btn-close').addEventListener('click', () => {
+            div.style.transition = 'opacity 0.3s, transform 0.3s';
+            div.style.opacity = '0';
+            div.style.transform = 'translateY(-8px)';
+            setTimeout(() => div.remove(), 320);
+        });
         container.prepend(div);
+
+        // Auto-dismiss after 5s
         setTimeout(() => {
             div.classList.replace('animate__fadeInDown', 'animate__fadeOutUp');
             setTimeout(() => div.remove(), 500);
-        }, 4000);
+        }, 5000);
+
         if (typeof lucide !== 'undefined') lucide.createIcons();
     };
 });
@@ -1078,13 +1415,47 @@ document.addEventListener('DOMContentLoaded', function() {
                     </div>
                     <div class="mb-0">
                         <label class="form-label fw-bold">Media / Laporan (Opsional)</label>
-                        <input type="file" name="media" class="form-control" accept="image/*,video/*,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
-                        <p class="text-muted small mt-1">Foto, Video, GIF, atau Laporan (PDF, DOCX, XLSX).</p>
+                        <input type="file" name="media" class="form-control" accept="image/png,image/jpeg,image/gif,image/heic,image/heif,video/*">
+                        <p class="text-muted small mt-1">Video, Foto (PNG, JPG, JPEG, HEIC, HEIF), atau GIF.</p>
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
                     <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
                     <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow">Posting Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{-- Edit Update Modal --}}
+<div class="modal fade" id="editUpdateModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 28px; background-color: var(--bg-color);">
+            <div class="modal-header border-0 p-4 pb-0">
+                <h4 class="fw-bold text-primary-custom m-0">Edit Update Berita</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="edit-update-form" action="" method="POST" enctype="multipart/form-data" data-seluna>
+                @csrf
+                <div class="modal-body p-4">
+                    <div class="mb-3">
+                        <label class="form-label fw-bold required">Judul Update</label>
+                        <input type="text" id="edit-update-title" name="title" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold required">Isi Berita</label>
+                        <textarea id="edit-update-content" name="content" class="form-control" rows="6" required></textarea>
+                    </div>
+                    <div class="mb-0">
+                        <label class="form-label fw-bold">Ganti Media / Laporan (Opsional)</label>
+                        <input type="file" name="media" class="form-control" accept="image/png,image/jpeg,image/gif,image/heic,image/heif,video/*">
+                        <p class="text-muted small mt-1">Biarkan kosong jika tidak ingin mengubah media. Format: Video, Foto (PNG, JPG, JPEG, HEIC, HEIF), atau GIF.</p>
+                    </div>
+                </div>
+                <div class="modal-footer border-0 p-4 pt-0">
+                    <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill shadow">Simpan Perubahan</button>
                 </div>
             </form>
         </div>
@@ -1247,31 +1618,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 <h4 class="fw-bold text-primary-custom m-0">Upload Laporan</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ route('campaigns.reports.store', $campaign->id) }}" method="POST" enctype="multipart/form-data" data-seluna>
-                @csrf
-                <div class="modal-body p-4">
-                    <div class="alert alert-info border-0 rounded-4 small mb-4" style="background-color: #eef3f0; color: #243e36;">
-                        <i data-lucide="info" class="me-2" style="width:16px;"></i>
-                        Unggah laporan pertanggungjawaban berupa file PDF, DOCX, XLSX, atau ZIP. Maksimal 50MB per file.
-                    </div>
-                    
-                    <div id="report-drop-zone" class="rounded-4 p-5 text-center mb-0"
-                         style="border: 2px dashed var(--secondary-color); cursor:pointer; background: white; transition: all 0.2s;"
-                         onclick="document.getElementById('report-file-input').click()">
-                        <div class="bg-secondary-color bg-opacity-10 rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 64px; height: 64px;">
-                            <i data-lucide="upload-cloud" style="width:32px; height:32px; color:var(--secondary-color);"></i>
+            <div class="modal-body p-4">
+                <div class="alert alert-info border-0 rounded-4 small mb-4" style="background-color: #eef3f0; color: #243e36;">
+                    <i data-lucide="info" class="me-2" style="width:16px;"></i>
+                    Unggah laporan pertanggungjawaban berupa file PDF, DOCX, XLSX, atau ZIP. Maksimal 50MB per file.
+                </div>
+                
+                <div class="drop-card border border-light shadow-sm">
+                    <div id="report-dropzone" class="seluna-dropzone" style="min-height: 140px; padding: 12px;">
+                        <div class="dz-message" style="text-align:center; padding: 20px 0;">
+                            <div class="icon-wrap">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" /></svg>
+                            </div>
+                            <h3>Seret &amp; letakkan file di sini</h3>
+                            <p class="small text-muted">atau pilih file dari komputer Anda</p>
+                            <button type="button" class="seluna-btn-browse">Pilih File</button>
                         </div>
-                        <h6 class="fw-bold text-primary-custom mb-1">Klik atau seret file ke sini</h6>
-                        <p class="text-muted small mb-0">PDF, DOCX, XLSX, ZIP (Max. 50MB)</p>
-                        <input type="file" id="report-file-input" name="files[]" class="d-none" accept=".pdf,.docx,.xlsx,.zip" multiple onchange="updateReportFilename(this)">
+                        {{-- Report file previews render inline here --}}
                     </div>
-                    <div id="report-filename-preview" class="mt-3 small text-primary-custom fw-bold text-center"></div>
+
+                    <div class="upload-stats">
+                        <div class="stat-item">
+                            <span class="label">Total File</span>
+                            <span class="val" id="report-stat-total">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Berhasil</span>
+                            <span class="val success" id="report-stat-success">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="label">Gagal</span>
+                            <span class="val danger" id="report-stat-error">0</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Upload Dokumen</button>
-                </div>
-            </form>
+            </div>
+            <div class="modal-footer border-0 p-4 pt-0">
+                <button type="button" class="btn btn-light px-4 py-2 rounded-pill" data-bs-dismiss="modal">Batal</button>
+                <button type="button" id="btn-upload-reports" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Upload Dokumen</button>
+            </div>
         </div>
     </div>
 </div>

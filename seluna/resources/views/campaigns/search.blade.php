@@ -13,7 +13,7 @@
                 <div class="col-12 col-md-6 col-xl-4">
                     <a href="{{ route('campaigns.show', $campaign->id) }}" class="text-decoration-none">
                         <div class="card border-0 shadow-sm overflow-hidden h-100" style="border-radius: 24px; transition: transform 0.2s;">
-                            <img src="https://picsum.photos/seed/campaign-{{ $campaign->id }}/600/400" class="card-img-top" style="height: 200px; object-fit: cover;">
+                            <img src="https://picsum.photos/seed/campaign-{{ $campaign->id }}/600/400" class="card-img-top" style="height: 200px; object-fit: cover;" loading="lazy">
                             <div class="card-body p-4">
                                 <span class="badge mb-3" style="background-color: var(--bg-color); color: var(--secondary-color);">{{ $campaign->tag }}</span>
                                 <h5 class="fw-bold text-primary-custom mb-3">{{ $campaign->title }}</h5>

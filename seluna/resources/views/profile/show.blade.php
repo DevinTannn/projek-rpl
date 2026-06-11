@@ -9,7 +9,7 @@
                 <div class="mb-4 position-relative d-inline-block">
                     <img src="{{ $user->profile_photo ? Storage::url($user->profile_photo) : 'https://ui-avatars.com/api/?name='.$user->username.'&background=7CA982&color=fff&size=300' }}" 
                          class="rounded-circle border border-4 border-white shadow-sm profile-img-main" 
-                         style="width: 180px; height: 180px; object-fit: cover; background-color: var(--surface-color);">
+                         style="width: 180px; height: 180px; object-fit: cover; background-color: var(--surface-color);" loading="lazy">
                 </div>
                 
                 <h4 class="fw-bold m-0 text-primary-custom">{{ $user->name ?? $user->username }}</h4>
@@ -19,7 +19,7 @@
                     <p class="mb-4 small text-secondary">{{ $user->description }}</p>
                 @endif
 
-                <a href="{{ route('profile.edit') }}" class="btn btn-outline-secondary w-100 rounded-pill fw-bold mb-4 py-2 small">Edit Profile</a>
+                <a href="{{ route('profile.edit') }}" class="btn btn-outline-secondary w-100 rounded-pill fw-bold mb-4 py-2 small">{{ __('Edit Profile') }}</a>
 
                 <div class="d-flex flex-column gap-2 text-muted small mt-2">
                     <div class="d-flex align-items-center gap-2">
@@ -37,21 +37,21 @@
                 <div class="mt-4 pt-4 border-top">
                     @if($user->isVerified())
                         <div class="badge bg-success bg-opacity-10 text-success p-2 w-100 rounded-3 mb-2 small d-flex align-items-center justify-content-center gap-2">
-                            <i data-lucide="check-circle" style="width: 14px;"></i> Identitas Terverifikasi
+                            <i data-lucide="check-circle" style="width: 14px;"></i> {{ __('Identitas Terverifikasi') }}
                         </div>
                     @else
                         <a href="{{ route('profile.verification') }}" class="btn btn-warning btn-sm w-100 rounded-pill mb-2 fw-bold shadow-sm py-2">
-                            <i data-lucide="alert-triangle" class="me-1" style="width: 14px;"></i> Verifikasi Sekarang
+                            <i data-lucide="alert-triangle" class="me-1" style="width: 14px;"></i> {{ __('Verifikasi Sekarang') }}
                         </a>
                     @endif
 
                     @if($user->role === 'fundraiser')
                         <div class="badge bg-primary-custom p-2 w-100 rounded-3 small d-flex align-items-center justify-content-center gap-2">
-                            <i data-lucide="award" style="width: 14px;"></i> Official Fundraiser
+                            <i data-lucide="award" style="width: 14px;"></i> {{ __('Official Fundraiser') }}
                         </div>
                     @else
                         <div class="badge bg-secondary bg-opacity-10 text-secondary p-2 w-100 rounded-3 small d-flex align-items-center justify-content-center gap-2">
-                            <i data-lucide="user" style="width: 14px;"></i> Official Donatur
+                            <i data-lucide="user" style="width: 14px;"></i> {{ __('Official Donatur') }}
                         </div>
                     @endif
                 </div>
@@ -69,19 +69,19 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link border-0 bg-transparent fw-bold px-3 pb-2 text-muted text-nowrap" id="followed-tab" data-bs-toggle="tab" href="#followed">
-                            Diikuti <span class="ms-1 opacity-50">{{ $user->follows->count() }}</span>
+                            {{ __('Diikuti') }} <span class="ms-1 opacity-50">{{ $user->follows->count() }}</span>
                         </a>
                     </li>
                     @if($user->role === 'fundraiser')
                     <li class="nav-item">
                         <a class="nav-link border-0 bg-transparent fw-bold px-3 pb-2 text-muted text-nowrap" id="campaigns-tab" data-bs-toggle="tab" href="#campaigns">
-                            Kampanye <span class="ms-1 opacity-50">{{ $user->campaigns->count() }}</span>
+                            {{ __('Kampanye') }} <span class="ms-1 opacity-50">{{ $user->campaigns->count() }}</span>
                         </a>
                     </li>
                     @endif
                     <li class="nav-item">
                         <a class="nav-link border-0 bg-transparent fw-bold px-3 pb-2 text-muted text-nowrap" id="donations-tab" data-bs-toggle="tab" href="#donations">
-                            Riwayat <span class="ms-1 opacity-50">{{ $user->donations->count() }}</span>
+                            {{ __('Riwayat') }} <span class="ms-1 opacity-50">{{ $user->donations->count() }}</span>
                         </a>
                     </li>
                 </ul>
@@ -100,7 +100,7 @@
                                             </div>
                                             <div class="overflow-hidden">
                                                 <h6 class="fw-bold m-0 text-primary-custom text-truncate">{{ $follow->campaign->title }}</h6>
-                                                <small class="text-muted" style="font-size: 10px;">Mengikuti sejak {{ $follow->created_at->format('M Y') }}</small>
+                                                <small class="text-muted" style="font-size: 10px;">{{ __('Mengikuti sejak') }} {{ $follow->created_at->format('M Y') }}</small>
                                             </div>
                                         </div>
                                     </a>
@@ -108,7 +108,7 @@
                             @empty
                                 <div class="col-12 py-5 text-center bg-light rounded-4">
                                     <i data-lucide="activity" class="text-muted opacity-25 mb-2" style="width: 40px; height: 40px;"></i>
-                                    <p class="text-muted small m-0">Belum ada aktivitas untuk ditampilkan.</p>
+                                    <p class="text-muted small m-0">{{ __('Belum ada aktivitas untuk ditampilkan.') }}</p>
                                 </div>
                             @endforelse
                         </div>
@@ -120,7 +120,7 @@
                             @foreach($user->follows as $follow)
                                 <div class="col-12 col-sm-6 col-xl-4">
                                     <div class="card border-0 shadow-sm rounded-4 overflow-hidden h-100">
-                                        <img src="https://picsum.photos/seed/{{ $follow->campaign->id }}/400/200" class="w-100" style="height: 120px; object-fit: cover;">
+                                        <img src="https://picsum.photos/seed/{{ $follow->campaign->id }}/400/200" class="w-100" style="height: 120px; object-fit: cover;" loading="lazy">
                                         <div class="p-3">
                                             <h6 class="fw-bold small text-truncate mb-2">{{ $follow->campaign->title }}</h6>
                                             <div class="progress" style="height: 4px;">
@@ -198,31 +198,31 @@
                                             <div class="d-flex align-items-center gap-2">
                                                 @if($isPaid)
                                                      <span class="badge bg-success bg-opacity-10 text-success rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700; color: #2D5A27 !important; background-color: rgba(45, 90, 39, 0.1) !important;">
-                                                         Berhasil
+                                                         {{ __('Berhasil') }}
                                                      </span>
                                                      <a href="{{ route('donations.certificate', $donation->id) }}" 
                                                         class="btn btn-outline-success btn-sm rounded-pill fw-bold px-3 py-1 ms-2"
                                                         style="font-size: 10px; border-color: #2D5A27; color: #2D5A27;">
-                                                         <i data-lucide="download" style="width: 12px;" class="me-1"></i> Sertifikat
+                                                         <i data-lucide="download" style="width: 12px;" class="me-1"></i> {{ __('Sertifikat') }}
                                                      </a>
                                                 @elseif($isPending)
                                                     @if($donation->payment_method === 'Manual')
                                                         <span class="badge bg-warning bg-opacity-10 text-warning-emphasis rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700;">
-                                                            Verifikasi Admin
+                                                            {{ __('Verifikasi Admin') }}
                                                         </span>
                                                     @else
                                                         <span class="badge bg-warning bg-opacity-10 text-warning-emphasis rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700;">
-                                                            Pending
+                                                            {{ __('Pending') }}
                                                         </span>
                                                         <button class="btn btn-primary btn-sm rounded-pill fw-bold px-3 py-1 shadow-sm ms-2"
                                                                 style="font-size: 10px;"
                                                                 onclick="payDonation('{{ $donation->snap_token }}')">
-                                                            Bayar
+                                                            {{ __('Bayar') }}
                                                         </button>
                                                     @endif
                                                 @else
                                                     <span class="badge bg-danger bg-opacity-10 text-danger rounded-pill px-2.5 py-1" style="font-size: 10px; font-weight: 700;">
-                                                        Gagal
+                                                        {{ __('Gagal') }}
                                                     </span>
                                                 @endif
                                             </div>
@@ -232,7 +232,7 @@
                             @empty
                                 <div class="py-5 text-center bg-light rounded-4">
                                     <i data-lucide="history" class="text-muted opacity-25 mb-2" style="width: 40px; height: 40px;"></i>
-                                    <p class="text-muted small m-0">Belum ada riwayat donasi.</p>
+                                    <p class="text-muted small m-0">{{ __('Belum ada riwayat donasi.') }}</p>
                                 </div>
                             @endforelse
                         </div>

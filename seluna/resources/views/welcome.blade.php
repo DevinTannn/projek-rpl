@@ -148,7 +148,7 @@
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-                <img src="{{ asset('assets/images/seluna-logo.png') }}" alt="SELUNA">
+                <img src="{{ asset('assets/images/seluna-logo.png') }}" alt="SELUNA" loading="lazy">
                 <span class="logo-text">SELUNA</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">

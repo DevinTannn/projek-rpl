@@ -2,9 +2,16 @@
 
 @section('content')
 <div class="text-center mb-5">
-    <h3 class="fw-bold text-primary-custom">Selamat Datang</h3>
-    <p class="text-muted">Masuk ke akun SumselPeduli Anda</p>
+    <h3 class="fw-bold" style="color:#243E36;">{{ __('Selamat Datang') }}</h3>
+    <p class="text-muted">{{ __('Masuk ke akun SELUNA Anda') }}</p>
 </div>
+
+@if(session('success'))
+    <div class="alert border-0 rounded-4 mb-4 small" style="background:#EFF8F1;color:#243E36;">
+        <i data-lucide="check-circle" style="width:14px;height:14px;vertical-align:-2px;margin-right:6px;"></i>
+        {{ session('success') }}
+    </div>
+@endif
 
 @if($errors->any())
     <div class="alert alert-danger border-0 rounded-4 mb-4 small">
@@ -17,22 +24,27 @@
 <form action="{{ route('login') }}" method="POST">
     @csrf
     <div class="mb-3">
-        <label class="form-label small fw-bold">Email atau Username</label>
+        <label class="form-label small fw-bold">{{ __('Email atau Username') }}</label>
         <input type="text" name="login" class="form-control" placeholder="user@example.com" value="{{ old('login') }}" required>
     </div>
     
     <div class="mb-4">
         <div class="d-flex justify-content-between align-items-center mb-1">
-            <label class="form-label small fw-bold m-0">Kata Sandi</label>
-            <a href="#" class="text-muted small text-decoration-none">Lupa sandi?</a>
+            <label class="form-label small fw-bold m-0">{{ __('Kata Sandi') }}</label>
+            <a href="{{ route('password.request') }}" class="text-muted small text-decoration-none" style="color:#7CA982 !important;font-weight:600;">{{ __('Lupa sandi?') }}</a>
         </div>
-        <input type="password" name="password" class="form-control" placeholder="••••••••" required>
+        <div class="password-wrapper">
+            <input type="password" id="login-password" name="password" class="form-control" placeholder="••••••••" required>
+            <button type="button" class="password-toggle" onclick="togglePassword('login-password', this)" aria-label="{{ __('Tampilkan sandi') }}">
+                <i data-lucide="eye"></i>
+            </button>
+        </div>
     </div>
 
-    <button type="submit" class="btn btn-auth">Masuk Sekarang</button>
+    <button type="submit" class="btn btn-auth">{{ __('Masuk Sekarang') }}</button>
 
     <div class="auth-switch">
-        Belum punya akun? <a href="{{ route('register') }}">Daftar Gratis</a>
+        {{ __('Belum punya akun?') }} <a href="{{ route('register') }}">{{ __('Daftar Gratis') }}</a>
     </div>
 </form>
 @endsection

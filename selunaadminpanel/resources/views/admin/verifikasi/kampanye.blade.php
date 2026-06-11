@@ -1,19 +1,31 @@
 @extends('layouts.admin')
 
 @section('content')
-<div class="p-8">
-    <div class="flex justify-between items-center mb-6">
+<div class="p-4 lg:p-8">
+    <div class="flex flex-col gap-4 lg:flex-row lg:justify-between lg:items-center mb-6">
         <div>
             <h2 class="text-2xl font-bold text-[#1B3022]">Verifikasi Kampanye</h2>
             <p class="text-sm text-gray-500 mt-1">Verifikasi kampanye penggalangan dana baru yang masuk.</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
             <div class="flex items-center gap-2 px-3 py-1 bg-green-50 text-green-600 rounded-full border border-green-100 animate-pulse">
                 <div class="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
                 <span class="text-[10px] font-bold uppercase tracking-wider">Live Monitoring</span>
             </div>
-            
+
+            {{-- Search Bar --}}
+            <form action="{{ route('admin.verify.campaign.index') }}" method="GET" class="flex items-center gap-2 bg-white px-3 py-2 rounded-xl shadow-sm border border-gray-100">
+                <svg class="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" name="search" value="{{ $search ?? '' }}" placeholder="Cari kampanye..." class="text-xs font-medium text-gray-700 bg-transparent border-none focus:outline-none focus:ring-0 w-40" autocomplete="off">
+                @if(!empty($search))
+                    <a href="{{ route('admin.verify.campaign.index') }}" class="text-gray-400 hover:text-red-500 transition text-xs" title="Hapus pencarian">✕</a>
+                @endif
+                <input type="hidden" name="sort" value="{{ request('sort', 'newest') }}">
+                <input type="hidden" name="per_page" value="{{ request('per_page', 10) }}">
+            </form>
+
             <form action="{{ route('admin.verify.campaign.index') }}" method="GET" class="flex items-center gap-3 bg-white px-4 py-2 rounded-xl shadow-sm border border-gray-100">
+
                 <div class="flex items-center gap-2 border-r border-gray-100 pr-3">
                     <label for="sort" class="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Urutan:</label>
                     <select name="sort" onchange="this.form.submit()" class="text-xs font-bold text-gray-700 bg-transparent border-none focus:ring-0 cursor-pointer">
@@ -37,6 +49,7 @@
                         <option value="all" {{ request('per_page') == 'all' ? 'selected' : '' }}>Semua</option>
                     </select>
                 </div>
+                <input type="hidden" name="search" value="{{ $search ?? '' }}">
             </form>
 
             <span class="bg-[#2D5A27] text-white px-5 py-2.5 rounded-xl text-sm font-bold shadow-lg shadow-[#2D5A27]/20 flex items-center gap-2">
@@ -95,14 +108,14 @@
 
             <div class="flex gap-3 mt-6 md:mt-0 w-full md:w-auto">
                 @if($c->status == 'pending')
-                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0" data-seluna>
+                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0" data-confirm data-confirm-title="Approve Kampanye?" data-confirm-body="Anda akan menyetujui kampanye ini. Kampanye akan aktif dan terlihat oleh publik." data-confirm-icon="✅" data-confirm-ok="Ya, Approve">
                         @csrf
                         <input type="hidden" name="status" value="active">
                         <button type="submit" class="w-full bg-[#2D5A27] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#1B3022] transition shadow-lg shadow-[#2D5A27]/20" data-action="update">
                             Approve
                         </button>
                     </form>
-                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0" data-seluna>
+                    <form action="{{ route('admin.verify.campaign.update', $c->id) }}" method="POST" class="flex-grow md:flex-grow-0" data-confirm data-confirm-title="Reject Kampanye?" data-confirm-body="Anda akan menolak kampanye ini. Fundraiser perlu mengajukan ulang." data-confirm-icon="❌" data-confirm-ok="Ya, Reject">
                         @csrf
                         <input type="hidden" name="status" value="rejected">
                         <button type="submit" class="w-full bg-white text-red-600 border border-red-100 px-8 py-3 rounded-xl font-bold hover:bg-red-50 transition" data-action="update">

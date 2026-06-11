@@ -18,7 +18,7 @@
                 <div class="bg-surface p-3 rounded-circle">
                     <i data-lucide="user-cog" class="text-primary-custom" style="width: 32px; height: 32px;"></i>
                 </div>
-                <h3 class="fw-bold m-0 text-primary-custom">Edit Profile Settings</h3>
+                <h3 class="fw-bold m-0 text-primary-custom">{{ __('Edit Profile Settings') }}</h3>
             </div>
             
             <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data">
@@ -41,24 +41,24 @@
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold required">Username</label>
+                        <label class="form-label fw-bold required">{{ __('Username') }}</label>
                         <input type="text" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username', $user->username) }}" required>
                         @error('username') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold required">Email Address</label>
+                        <label class="form-label fw-bold required">{{ __('Email Address') }}</label>
                         <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', $user->email) }}" required>
                         @error('email') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Date of Birth</label>
+                        <label class="form-label fw-bold">{{ __('Date of Birth') }}</label>
                         <input type="date" name="date_of_birth" class="form-control @error('date_of_birth') is-invalid @enderror" value="{{ old('date_of_birth', $user->date_of_birth) }}" max="{{ date('Y-m-d') }}">
                     </div>
 
                     <div class="col-md-6">
-                        <label class="form-label fw-bold">Gender</label>
+                        <label class="form-label fw-bold">{{ __('Gender') }}</label>
                         <select name="gender" class="form-select @error('gender') is-invalid @enderror">
                             <option value="">Select Gender</option>
                             <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>Male</option>
@@ -67,15 +67,23 @@
                         </select>
                     </div>
 
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">{{ __('Choose Language') }}</label>
+                        <select name="locale" class="form-select">
+                            <option value="id" {{ session('locale', 'id') == 'id' ? 'selected' : '' }}>{{ __('Indonesia') }}</option>
+                            <option value="en" {{ session('locale', 'id') == 'en' ? 'selected' : '' }}>{{ __('English') }}</option>
+                        </select>
+                    </div>
+
                     <div class="col-12">
-                        <label class="form-label fw-bold">Description / Bio</label>
+                        <label class="form-label fw-bold">{{ __('Description / Bio') }}</label>
                         <textarea name="description" rows="3" class="form-control @error('description') is-invalid @enderror">{{ old('description', $user->description) }}</textarea>
                     </div>
                 </div>
 
                 <div class="mt-5 d-flex gap-3">
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Update Profile</button>
-                    <a href="{{ route('profile.show') }}" class="btn btn-light px-5 py-2 fw-bold rounded-pill">Cancel</a>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">{{ __('Update Profile') }}</button>
+                    <a href="{{ route('profile.show') }}" class="btn btn-light px-5 py-2 fw-bold rounded-pill">{{ __('Cancel') }}</a>
                 </div>
             </form>
         </div>

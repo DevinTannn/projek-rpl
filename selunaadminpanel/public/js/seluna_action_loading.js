@@ -363,25 +363,40 @@
     }
 
     /**
-     * Show a confirmation dialog before executing a delete action.
+     * Show a confirmation dialog before executing a delete or other action.
      * @param {object} opts
      * @param {string}   opts.title   - Dialog heading
      * @param {string}   opts.body    - Dialog subtext
+     * @param {string}   opts.icon    - Dialog icon/emoji
+     * @param {string}   opts.buttonText - Dialog confirmation button text
      * @param {Function} opts.onConfirm - Called when user confirms
      */
-    function showDeleteConfirm({ title, body, onConfirm } = {}) {
+    function showDeleteConfirm({ title, body, icon, buttonText, onConfirm } = {}) {
         const overlay = getConfirmOverlay();
         if (title) overlay.querySelector('#seluna-confirm-title').textContent = title;
         if (body)  overlay.querySelector('#seluna-confirm-body').textContent  = body;
 
+        const iconEl = overlay.querySelector('.seluna-confirm-icon');
+        if (iconEl) iconEl.textContent = icon || '🗑️';
+
         const okBtn = overlay.querySelector('#seluna-confirm-ok');
-        // Remove old listener
-        const fresh = okBtn.cloneNode(true);
-        okBtn.parentNode.replaceChild(fresh, okBtn);
-        fresh.addEventListener('click', () => {
-            overlay.classList.remove('active');
-            if (typeof onConfirm === 'function') onConfirm();
-        });
+        if (okBtn) {
+            okBtn.textContent = buttonText || 'Ya, Hapus';
+            // Custom button styling
+            if (buttonText && (buttonText.toLowerCase().includes('logout') || buttonText.toLowerCase().includes('keluar'))) {
+                okBtn.style.backgroundColor = '#e74c3c';
+            } else {
+                okBtn.style.backgroundColor = '#e74c3c';
+            }
+
+            // Remove old listener
+            const fresh = okBtn.cloneNode(true);
+            okBtn.parentNode.replaceChild(fresh, okBtn);
+            fresh.addEventListener('click', () => {
+                overlay.classList.remove('active');
+                if (typeof onConfirm === 'function') onConfirm();
+            });
+        }
 
         overlay.classList.add('active');
     }
@@ -437,6 +452,24 @@
             if (form._selunabound) return;
             form._selunabound = true;
             form.addEventListener('submit', handleFormSubmit);
+        });
+
+        /* 8a-2. Forms with confirmations (e.g. Logout, Delete) */
+        root.querySelectorAll('form[data-confirm]').forEach(form => {
+            if (form._confirmbound) return;
+            form._confirmbound = true;
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                showDeleteConfirm({
+                    title: this.dataset.confirmTitle || 'Konfirmasi',
+                    body: this.dataset.confirmBody || 'Apakah Anda yakin?',
+                    icon: this.dataset.confirmIcon || '🚪',
+                    buttonText: this.dataset.confirmOk || 'Ya',
+                    onConfirm: () => {
+                        form.submit();
+                    }
+                });
+            });
         });
 
         /* 8b. Standalone action buttons (non-form) */

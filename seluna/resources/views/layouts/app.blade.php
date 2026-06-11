@@ -191,66 +191,43 @@
             color: var(--accent-color);
         }
 
-        /* Burger bars */
-        .burger-bars {
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            width: 18px;
-            height: 14px;
-            flex-shrink: 0;
-            transition: opacity 0.3s ease, transform 0.3s ease;
+        /* Animated Ham SVG Styles */
+        .ham {
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+            transition: transform 400ms;
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .hamRotate180.active {
+            transform: rotate(180deg);
+        }
+        .line {
+            fill: none;
+            transition: stroke-dasharray 400ms, stroke-dashoffset 400ms;
+            stroke: rgba(255, 255, 255, 0.8);
+            stroke-width: 5.5;
+            stroke-linecap: round;
+        }
+        .ham5 .top {
+            stroke-dasharray: 40 82;
+        }
+        .ham5 .bottom {
+            stroke-dasharray: 40 82;
+        }
+        .ham5.active .top {
+            stroke-dasharray: 14 82;
+            stroke-dashoffset: -72px;
+        }
+        .ham5.active .bottom {
+            stroke-dasharray: 14 82;
+            stroke-dashoffset: -72px;
         }
 
-        .burger-bar {
-            display: block;
-            height: 2px;
-            width: 100%;
-            background: currentColor;
-            border-radius: 2px;
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.25s ease,
-                        width 0.3s ease;
-        }
-
-        /* Arrow icon — hidden when expanded */
-        .arrow-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            flex-shrink: 0;
-            opacity: 0;
-            transform: translateX(-6px);
-            transition: opacity 0.3s ease, transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            position: absolute;
-        }
-
-        .toggle-label {
-            font-size: 13px;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            max-width: 120px;
-            opacity: 1;
-            transition: max-width 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.25s ease;
-        }
-
-        /* ── Collapsed state: hide burger, show arrow ── */
-        .sidebar.collapsed .burger-bars {
-            opacity: 0;
-            transform: scale(0.7);
-        }
-        .sidebar.collapsed .arrow-icon {
-            opacity: 1;
-            transform: translateX(0);
-            position: static;
-        }
-        .sidebar.collapsed .toggle-label {
-            max-width: 0;
-            opacity: 0;
+        .sidebar.collapsed .sidebar-footer-meta {
+            display: none !important;
         }
 
         .nav-items {
@@ -451,6 +428,70 @@
         .search-container .search-icon svg {
             width: 20px;
             height: 20px;
+        }
+
+        /* ── Search Results Dropdown ── */
+        .search-results-dropdown {
+            display: none;
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px rgba(36, 62, 54, 0.12);
+            border: 1px solid rgba(36, 62, 54, 0.06);
+            overflow: hidden;
+            z-index: 9999;
+            max-height: 340px;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            text-decoration: none;
+            color: var(--primary-color);
+            transition: background 0.18s ease;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+        }
+
+        .search-result-item:last-child { border-bottom: none; }
+
+        .search-result-item:hover {
+            background: #f3f8f4;
+        }
+
+        .search-result-item .icon-box {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(124, 169, 130, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            color: var(--secondary-color);
+        }
+
+        .search-result-item .icon-box svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .search-result-text .title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1.3;
+        }
+
+        .search-result-text .subtitle {
+            font-size: 11px;
+            color: #888;
+            margin-top: 1px;
         }
 
         .profile-area {
@@ -744,16 +785,18 @@
             </div>
         </a>
 
-        <button onclick="toggleSidebar()" class="sidebar-toggle" aria-label="Toggle sidebar">
-            <span class="burger-bars">
-                <span class="burger-bar"></span>
-                <span class="burger-bar"></span>
-                <span class="burger-bar"></span>
-            </span>
-            <span class="arrow-icon">
-                <i data-lucide="chevron-right" style="width:18px;height:18px;"></i>
-            </span>
-            <span class="toggle-label">Menu</span>
+        <button onclick="toggleSidebar()" class="sidebar-toggle" aria-label="Toggle sidebar" style="justify-content: center; width: 48px; height: 48px; padding: 0; margin: 10px auto; border-radius: 10px; background: rgba(255,255,255,0.07);">
+            <svg id="sidebar-ham-svg" class="ham hamRotate180 ham5 active" viewBox="0 0 100 100" width="38" height="38">
+              <path
+                    class="line top"
+                    d="m 30,33 h 40 c 0,0 8.5,-0.68551 8.5,10.375 0,8.292653 -6.122707,9.002293 -8.5,6.625 l -11.071429,-11.071429" />
+              <path
+                    class="line middle"
+                    d="m 70,50 h -40" />
+              <path
+                    class="line bottom"
+                    d="m 30,67 h 40 c 0,0 8.5,0.68551 8.5,-10.375 0,-8.292653 -6.122707,-9.002293 -8.5,-6.625 l -11.071429,11.071429" />
+            </svg>
         </button>
 
         <nav class="nav-items" id="sidebar-nav-items">
@@ -761,11 +804,11 @@
         </nav>
 
         <div class="sidebar-footer">
-            <form action="{{ route('logout') }}" method="POST">
+            <form action="{{ route('logout') }}" method="POST" data-confirm data-confirm-title="{{ __('Logout?') }}" data-confirm-body="{{ __('Apakah Anda yakin ingin logout?') }}" data-confirm-icon="🚪" data-confirm-ok="{{ __('Logout') }}">
                 @csrf
                 <button type="submit" class="nav-item-link logout-item w-100 border-0 text-start bg-transparent">
                     <span class="nav-icon"><i data-lucide="log-out"></i></span>
-                    <span class="nav-label">Logout</span>
+                    <span class="nav-label">{{ __('Logout') }}</span>
                 </button>
             </form>
             
@@ -790,7 +833,7 @@
                 <span class="search-icon">
                     <i data-lucide="search"></i>
                 </span>
-                <input type="text" id="main-search-input" name="query" placeholder="Cari kampanye donasi..." value="{{ request('query') }}" autocomplete="off">
+                <input type="text" id="main-search-input" name="query" placeholder="{{ __('Search donation campaigns...') }}" value="{{ request('query') }}" autocomplete="off">
                 <div id="search-results" class="search-results-dropdown">
                     <!-- Results injected here -->
                 </div>
@@ -807,8 +850,8 @@
                 </a>
                 @else
                 <div class="d-flex gap-2">
-                    <a href="{{ route('login') }}" class="btn btn-outline-secondary rounded-pill px-4 btn-sm fw-bold">Masuk</a>
-                    <a href="{{ route('register') }}" class="btn btn-primary rounded-pill px-4 btn-sm fw-bold">Daftar</a>
+                    <a href="{{ route('login') }}" class="btn btn-outline-secondary rounded-pill px-4 btn-sm fw-bold">{{ __('Masuk') }}</a>
+                    <a href="{{ route('register') }}" class="btn btn-primary rounded-pill px-4 btn-sm fw-bold">{{ __('Daftar') }}</a>
                 </div>
                 @endauth
             </div>
@@ -880,16 +923,19 @@
         function applySidebarState() {
             const sidebar = document.getElementById('sidebar');
             const mainContent = document.getElementById('main-content');
+            const hamSvg = document.getElementById('sidebar-ham-svg');
             if (!sidebar || !mainContent) return;
 
             if (isSidebarCollapsed) {
                 sidebar.classList.add('collapsed');
                 mainContent.classList.remove('wide-space');
                 mainContent.classList.add('collapsed-space');
+                if (hamSvg) hamSvg.classList.remove('active');
             } else {
                 sidebar.classList.remove('collapsed');
                 mainContent.classList.remove('collapsed-space');
                 mainContent.classList.add('wide-space');
+                if (hamSvg) hamSvg.classList.add('active');
             }
             lucide.createIcons();
         }
@@ -904,10 +950,10 @@
         const isCampaignActive = {{ request()->routeIs('campaigns.*') ? 'true' : 'false' }};
 
         const navItems = [
-            { id: 'home', label: 'Home', icon: 'home', url: '{{ route('home') }}', active: {{ request()->routeIs('home') ? 'true' : 'false' }} },
-            { id: 'follow', label: 'Follow', icon: 'heart', url: '{{ route('campaigns.followed') }}', active: {{ request()->routeIs('campaigns.followed') ? 'true' : 'false' }} },
-            { id: 'campaign', label: 'Your Campaign', icon: 'layout-grid', url: '{{ route('campaigns.index') }}', active: {{ request()->routeIs('campaigns.index') ? 'true' : 'false' }} },
-            { id: 'archive', label: 'Archive', icon: 'archive', url: '{{ route('profile.archived') }}', active: {{ request()->routeIs('profile.archived') ? 'true' : 'false' }} }
+            { id: 'home', label: '{{ __('Home') }}', icon: 'home', url: '{{ route('home') }}', active: {{ request()->routeIs('home') ? 'true' : 'false' }} },
+            { id: 'follow', label: '{{ __('Follow') }}', icon: 'heart', url: '{{ route('campaigns.followed') }}', active: {{ request()->routeIs('campaigns.followed') ? 'true' : 'false' }} },
+            { id: 'campaign', label: '{{ __('Your Campaign') }}', icon: 'layout-grid', url: '{{ route('campaigns.index') }}', active: {{ request()->routeIs('campaigns.index') ? 'true' : 'false' }} },
+            { id: 'archive', label: '{{ __('Archive') }}', icon: 'archive', url: '{{ route('profile.archived') }}', active: {{ request()->routeIs('profile.archived') ? 'true' : 'false' }} }
         ];
 
         @guest
@@ -979,18 +1025,18 @@
                                     searchResults.innerHTML = data.map(item => `
                                         <a href="/my-campaigns/${item.id}" class="search-result-item">
                                             <div class="icon-box">
-                                                <i data-lucide="layout-grid" style="width:16px;"></i>
+                                                <i data-lucide="layout-grid" style="width:16px;height:16px;"></i>
                                             </div>
-                                            <div>
-                                                <div class="fw-bold small">${item.title}</div>
-                                                <div class="text-muted" style="font-size:10px;">${item.tag || 'No Category'}</div>
+                                            <div class="search-result-text">
+                                                <div class="title">${item.title}</div>
+                                                <div class="subtitle">${item.tag || 'No Category'}</div>
                                             </div>
                                         </a>
                                     `).join('');
                                     searchResults.style.display = 'block';
                                     lucide.createIcons();
                                 } else {
-                                    searchResults.innerHTML = '<div class="p-3 text-center text-muted small">Tidak ada kampanye ditemukan.</div>';
+                                    searchResults.innerHTML = '<div style="padding: 16px; text-align:center; color:#aaa; font-size:13px;">Kampanye tidak ditemukan.</div>';
                                     searchResults.style.display = 'block';
                                 }
                             });
