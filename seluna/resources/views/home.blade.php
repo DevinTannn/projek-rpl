@@ -17,9 +17,9 @@
 <!-- Recently Updated -->
 <div class="mb-5">
     <div class="section-title mb-4">
-        <h4 class="m-0 text-primary-custom">Akses Terakhir</h4>
+        <h4 class="m-0 text-primary-custom">{{ __('Last Access') }}</h4>
         @if($lastUpdatedCampaigns->count() > 0)
-            <a href="{{ route('campaigns.last-accessed') }}" class="text-secondary-custom text-decoration-none small fw-bold">Lihat Semua <i data-lucide="chevron-right" style="width: 14px;"></i></a>
+            <a href="{{ route('campaigns.last-accessed') }}" class="text-secondary-custom text-decoration-none small fw-bold">{{ __('See More') }} <i data-lucide="chevron-right" style="width: 14px;"></i></a>
         @endif
     </div>
     <div class="row g-4">
@@ -51,7 +51,7 @@
             </div>
         @empty
             <div class="col-12 text-center py-4">
-                <p class="text-muted">Belum ada riwayat akses campaign.</p>
+                <p class="text-muted">{{ __('Belum ada riwayat akses campaign.') }}</p>
             </div>
         @endforelse
     </div>
@@ -60,7 +60,7 @@
 <!-- Popular Now -->
 <div class="mb-5">
     <div class="section-title mb-4">
-        <h4 class="m-0 text-primary-custom">Populer Sekarang</h4>
+        <h4 class="m-0 text-primary-custom">{{ __('Popular Now') }}</h4>
     </div>
     <div class="row g-4">
         @forelse($popularCampaigns as $index => $campaign)
@@ -85,14 +85,14 @@
                         <p class="small opacity-75 mb-4 line-clamp-2">{{ Str::limit($campaign->description, 100) }}</p>
                         <div class="d-flex justify-content-between align-items-center mt-auto">
                             <div class="small fw-bold">{{ number_format($campaign->collected_amount / 1000, 1) }}k Donasi</div>
-                            <a href="{{ route('campaigns.show', $campaign->id) }}" class="btn btn-light rounded-pill px-4 py-2 fw-bold shadow-sm" style="font-size: 12px; color: {{ $bg }};">Lihat Detail</a>
+                            <a href="{{ route('campaigns.show', $campaign->id) }}" class="btn btn-light rounded-pill px-4 py-2 fw-bold shadow-sm" style="font-size: 12px; color: {{ $bg }};">{{ __('Lihat Detail') }}</a>
                         </div>
                     </div>
                 </div>
             </div>
         @empty
             <div class="col-12 text-center py-4">
-                <p class="text-muted">Belum ada kampanye populer.</p>
+                <p class="text-muted">{{ __('Belum ada kampanye populer.') }}</p>
             </div>
         @endforelse
     </div>
@@ -101,8 +101,8 @@
 <!-- Exploration Section -->
 <div class="mb-5">
     <div class="section-title mb-4">
-        <h4 class="m-0 text-primary-custom">Eksplorasi</h4>
-        <p class="text-muted small m-0">Kampanye terbaru yang menunggumu</p>
+        <h4 class="m-0 text-primary-custom">{{ __('Explore') }}</h4>
+        <p class="text-muted small m-0">{{ __('Kampanye terbaru yang menunggumu') }}</p>
     </div>
     <div class="row g-4">
         @forelse($explorationCampaigns as $campaign)
@@ -124,7 +124,7 @@
                                 <div class="small">
                                     <span class="fw-bold text-accent-custom" style="font-size: 14px;">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</span>
                                 </div>
-                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill fw-bold" style="font-size: 9px; padding: 4px 10px; letter-spacing: 1px;">AKTIF</span>
+                                <span class="badge bg-success bg-opacity-10 text-success rounded-pill fw-bold" style="font-size: 9px; padding: 4px 10px; letter-spacing: 1px;">{{ strtoupper(__('Aktif')) }}</span>
                             </div>
                         </div>
                     </div>
@@ -133,7 +133,7 @@
         @empty
             <div class="col-12 text-center py-5">
                 <i data-lucide="layout-grid" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
-                <p class="text-muted">Mulai eksplorasi pertamamu.</p>
+                <p class="text-muted">{{ __('Mulai eksplorasi pertamamu.') }}</p>
             </div>
         @endforelse
     </div>

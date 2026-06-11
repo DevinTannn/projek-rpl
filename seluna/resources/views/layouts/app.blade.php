@@ -884,7 +884,7 @@
                         <div class="bg-primary bg-opacity-10 rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
                             <img src="{{ asset('assets/images/seluna_logo_fit.png') }}" alt="Logo" style="height: 45px;">
                         </div>
-                        <h3 class="fw-bold text-primary-custom">Tentang SELUNA</h3>
+                        <h3 class="fw-bold text-primary-custom">{{ __('Tentang SELUNA') }}</h3>
                         <p class="text-muted">Versi 1.0.4 - 2026</p>
                     </div>
                     
@@ -905,7 +905,7 @@
                         </p>
                     </div>
                     
-                    <button type="button" class="btn btn-primary w-100 mt-5 rounded-pill py-3 fw-bold shadow-sm" data-bs-dismiss="modal">Tutup</button>
+                    <button type="button" class="btn btn-primary w-100 mt-5 rounded-pill py-3 fw-bold shadow-sm" data-bs-dismiss="modal">{{ __('Tutup') }}</button>
                 </div>
             </div>
         </div>

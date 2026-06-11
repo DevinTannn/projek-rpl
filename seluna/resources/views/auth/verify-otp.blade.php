@@ -5,9 +5,9 @@
     <div style="width:52px;height:52px;background:#EFF8F1;border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
         <i data-lucide="shield-check" style="width:24px;height:24px;color:#243E36;"></i>
     </div>
-    <h3 class="fw-bold" style="color:#243E36;">Masukkan Kode OTP</h3>
+    <h3 class="fw-bold" style="color:#243E36;">{{ __('Verifikasi OTP') }}</h3>
     <p class="text-muted" style="font-size:14px;">
-        Kami telah mengirim kode 6 digit ke<br>
+        {{ __('Masukkan 6 digit kode OTP yang dikirim ke') }}<br>
         <strong style="color:#243E36;">{{ $email }}</strong>
     </p>
 </div>
@@ -30,7 +30,7 @@
 <form action="{{ route('password.do-verify-otp') }}" method="POST">
     @csrf
     <div class="mb-4">
-        <label class="form-label small fw-bold">Kode OTP (6 digit)</label>
+        <label class="form-label small fw-bold">{{ __('Kode OTP (6 digit)') }}</label>
         {{-- OTP digit input boxes --}}
         <div id="otp-inputs" style="display:flex;gap:10px;justify-content:center;margin-bottom:8px;">
             @for($i = 0; $i < 6; $i++)
@@ -47,25 +47,25 @@
         </div>
         {{-- Hidden input that holds the concatenated OTP --}}
         <input type="hidden" name="otp" id="otp-value">
-        <p class="text-center text-muted" style="font-size:12px;">Kode berlaku selama 10 menit</p>
+        <p class="text-center text-muted" style="font-size:12px;">{{ __('Kode berlaku selama 10 menit') }}</p>
     </div>
 
     <button type="submit" id="otp-submit" class="btn btn-auth" disabled>
-        Verifikasi Kode
+        {{ __('Verifikasi Kode') }}
     </button>
 </form>
 
 <div class="auth-switch">
-    Email salah? <a href="{{ route('password.request') }}">Ganti email</a>
+    {{ __('Email salah?') }} <a href="{{ route('password.request') }}">{{ __('Ganti email') }}</a>
 </div>
 
 <div class="auth-switch mt-2">
-    Tidak menerima email?
+    {{ __('Tidak menerima email?') }}
     <form action="{{ route('password.send-otp') }}" method="POST" style="display:inline;">
         @csrf
         <input type="hidden" name="email" value="{{ $email }}">
         <button type="submit" style="background:none;border:none;padding:0;color:#7CA982;font-weight:700;font-size:14px;cursor:pointer;">
-            Kirim ulang
+            {{ __('Kirim Ulang OTP') }}
         </button>
     </form>
 </div>

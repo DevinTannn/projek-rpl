@@ -9,7 +9,7 @@
                     <a href="{{ route('profile.show') }}" class="btn btn-light rounded-circle p-2">
                         <i data-lucide="arrow-left"></i>
                     </a>
-                    <h3 class="fw-bold m-0 text-primary-custom">Verifikasi Identitas Fundraiser</h3>
+                    <h3 class="fw-bold m-0 text-primary-custom">{{ __('Verifikasi Identitas Fundraiser') }}</h3>
                 </div>
 
                 @if($user->isVerified())
@@ -17,8 +17,8 @@
                         <div class="d-flex gap-3">
                             <i data-lucide="shield-check" style="width: 32px; height: 32px;"></i>
                             <div>
-                                <h5 class="fw-bold mb-1">Akun Terverifikasi</h5>
-                                <p class="mb-0 opacity-75">Identitas Anda telah divalidasi oleh tim SumselPeduli. Anda dapat membuat dan mengelola campaign secara penuh.</p>
+                                <h5 class="fw-bold mb-1">{{ __('Akun Terverifikasi') }}</h5>
+                                <p class="mb-0 opacity-75">{{ __('Identitas Anda telah divalidasi oleh tim SumselPeduli. Anda dapat membuat dan mengelola campaign secara penuh.') }}</p>
                             </div>
                         </div>
                     </div>
@@ -27,8 +27,8 @@
                         <div class="d-flex gap-3">
                             <i data-lucide="clock" style="width: 32px; height: 32px;"></i>
                             <div>
-                                <h5 class="fw-bold mb-1">Menunggu Verifikasi</h5>
-                                <p class="mb-0 opacity-75">Dokumen Anda sedang ditinjau oleh admin. Proses ini biasanya memakan waktu 1-2 hari kerja.</p>
+                                <h5 class="fw-bold mb-1">{{ __('Menunggu Verifikasi') }}</h5>
+                                <p class="mb-0 opacity-75">{{ __('Dokumen Anda sedang ditinjau oleh admin. Proses ini biasanya memakan waktu 1-2 hari kerja.') }}</p>
                             </div>
                         </div>
                     </div>
@@ -39,7 +39,7 @@
                     @csrf
                     
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted required">NAMA LENGKAP (SESUAI KTP)</label>
+                        <label class="form-label fw-bold small text-muted required">{{ __('NAMA LENGKAP (SESUAI KTP)') }}</label>
                         <input type="text" name="full_name" class="form-control rounded-3 @error('full_name') is-invalid @enderror" 
                                value="{{ old('full_name', $verification->full_name ?? '') }}" 
                                {{ $user->isVerified() || ($verification && $verification->status === 'pending') ? 'disabled' : 'required' }}>
@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted required">NOMOR INDUK KEPENDUDUKAN (NIK)</label>
+                        <label class="form-label fw-bold small text-muted required">{{ __('NOMOR INDUK KEPENDUDUKAN (NIK)') }}</label>
                         <input type="number" name="nik" class="form-control rounded-3 @error('nik') is-invalid @enderror" maxlength="16"
                                value="{{ old('nik', $verification->nik ?? '') }}" 
                                {{ $user->isVerified() || ($verification && $verification->status === 'pending') ? 'disabled' : 'required' }}>
@@ -59,7 +59,7 @@
                     </div>
 
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted required">NAMA KOMUNITAS / YAYASAN / ORGANISASI</label>
+                        <label class="form-label fw-bold small text-muted required">{{ __('NAMA KOMUNITAS / YAYASAN / ORGANISASI') }}</label>
                         <input type="text" name="organization_name" class="form-control rounded-3 @error('organization_name') is-invalid @enderror" 
                                value="{{ old('organization_name', $verification->organization_name ?? '') }}" required>
                         @error('organization_name')
@@ -69,18 +69,18 @@
 
                     @if(!$user->isVerified())
                     <div class="mb-4">
-                        <label class="form-label fw-bold small text-muted required">UNGGAH FOTO IDENTITAS (KTP / PDF)</label>
+                        <label class="form-label fw-bold small text-muted required">{{ __('UNGGAH FOTO IDENTITAS (KTP / PDF)') }}</label>
                         @if($verification && $verification->status === 'pending')
                             <div class="p-3 bg-light rounded-3 text-center border">
                                 <i data-lucide="image" class="text-muted mb-2"></i>
                                 <div class="small text-muted text-truncate">{{ $verification->ktp_photo }}</div>
-                                <div class="small fw-bold text-warning">Dokumen sedang ditinjau</div>
+                                <div class="small fw-bold text-warning">{{ __('Dokumen sedang ditinjau') }}</div>
                             </div>
                         @else
                             <div id="ktp-drop-zone" class="p-4 rounded-4 text-center @error('ktp_photo') border-danger @enderror" 
                                  style="border: 2px dashed var(--secondary-color); background: #fbfdfb; cursor: pointer;">
                                 <i data-lucide="camera" class="mb-2" style="color: var(--secondary-color);"></i>
-                                <div class="small fw-bold">Pilih atau Seret Foto KTP / Berkas PDF</div>
+                                <div class="small fw-bold">{{ __('Pilih atau Seret Foto KTP / Berkas PDF') }}</div>
                                 <input type="file" name="ktp_photo" id="ktp-input" class="d-none" accept="image/*,application/pdf" required>
                                 <div id="ktp-preview" class="mt-2 d-none">
                                     <img src="" class="img-fluid rounded-3 shadow-sm" style="max-height: 200px;">
@@ -110,9 +110,9 @@
 
                     <div class="d-grid mt-5">
                         @if(!$user->isVerified() && (!$verification || $verification->status !== 'pending'))
-                            <button type="submit" class="btn btn-primary py-3 rounded-pill fw-bold shadow-sm">Kirim Dokumen Verifikasi</button>
+                            <button type="submit" class="btn btn-primary py-3 rounded-pill fw-bold shadow-sm">{{ __('Kirim Dokumen Verifikasi') }}</button>
                         @elseif($user->isVerified())
-                            <button type="submit" class="btn btn-secondary-color py-3 rounded-pill fw-bold text-white shadow-sm" style="background-color: var(--secondary-color);">Simpan Perubahan Organisasi</button>
+                            <button type="submit" class="btn btn-secondary-color py-3 rounded-pill fw-bold text-white shadow-sm" style="background-color: var(--secondary-color);">{{ __('Simpan Perubahan Organisasi') }}</button>
                         @endif
                     </div>
                 </form>

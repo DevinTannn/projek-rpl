@@ -3,8 +3,8 @@
 @section('content')
 <div class="container py-4">
     <div class="mb-5">
-        <h2 class="fw-bold text-primary-custom mb-2">Campaign Favorit</h2>
-        <p class="text-muted">Campaign yang Anda ikuti untuk memantau perkembangannya.</p>
+        <h2 class="fw-bold text-primary-custom mb-2">{{ __('Favorite Campaign') }}</h2>
+        <p class="text-muted">{{ __('Campaign yang Anda ikuti untuk memantau perkembangannya.') }}</p>
     </div>
 
     @if($campaigns->count() > 0)
@@ -24,11 +24,11 @@
 
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="small text-muted">Terkumpul</div>
+                                        <div class="small text-muted">{{ __('Collected') }}</div>
                                         <div class="fw-bold text-accent-custom">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</div>
                                     </div>
                                     <div class="text-end">
-                                        <div class="small text-muted">Target</div>
+                                        <div class="small text-muted">{{ __('Target') }}</div>
                                         <div class="fw-bold text-primary-custom">Rp {{ number_format($campaign->goal_amount, 0, ',', '.') }}</div>
                                     </div>
                                 </div>
@@ -45,9 +45,9 @@
     @else
         <div class="text-center py-5">
             <i data-lucide="heart" class="text-muted mb-4" style="width: 64px; height: 64px; opacity: 0.2;"></i>
-            <h4 class="fw-bold text-muted">Belum ada campaign favorit</h4>
-            <p class="text-muted">Klik ikon hati pada detail campaign untuk menyimpannya di sini.</p>
-            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-4 mt-3">Eksplorasi Campaign</a>
+            <h4 class="fw-bold text-muted">{{ __('Belum ada campaign favorit') }}</h4>
+            <p class="text-muted">{{ __('Klik ikon hati pada detail campaign untuk menyimpannya di sini.') }}</p>
+            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-4 mt-3">{{ __('Eksplorasi Campaign') }}</a>
         </div>
     @endif
 </div>

@@ -2,10 +2,10 @@
 
 @section('content')
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-    <h2 class="fw-bold text-primary-custom">Your Campaign</h2>
+    <h2 class="fw-bold text-primary-custom">{{ __('Your Campaign') }}</h2>
     <button class="btn btn-accent px-4 py-2 fw-bold d-flex align-items-center justify-content-center gap-2" data-bs-toggle="modal" data-bs-target="#createCampaignModal">
         <i data-lucide="plus-circle" style="width: 20px;"></i>
-        Create a Campaign
+        {{ __('Create a Campaign') }}
     </button>
 </div>
 
@@ -14,9 +14,9 @@
         <div class="mb-4">
             <i data-lucide="layers" class="text-accent-custom" style="width: 80px; height: 80px; opacity: 0.5;"></i>
         </div>
-        <h4 class="fw-bold text-primary-custom mb-2">YOU HAVEN'T CREATED ANY CAMPAIGN</h4>
-        <p class="text-muted mb-4 text-uppercase fw-semibold" style="letter-spacing: 1px;">CREATE A CAMPAIGN?</p>
-        <button class="btn btn-primary px-5 py-3 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#createCampaignModal">Create a Campaign</button>
+        <h4 class="fw-bold text-primary-custom mb-2">{{ __("YOU HAVEN'T CREATED ANY CAMPAIGN") }}</h4>
+        <p class="text-muted mb-4 text-uppercase fw-semibold" style="letter-spacing: 1px;">{{ __('CREATE A CAMPAIGN?') }}</p>
+        <button class="btn btn-primary px-5 py-3 rounded-pill fw-bold" data-bs-toggle="modal" data-bs-target="#createCampaignModal">{{ __('Create a Campaign') }}</button>
     </div>
 @else
     <div class="row g-4">
@@ -37,11 +37,11 @@
                                     <span class="badge bg-accent-custom mt-2" style="font-size: 10px;">{{ $campaign->tag }}</span>
                                 @endif
                                 @if($campaign->status === 'active')
-                                    <span class="badge bg-success mt-2" style="font-size: 10px;">Aktif</span>
+                                    <span class="badge bg-success mt-2" style="font-size: 10px;">{{ __('Aktif') }}</span>
                                 @elseif($campaign->status === 'pending')
-                                    <span class="badge bg-warning mt-2" style="font-size: 10px;">Menunggu Verifikasi</span>
+                                    <span class="badge bg-warning mt-2" style="font-size: 10px;">{{ __('Menunggu Verifikasi') }}</span>
                                 @elseif($campaign->status === 'rejected')
-                                    <span class="badge bg-danger mt-2" style="font-size: 10px;">Ditolak</span>
+                                    <span class="badge bg-danger mt-2" style="font-size: 10px;">{{ __('Ditolak') }}</span>
                                 @endif
                             </div>
                         </div>
@@ -49,7 +49,7 @@
 
                     <div class="p-4">
                         <div class="d-flex justify-content-between mb-2">
-                            <span class="fw-bold">{{ $campaign->percentage }}% Terkumpul</span>
+                            <span class="fw-bold">{{ $campaign->percentage }}% {{ __('Collected') }}</span>
                             <span class="text-muted small">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }} / {{ number_format($campaign->goal_amount, 0, ',', '.') }}</span>
                         </div>
                         <div class="progress" style="height: 10px; border-radius: 10px;">
@@ -67,24 +67,24 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0" style="border-radius: 24px; background-color: var(--bg-color);">
             <div class="modal-header border-0 pb-0">
-                <h4 class="fw-bold text-primary-custom m-0">Create New Campaign</h4>
+                <h4 class="fw-bold text-primary-custom m-0">{{ __('Create New Campaign') }}</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form action="{{ route('campaigns.store') }}" method="POST">
                 @csrf
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold required">Title</label>
-                        <input type="text" name="title" class="form-control" placeholder="Campaign name..." required>
+                        <label class="form-label fw-bold required">{{ __('Title') }}</label>
+                        <input type="text" name="title" class="form-control" placeholder="{{ __('Campaign name...') }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold required">Bio / Description</label>
-                        <textarea name="description" id="description" class="form-control" rows="3" placeholder="Short campaign description"></textarea>
+                        <label class="form-label fw-bold required">{{ __('Bio / Description') }}</label>
+                        <textarea name="description" id="description" class="form-control" rows="3" placeholder="{{ __('Short campaign description') }}"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Campaign Tag / Category</label>
+                        <label class="form-label fw-bold">{{ __('Campaign Tag / Category') }}</label>
                         <select name="tag" class="form-select">
-                            <option value="">Pilih Kategori...</option>
+                            <option value="">{{ __('Pilih Kategori...') }}</option>
                             <option value="Sosial & Kemanusiaan">Sosial & Kemanusiaan</option>
                             <option value="Pendidikan">Pendidikan</option>
                             <option value="Kesehatan">Kesehatan</option>
@@ -99,14 +99,14 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label fw-bold required">Goal Amount (Target)</label>
+                        <label class="form-label fw-bold required">{{ __('Goal Amount (Target)') }}</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">Rp</span>
                             <input type="number" name="goal_amount" id="create_goal_amount" class="form-control border-start-0" placeholder="5000000" required>
                         </div>
                     </div>
 
-                    <h6 class="fw-bold text-primary-custom mb-3 mt-4">Milestone Rewards</h6>
+                    <h6 class="fw-bold text-primary-custom mb-3 mt-4">{{ __('Milestone Rewards') }}</h6>
                     <div class="row g-3">
                         @foreach([25, 50, 75, 100] as $perc)
                             <div class="col-12">
@@ -122,8 +122,8 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Launch Campaign</button>
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">{{ __('Launch Campaign') }}</button>
                 </div>
             </form>
         </div>
@@ -135,7 +135,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content border-0" style="border-radius: 24px; background-color: var(--bg-color);">
             <div class="modal-header border-0 pb-0">
-                <h4 class="fw-bold text-primary-custom m-0">Edit Campaign</h4>
+                <h4 class="fw-bold text-primary-custom m-0">{{ __('Edit Campaign') }}</h4>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form id="editCampaignForm" method="POST">
@@ -143,17 +143,17 @@
                 @method('PUT')
                 <div class="modal-body p-4">
                     <div class="mb-3">
-                        <label class="form-label fw-bold required">Title</label>
+                        <label class="form-label fw-bold required">{{ __('Title') }}</label>
                         <input type="text" name="title" id="edit_title" class="form-control" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold required">Bio / Description</label>
+                        <label class="form-label fw-bold required">{{ __('Bio / Description') }}</label>
                         <textarea name="description" id="edit_description" class="form-control" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label fw-bold">Campaign Tag / Category</label>
+                        <label class="form-label fw-bold">{{ __('Campaign Tag / Category') }}</label>
                         <select name="tag" id="edit_tag" class="form-select">
-                            <option value="">Pilih Kategori...</option>
+                            <option value="">{{ __('Pilih Kategori...') }}</option>
                             <option value="Sosial & Kemanusiaan">Sosial & Kemanusiaan</option>
                             <option value="Pendidikan">Pendidikan</option>
                             <option value="Kesehatan">Kesehatan</option>
@@ -168,14 +168,14 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label class="form-label fw-bold required">Goal Amount (Target)</label>
+                        <label class="form-label fw-bold required">{{ __('Goal Amount (Target)') }}</label>
                         <div class="input-group">
                             <span class="input-group-text bg-white border-end-0">Rp</span>
                             <input type="number" name="goal_amount" id="edit_goal_amount" class="form-control border-start-0" required>
                         </div>
                     </div>
 
-                    <h6 class="fw-bold text-primary-custom mb-3 mt-4">Milestone Rewards</h6>
+                    <h6 class="fw-bold text-primary-custom mb-3 mt-4">{{ __('Milestone Rewards') }}</h6>
                     <div class="row g-3">
                         @foreach([25, 50, 75, 100] as $perc)
                             <div class="col-12">
@@ -191,8 +191,8 @@
                     </div>
                 </div>
                 <div class="modal-footer border-0 p-4 pt-0">
-                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">Update Campaign</button>
+                    <button type="button" class="btn btn-light px-4" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                    <button type="submit" class="btn btn-primary px-5 py-2 fw-bold rounded-pill">{{ __('Update Campaign') }}</button>
                 </div>
             </form>
         </div>

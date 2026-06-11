@@ -278,13 +278,13 @@
     <div class="container px-lg-5">
         <div class="row align-items-center g-5">
             <div class="col-12 col-lg-6">
-                <h1 class="hero-title">Dukung Aksi Kebaikan Nyata di Indonesia</h1>
+                <h1 class="hero-title">{{ __('Dukung Aksi Kebaikan Nyata di Indonesia') }}</h1>
                 <p class="hero-subtitle">
-                    Seluna membantu Anda mengumpulkan donasi secara transparan dan tepercaya untuk penanganan medis, dana darurat, bantuan bencana, serta inisiatif komunitas lokal di Indonesia.
+                    {{ __('Seluna membantu Anda mengumpulkan donasi secara transparan dan tepercaya untuk penanganan medis, dana darurat, bantuan bencana, serta inisiatif komunitas lokal di Indonesia.') }}
                 </p>
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="{{ route('campaigns.index') }}" class="btn-gofundme-green py-3 px-4 fw-bold">Mulai Galang Dana</a>
-                    <a href="#explore-campaigns" class="btn-hero-outline py-3 px-4">Cari Kampanye</a>
+                    <a href="{{ route('campaigns.index') }}" class="btn-gofundme-green py-3 px-4 fw-bold">{{ __('Mulai Galang Dana') }}</a>
+                    <a href="#explore-campaigns" class="btn-hero-outline py-3 px-4">{{ __('Cari Kampanye') }}</a>
                 </div>
             </div>
             <div class="col-12 col-lg-6 hero-image-wrapper">
@@ -297,7 +297,7 @@
 <!-- 2. Featured Topics -->
 <section class="container px-lg-5">
     <div class="section-header-custom">
-        <h2 class="section-title-custom">Topik Pilihan</h2>
+        <h2 class="section-title-custom">{{ __('Topik Pilihan') }}</h2>
     </div>
 
     <!-- Main horizontal banner -->
@@ -372,8 +372,8 @@
 <section class="container px-lg-5" id="explore-campaigns">
     <div class="section-header-custom d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3">
         <div>
-            <h2 class="section-title-custom m-0">Temukan kampanye yang menginspirasi</h2>
-            <p class="text-muted small m-0 mt-1">Salurkan kebaikan Anda ke kampanye donasi terverifikasi di bawah ini</p>
+            <h2 class="section-title-custom m-0">{{ __('Temukan kampanye yang menginspirasi') }}</h2>
+            <p class="text-muted small m-0 mt-1">{{ __('Salurkan kebaikan Anda ke kampanye donasi terverifikasi di bawah ini') }}</p>
         </div>
         
         <!-- Category Pill selector -->
@@ -405,8 +405,8 @@
     @if(!$featured)
         <div class="text-center py-5 bg-light rounded-5 border">
             <i data-lucide="heart-off" class="text-muted mb-3" style="width: 48px; height: 48px;"></i>
-            <h5 class="fw-bold text-primary-custom">Belum Ada Kampanye Aktif</h5>
-            <p class="text-muted small mb-0">Silakan kembali lagi nanti atau buat kampanye donasi pertama Anda!</p>
+            <h5 class="fw-bold text-primary-custom">{{ __('Belum Ada Kampanye Aktif') }}</h5>
+            <p class="text-muted small mb-0">{{ __('Silakan kembali lagi nanti atau buat kampanye donasi pertama Anda!') }}</p>
         </div>
     @else
         <div class="discovery-grid">
@@ -439,7 +439,7 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div class="small">
                                         <span class="fw-bold text-success" style="font-size: 18px;">Rp {{ number_format($featured->collected_amount, 0, ',', '.') }}</span>
-                                        <span class="text-muted" style="font-size: 13px;"> terkumpul dari Rp {{ number_format($featured->goal_amount, 0, ',', '.') }}</span>
+                                        <span class="text-muted" style="font-size: 13px;"> {{ __('terkumpul dari') }} Rp {{ number_format($featured->goal_amount, 0, ',', '.') }}</span>
                                     </div>
                                     <span class="badge bg-success bg-opacity-10 text-success rounded-pill fw-bold px-3 py-2" style="font-size: 10px;">
                                         {{ $featured->percentage }}%
@@ -484,7 +484,7 @@
                         </a>
                     @empty
                         <div class="col-12 text-center py-5 text-muted">
-                            Tidak ada kampanye tambahan lainnya.
+                            {{ __('Tidak ada kampanye tambahan lainnya.') }}
                         </div>
                     @endforelse
                 </div>
@@ -496,8 +496,8 @@
 <!-- 4. How Seluna Works Section -->
 <section class="container px-lg-5 mt-5">
     <div class="section-header-custom text-center">
-        <h2 class="section-title-custom mb-2">Bagaimana Seluna Bekerja?</h2>
-        <p class="text-muted small mx-auto" style="max-width: 500px;">Hanya butuh beberapa menit untuk mulai berbagi harapan dengan jutaan donatur</p>
+        <h2 class="section-title-custom mb-2">{{ __('Bagaimana Seluna Bekerja?') }}</h2>
+        <p class="text-muted small mx-auto" style="max-width: 500px;">{{ __('Hanya butuh beberapa menit untuk mulai berbagi harapan dengan jutaan donatur') }}</p>
     </div>
     
     <div class="row g-4">
@@ -543,12 +543,12 @@
 <!-- 5. Call to Action Banner -->
 <section class="container px-lg-5">
     <div class="bottom-banner-landing">
-        <h2 class="fw-bold text-primary-custom mb-3" style="font-size: 36px; letter-spacing: -0.5px;">Siap Menyalakan Cahaya Harapan?</h2>
+        <h2 class="fw-bold text-primary-custom mb-3" style="font-size: 36px; letter-spacing: -0.5px;">{{ __('Siap Menyalakan Cahaya Harapan?') }}</h2>
         <p class="text-muted small mx-auto mb-4" style="max-width: 550px; font-weight: 500;">
-            Buat kampanye donasi online pertamamu sekarang secara gratis. Bersama Seluna, setiap kontribusi kecil membawa perubahan besar.
+            {{ __('Buat kampanye donasi online pertamamu sekarang secara gratis. Bersama Seluna, setiap kontribusi kecil membawa perubahan besar.') }}
         </p>
         <div class="d-flex justify-content-center">
-            <a href="{{ route('campaigns.index') }}" class="btn-gofundme-green py-3 px-5 fw-bold shadow-lg">Mulai Seluna Hari Ini</a>
+            <a href="{{ route('campaigns.index') }}" class="btn-gofundme-green py-3 px-5 fw-bold shadow-lg">{{ __('Mulai Seluna Hari Ini') }}</a>
         </div>
     </div>
 </section>

@@ -8,7 +8,7 @@
                 <a href="{{ route('profile.show') }}" class="btn btn-light rounded-circle shadow-sm p-2">
                     <i data-lucide="arrow-left" style="width: 24px; height: 24px;"></i>
                 </a>
-                <h3 class="fw-bold m-0">Riwayat Donasi</h3>
+                <h3 class="fw-bold m-0">{{ __('Riwayat') }}</h3>
             </div>
 
             {{-- Section: Unpaid Donations (Pending Midtrans) --}}
@@ -16,7 +16,7 @@
                 <div class="mb-5">
                     <div class="d-flex align-items-center gap-2 mb-3 px-2 px-lg-0">
                         <div class="bg-warning rounded-pill" style="width: 8px; height: 8px;"></div>
-                        <h6 class="fw-bold m-0 text-muted uppercase tracking-wider small">Pembayaran Tertunda</h6>
+                        <h6 class="fw-bold m-0 text-muted uppercase tracking-wider small">{{ __('Pembayaran Tertunda') }}</h6>
                     </div>
                     
                     @foreach($unpaidDonations as $donation)
@@ -36,10 +36,10 @@
                                                 <div class="d-flex flex-wrap align-items-center gap-2 mt-1">
                                                     <span class="text-muted" style="font-size: 10px;">#{{ $donation->order_id }}</span>
                                                     @if($donation->payment_method === 'Manual')
-                                                        <span class="badge bg-info bg-opacity-25 text-info-emphasis rounded-pill px-2" style="font-size: 9px;">Transfer Manual</span>
-                                                        <span class="badge bg-warning bg-opacity-25 text-warning-emphasis rounded-pill px-2" style="font-size: 9px;">Menunggu Verifikasi Admin</span>
+                                                        <span class="badge bg-info bg-opacity-25 text-info-emphasis rounded-pill px-2" style="font-size: 9px;">{{ __('Transfer Manual') }}</span>
+                                                        <span class="badge bg-warning bg-opacity-25 text-warning-emphasis rounded-pill px-2" style="font-size: 9px;">{{ __('Menunggu Verifikasi Admin') }}</span>
                                                     @else
-                                                        <span class="badge bg-warning bg-opacity-25 text-warning-emphasis rounded-pill px-2" style="font-size: 9px;">Menunggu Pembayaran</span>
+                                                        <span class="badge bg-warning bg-opacity-25 text-warning-emphasis rounded-pill px-2" style="font-size: 9px;">{{ __('Menunggu Pembayaran') }}</span>
                                                     @endif
                                                 </div>
                                             </div>
@@ -88,7 +88,7 @@
                                                 </p>
                                                 <div class="d-flex align-items-center gap-2 mt-1">
                                                     <span class="text-muted" style="font-size: 10px;">#{{ $donation->order_id }}</span>
-                                                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-2" style="font-size: 9px;">Berhasil Terverifikasi</span>
+                                                    <span class="badge bg-success bg-opacity-25 text-success rounded-pill px-2" style="font-size: 9px;">{{ __('Berhasil Terverifikasi') }}</span>
                                                 </div>
                                             </div>
                                             <div class="text-end d-flex flex-column align-items-end gap-2">
@@ -96,7 +96,7 @@
                                                 <a href="{{ route('donations.certificate', $donation->id) }}" 
                                                    class="btn btn-outline-primary btn-sm rounded-pill fw-bold px-3 py-1 mt-1"
                                                    style="font-size: 10px;">
-                                                    <i data-lucide="download" style="width: 12px;" class="me-1"></i> Sertifikat
+                                                    <i data-lucide="download" style="width: 12px;" class="me-1"></i> {{ __('Sertifikat') }}
                                                 </a>
                                             </div>
                                         </div>
@@ -112,9 +112,9 @@
                         <div class="mb-3">
                             <i data-lucide="history" style="width: 64px; height: 64px; opacity: 0.1;"></i>
                         </div>
-                        <h5 class="fw-bold">Pelacak Kebaikan Anda Kosong</h5>
-                        <p class="text-muted small">Donasi yang Anda lakukan akan tersimpan manis di sini.</p>
-                        <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-5 py-2 fw-bold mt-2 shadow-sm">Mulai Berbagi</a>
+                        <h5 class="fw-bold">{{ __('Pelacak Kebaikan Anda Kosong') }}</h5>
+                        <p class="text-muted small">{{ __('Donasi yang Anda lakukan akan tersimpan manis di sini.') }}</p>
+                        <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-5 py-2 fw-bold mt-2 shadow-sm">{{ __('Mulai Berbagi') }}</a>
                     </div>
                 @endif
             @endforelse

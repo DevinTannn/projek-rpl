@@ -319,7 +319,7 @@
                     <span class="search-icon">
                         <i data-lucide="search" style="width: 18px; height: 18px;"></i>
                     </span>
-                    <input type="text" id="landing-search-input" name="query" placeholder="Cari donasi..." value="{{ request('query') }}" autocomplete="off">
+                    <input type="text" id="landing-search-input" name="query" placeholder="{{ __('Search donation campaigns...') }}" value="{{ request('query') }}" autocomplete="off">
                     <div id="landing-search-results" class="search-results-dropdown">
                         <!-- Autocomplete items -->
                     </div>
@@ -328,20 +328,20 @@
                 <!-- Kategori Dropdown -->
                 <div class="dropdown">
                     <button class="nav-item-custom dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <span>Kategori</span>
+                        <span>{{ __('Kategori') }}</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-custom">
                         <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.search', ['query' => 'Kesehatan']) }}">Kesehatan</a></li>
                         <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.search', ['query' => 'Pendidikan']) }}">Pendidikan</a></li>
                         <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.search', ['query' => 'Bencana Alam']) }}">Bencana Alam</a></li>
-                        <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.search', ['query' => 'Sosial']) }}">Sosial & Kemanusiaan</a></li>
+                        <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.search', ['query' => 'Sosial']) }}">{{ __('Sosial & Kemanusiaan') }}</a></li>
                         <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.search', ['query' => 'Lingkungan']) }}">Lingkungan</a></li>
                         <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.search', ['query' => 'Keagamaan']) }}">Keagamaan</a></li>
                     </ul>
                 </div>
 
                 <a href="{{ route('campaigns.index') }}" class="nav-item-custom">
-                    <span>Galang Dana</span>
+                    <span>{{ __('Galang Dana') }}</span>
                 </a>
             </div>
 
@@ -355,7 +355,7 @@
             <div class="nav-links-right">
                 <button class="nav-item-custom d-none d-md-flex" data-bs-toggle="modal" data-bs-target="#infoModal">
                     <i data-lucide="info" style="width: 18px; height: 18px;"></i>
-                    <span>Tentang</span>
+                    <span>{{ __('Tentang') }}</span>
                 </button>
 
                 @auth
@@ -369,22 +369,22 @@
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-custom">
                             <li><h6 class="dropdown-header text-muted fw-bold" style="font-size: 11px;">{{ Auth::user()->email }}</h6></li>
                             <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item dropdown-item-custom" href="{{ route('profile.show') }}"><i data-lucide="user" class="me-2" style="width: 16px;"></i> Profil Saya</a></li>
-                            <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.index') }}"><i data-lucide="layers" class="me-2" style="width: 16px;"></i> Kampanye Anda</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ route('profile.show') }}"><i data-lucide="user" class="me-2" style="width: 16px;"></i> {{ __('Profil Saya') }}</a></li>
+                            <li><a class="dropdown-item dropdown-item-custom" href="{{ route('campaigns.index') }}"><i data-lucide="layers" class="me-2" style="width: 16px;"></i> {{ __('Your Campaign') }}</a></li>
                             <li>
                                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                                     @csrf
-                                    <button type="submit" class="dropdown-item dropdown-item-custom text-danger"><i data-lucide="log-out" class="me-2" style="width: 16px;"></i> Keluar</button>
+                                    <button type="submit" class="dropdown-item dropdown-item-custom text-danger"><i data-lucide="log-out" class="me-2" style="width: 16px;"></i> {{ __('Keluar') }}</button>
                                 </form>
                             </li>
                         </ul>
                     </div>
-                    <a href="{{ route('campaigns.index') }}" class="btn-gofundme-green">Mulai Seluna</a>
+                    <a href="{{ route('campaigns.index') }}" class="btn-gofundme-green">{{ __('Mulai Seluna') }}</a>
                 @else
                     <a href="{{ route('login') }}" class="nav-item-custom">
-                        <span>Masuk</span>
+                        <span>{{ __('Masuk') }}</span>
                     </a>
-                    <a href="{{ route('register') }}" class="btn-gofundme-green">Mulai Seluna</a>
+                    <a href="{{ route('register') }}" class="btn-gofundme-green">{{ __('Mulai Seluna') }}</a>
                 @endauth
             </div>
         </div>
@@ -422,31 +422,31 @@
                         <span class="footer-logo-text">SELUNA</span>
                     </div>
                     <p class="text-muted small fw-medium" style="line-height: 1.6;">
-                        Seluna adalah platform galang dana dan donasi online tepercaya di Indonesia. Kami mempertemukan orang-orang baik untuk berbagi kebahagiaan dan menyalakan cahaya harapan bagi sesama.
+                        {{ __('Seluna adalah platform galang dana dan donasi online tepercaya di Indonesia. Kami mempertemukan orang-orang baik untuk berbagi kebahagiaan dan menyalakan cahaya harapan bagi sesama.') }}
                     </p>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2 offset-lg-1 footer-link-col">
-                    <h6>Galang Dana</h6>
+                    <h6>{{ __('Galang Dana') }}</h6>
                     <ul>
-                        <li><a href="{{ route('campaigns.search', ['query' => 'Medis']) }}">Medis & Kesehatan</a></li>
-                        <li><a href="{{ route('campaigns.search', ['query' => 'Pendidikan']) }}">Pendidikan</a></li>
-                        <li><a href="{{ route('campaigns.search', ['query' => 'Bencana']) }}">Bencana Alam</a></li>
-                        <li><a href="{{ route('campaigns.search', ['query' => 'Lingkungan']) }}">Lingkungan</a></li>
+                        <li><a href="{{ route('campaigns.search', ['query' => 'Medis']) }}">{{ __('Medis & Kesehatan') }}</a></li>
+                        <li><a href="{{ route('campaigns.search', ['query' => 'Pendidikan']) }}">{{ __('Pendidikan') }}</a></li>
+                        <li><a href="{{ route('campaigns.search', ['query' => 'Bencana']) }}">{{ __('Bencana Alam') }}</a></li>
+                        <li><a href="{{ route('campaigns.search', ['query' => 'Lingkungan']) }}">{{ __('Lingkungan') }}</a></li>
                     </ul>
                 </div>
                 <div class="col-6 col-md-4 col-lg-2 footer-link-col">
-                    <h6>Tentang</h6>
+                    <h6>{{ __('Tentang') }}</h6>
                     <ul>
-                        <li><a href="#" data-bs-toggle="modal" data-bs-target="#infoModal">Tentang Seluna</a></li>
-                        <li><a href="https://doc-hosting.flycricket.io/seluna-privacy-policy/26c20c6d-945f-4cfb-a752-a4e69c511147/privacy" target="_blank">Kebijakan Privasi</a></li>
-                        <li><a href="https://doc-hosting.flycricket.io/seluna-terms-of-use/01968fad-012c-4ea3-af57-ba843e46d7e5/terms" target="_blank">Syarat & Ketentuan</a></li>
+                        <li><a href="#" data-bs-toggle="modal" data-bs-target="#infoModal">{{ __('Tentang Seluna') }}</a></li>
+                        <li><a href="https://doc-hosting.flycricket.io/seluna-privacy-policy/26c20c6d-945f-4cfb-a752-a4e69c511147/privacy" target="_blank">{{ __('Kebijakan Privasi') }}</a></li>
+                        <li><a href="https://doc-hosting.flycricket.io/seluna-terms-of-use/01968fad-012c-4ea3-af57-ba843e46d7e5/terms" target="_blank">{{ __('Syarat & Ketentuan') }}</a></li>
                     </ul>
                 </div>
                 <div class="col-12 col-md-4 col-lg-3 footer-link-col">
-                    <h6>Hubungi Kami</h6>
+                    <h6>{{ __('Hubungi Kami') }}</h6>
                     <ul class="text-muted small fw-medium" style="line-height: 1.6;">
                         <li>Email: support@seluna.org</li>
-                        <li>Jam Layanan: 09:00 - 17:00 WIB</li>
+                        <li>{{ __('Jam Layanan: 09:00 - 17:00 WIB') }}</li>
                         <li>Palembang, Sumatera Selatan</li>
                     </ul>
                 </div>

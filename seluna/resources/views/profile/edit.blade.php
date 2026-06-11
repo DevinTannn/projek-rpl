@@ -34,7 +34,7 @@
                                  class="rounded-circle border border-4 border-white shadow-sm mb-3" 
                                  style="width: 120px; height: 120px; object-fit: cover;">
                             <label for="profile_photo" class="btn btn-sm btn-accent position-absolute bottom-0 start-50 translate-middle-x rounded-pill shadow-sm" style="margin-bottom: -10px;">
-                                <i data-lucide="camera" style="width: 14px;"></i> Edit
+                                <i data-lucide="camera" style="width: 14px;"></i> {{ __('Edit') }}
                             </label>
                             <input type="file" name="profile_photo" id="profile_photo" class="d-none" accept="image/*">
                         </div>
@@ -60,10 +60,10 @@
                     <div class="col-md-6">
                         <label class="form-label fw-bold">{{ __('Gender') }}</label>
                         <select name="gender" class="form-select @error('gender') is-invalid @enderror">
-                            <option value="">Select Gender</option>
-                            <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>Male</option>
-                            <option value="Female" {{ old('gender', $user->gender) == 'Female' ? 'selected' : '' }}>Female</option>
-                            <option value="Other" {{ old('gender', $user->gender) == 'Other' ? 'selected' : '' }}>Other</option>
+                            <option value="">{{ __('Select Gender') }}</option>
+                            <option value="Male" {{ old('gender', $user->gender) == 'Male' ? 'selected' : '' }}>{{ __('Male') }}</option>
+                            <option value="Female" {{ old('gender', $user->gender) == 'Female' ? 'selected' : '' }}>{{ __('Female') }}</option>
+                            <option value="Other" {{ old('gender', $user->gender) == 'Other' ? 'selected' : '' }}>{{ __('Other') }}</option>
                         </select>
                     </div>
 
@@ -96,7 +96,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content border-0 shadow-lg" style="border-radius: 20px;">
             <div class="modal-header border-0 pb-0">
-                <h5 class="modal-title fw-bold text-primary-custom" id="cropperModalLabel">Crop Profile Photo</h5>
+                <h5 class="modal-title fw-bold text-primary-custom" id="cropperModalLabel">{{ __('Crop Profile Photo') }}</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -105,8 +105,8 @@
                 </div>
             </div>
             <div class="modal-footer border-0 pt-0 d-flex justify-content-end gap-2">
-                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" id="cropAndSaveBtn">Crop & Save</button>
+                <button type="button" class="btn btn-light rounded-pill px-4 fw-bold" data-bs-dismiss="modal">{{ __('Cancel') }}</button>
+                <button type="button" class="btn btn-primary rounded-pill px-4 fw-bold" id="cropAndSaveBtn">{{ __('Crop & Save') }}</button>
             </div>
         </div>
     </div>

@@ -3,8 +3,8 @@
 @section('content')
 <div class="container py-4">
     <div class="mb-5">
-        <h2 class="fw-bold text-primary-custom mb-2">Hasil Pencarian</h2>
-        <p class="text-muted">Menampilkan hasil untuk: <span class="fw-bold text-secondary-custom">"{{ $query }}"</span></p>
+        <h2 class="fw-bold text-primary-custom mb-2">{{ __('Hasil Pencarian') }}</h2>
+        <p class="text-muted">{{ __('Menampilkan hasil untuk:') }} <span class="fw-bold text-secondary-custom">"{{ $query }}"</span></p>
     </div>
 
     @if($campaigns->count() > 0)
@@ -24,11 +24,11 @@
 
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="small text-muted">Terkumpul</div>
+                                        <div class="small text-muted">{{ __('Collected') }}</div>
                                         <div class="fw-bold text-accent-custom">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</div>
                                     </div>
                                     <div class="text-end">
-                                        <div class="small text-muted">Target</div>
+                                        <div class="small text-muted">{{ __('Target') }}</div>
                                         <div class="fw-bold text-primary-custom">Rp {{ number_format($campaign->goal_amount, 0, ',', '.') }}</div>
                                     </div>
                                 </div>
@@ -45,9 +45,9 @@
     @else
         <div class="text-center py-5">
             <i data-lucide="search-x" class="text-muted mb-4" style="width: 64px; height: 64px;"></i>
-            <h4 class="fw-bold text-muted">Tidak ada kampanye ditemukan</h4>
-            <p class="text-muted">Gunakan kata kunci lain atau cari berdasarkan kategori.</p>
-            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-4 mt-3">Kembali ke Home</a>
+            <h4 class="fw-bold text-muted">{{ __('Tidak ada kampanye ditemukan') }}</h4>
+            <p class="text-muted">{{ __('Gunakan kata kunci lain atau cari berdasarkan kategori.') }}</p>
+            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-4 mt-3">{{ __('Kembali ke Home') }}</a>
         </div>
     @endif
 </div>

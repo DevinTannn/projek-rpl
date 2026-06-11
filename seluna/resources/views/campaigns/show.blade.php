@@ -309,13 +309,13 @@
                 <div class="mb-5">
                     <ul class="nav nav-tabs border-0 gap-3 mb-4" id="campaignTabs">
                         <li class="nav-item">
-                            <a class="nav-link active rounded-pill px-4" data-bs-toggle="tab" href="#updates">Updates</a>
+                            <a class="nav-link active rounded-pill px-4" data-bs-toggle="tab" href="#updates">{{ __('Updates') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link rounded-pill px-4" data-bs-toggle="tab" href="#gallery">Gallery</a>
+                            <a class="nav-link rounded-pill px-4" data-bs-toggle="tab" href="#gallery">{{ __('Gallery') }}</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link rounded-pill px-4" data-bs-toggle="tab" href="#reports">Report</a>
+                            <a class="nav-link rounded-pill px-4" data-bs-toggle="tab" href="#reports">{{ __('Report') }}</a>
                         </li>
                     </ul>
                     <div class="tab-content">
@@ -323,7 +323,7 @@
                             @if(Auth::id() === $campaign->user_id)
                                 <div class="text-end mb-4">
                                     <button class="btn btn-accent-custom rounded-pill fw-bold px-4 shadow-sm" data-bs-toggle="modal" data-bs-target="#addUpdateModal">
-                                        <i data-lucide="plus-circle" class="me-2" style="width:18px;"></i> Buat Update Berita
+                                        <i data-lucide="plus-circle" class="me-2" style="width:18px;"></i> {{ __('Create News Update') }}
                                     </button>
                                 </div>
                             @endif
@@ -400,19 +400,19 @@
                                 {{-- Fundraiser View: Manage Reports --}}
                                 <div class="bg-light rounded-4 p-4 mb-4">
                                     <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <h6 class="fw-bold m-0 text-primary-custom">Manage Reports</h6>
+                                        <h6 class="fw-bold m-0 text-primary-custom">{{ __('Manage Reports') }}</h6>
                                         <button class="btn btn-sm btn-accent-custom rounded-pill px-3 fw-bold" data-bs-toggle="modal" data-bs-target="#uploadReportModal">
-                                            <i data-lucide="plus" style="width:14px;" class="me-1"></i> Add New
+                                            <i data-lucide="plus" style="width:14px;" class="me-1"></i> {{ __('Add New') }}
                                         </button>
                                     </div>
                                     <div class="table-responsive">
                                         <table class="table table-hover align-middle">
                                             <thead class="table-light">
                                                 <tr>
-                                                    <th class="small py-2 border-0">File</th>
-                                                    <th class="small py-2 border-0">Size</th>
-                                                    <th class="small py-2 border-0">Status</th>
-                                                    <th class="small py-2 border-0 text-end">Action</th>
+                                                    <th class="small py-2 border-0">{{ __('File') }}</th>
+                                                    <th class="small py-2 border-0">{{ __('Size') }}</th>
+                                                    <th class="small py-2 border-0">{{ __('Status') }}</th>
+                                                    <th class="small py-2 border-0 text-end">{{ __('Action') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -427,11 +427,11 @@
                                                         <td class="small border-0">{{ $report->file_size_formatted }}</td>
                                                         <td class="small border-0">
                                                             @if($report->status === 'verified')
-                                                                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style="font-size: 9px;">Verified</span>
+                                                                <span class="badge bg-success-subtle text-success px-2 py-1 rounded-pill" style="font-size: 9px;">{{ __('Verified') }}</span>
                                                             @elseif($report->status === 'rejected')
-                                                                <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill" style="font-size: 9px;">Rejected</span>
+                                                                <span class="badge bg-danger-subtle text-danger px-2 py-1 rounded-pill" style="font-size: 9px;">{{ __('Rejected') }}</span>
                                                             @else
-                                                                <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill" style="font-size: 9px;">Pending</span>
+                                                                <span class="badge bg-warning-subtle text-warning px-2 py-1 rounded-pill" style="font-size: 9px;">{{ __('Pending') }}</span>
                                                             @endif
                                                         </td>
                                                         <td class="small border-0 text-end">
@@ -452,7 +452,7 @@
                                                     </tr>
                                                 @empty
                                                     <tr>
-                                                        <td colspan="4" class="text-center text-muted py-3 small">Belum ada laporan diupload.</td>
+                                                        <td colspan="4" class="text-center text-muted py-3 small">{{ __('Belum ada laporan diupload.') }}</td>
                                                     </tr>
                                                 @endforelse
                                             </tbody>
@@ -525,10 +525,10 @@
             scrollbar-width: thin;
             scrollbar-color: #e2e8f0 transparent;
         ">
-            <h5 class="fw-bold mb-4">Donation Progress</h5>
+            <h5 class="fw-bold mb-4">{{ __('Donation Progress') }}</h5>
             <div class="d-flex justify-content-between mb-2">
                 <span id="collected-label" class="h4 fw-bold m-0 text-accent-custom">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</span>
-                <span class="text-muted">Goal: Rp {{ number_format($campaign->goal_amount, 0, ',', '.') }}</span>
+                <span class="text-muted">{{ __('Goal') }}: Rp {{ number_format($campaign->goal_amount, 0, ',', '.') }}</span>
             </div>
             <div class="progress mb-4" style="height: 12px; border-radius: 12px;">
                 <div id="progress-bar-el" class="progress-bar progress-bar-striped progress-bar-animated" style="width: {{ $campaign->percentage }}%; background-color: var(--secondary-color);"></div>
@@ -539,7 +539,7 @@
                 <button class="btn btn-light py-3 fw-bold rounded-pill shadow-sm mb-1 d-flex align-items-center justify-content-center gap-2 border border-light-custom" 
                         onclick="openShareModal()">
                     <i data-lucide="share-2" style="width: 20px;"></i>
-                    Bagikan Campaign
+                    {{ __('Share Campaign') }}
                 </button>
 
                 @if(Auth::id() != $campaign->user_id)
@@ -547,13 +547,13 @@
                             data-bs-toggle="modal" data-bs-target="#donationModal"
                             onclick="setTimeout(() => updateFee(document.getElementById('donation-amount')?.value || 0), 200)">
                         <i data-lucide="heart" style="width: 20px; height: 20px;"></i>
-                        Donasi Sekarang
+                        {{ __('Donasi Sekarang') }}
                     </button>
                 @endif
                 @if(Auth::id() == $campaign->user_id)
                 <button class="btn btn-outline-secondary py-2 rounded-pill small fw-bold"
                         data-bs-toggle="modal" data-bs-target="#campaignSettingsModal">
-                    <i data-lucide="settings" style="width: 16px;" class="me-2"></i> Campaign Settings
+                    <i data-lucide="settings" style="width: 16px;" class="me-2"></i> {{ __('Campaign Settings') }}
                 </button>
                 @endif
             </div>
@@ -561,8 +561,8 @@
             @if(Auth::id() === $campaign->user_id)
             <!-- Upload Media Section -->
             <div class="mt-4 pt-4 border-top">
-                <h6 class="fw-bold mb-1">Upload Bukti Lapangan</h6>
-                <p class="text-muted small mb-3">Tambahkan foto atau video dokumentasi terbaru.</p>
+                <h6 class="fw-bold mb-1">{{ __('Upload Field Evidence') }}</h6>
+                <p class="text-muted small mb-3">{{ __('Tambahkan foto atau video dokumentasi terbaru.') }}</p>
                 
                 <div class="drop-card p-0 border-0 shadow-none">
                     <div id="media-dropzone" class="seluna-dropzone" style="
@@ -576,7 +576,7 @@
                             <div class="icon-wrap mb-2">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 4v16m8-8H4" /></svg>
                             </div>
-                            <h3 style="font-size:1rem;">Pilih File</h3>
+                            <h3 style="font-size:1rem;">{{ __('Select Files') }}</h3>
                             <p class="small text-muted" style="font-size:0.75rem;">Maks 10 file • 7MB/file</p>
                             <button type="button" class="seluna-btn-browse py-1 px-3" style="font-size:0.75rem;">Browse</button>
                         </div>
@@ -586,15 +586,15 @@
 
                     <div class="upload-stats" style="font-size: 0.75rem;">
                         <div class="stat-item">
-                            <span class="label">Total File</span>
+                            <span class="label">{{ __('Total File') }}</span>
                             <span class="val" id="media-stat-total" style="font-size:0.95rem;">0</span>
                         </div>
                         <div class="stat-item">
-                            <span class="label">Berhasil</span>
+                            <span class="label">{{ __('Berhasil') }}</span>
                             <span class="val success" id="media-stat-success" style="font-size:0.95rem;">0</span>
                         </div>
                         <div class="stat-item">
-                            <span class="label">Gagal</span>
+                            <span class="label">{{ __('Gagal') }}</span>
                             <span class="val danger" id="media-stat-error" style="font-size:0.95rem;">0</span>
                         </div>
                     </div>

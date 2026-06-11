@@ -3,8 +3,8 @@
 @section('content')
 <div class="container py-4">
     <div class="mb-5">
-        <h2 class="fw-bold text-primary-custom mb-2">Akses Terakhir</h2>
-        <p class="text-muted">Campaign yang baru-baru ini Anda kunjungi.</p>
+        <h2 class="fw-bold text-primary-custom mb-2">{{ __('Last Access') }}</h2>
+        <p class="text-muted">{{ __('Campaign yang baru-baru ini Anda kunjungi.') }}</p>
     </div>
 
     @if($campaigns->count() > 0)
@@ -27,11 +27,11 @@
 
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
-                                        <div class="small text-muted">Terkumpul</div>
+                                        <div class="small text-muted">{{ __('Collected') }}</div>
                                         <div class="fw-bold text-accent-custom">Rp {{ number_format($campaign->collected_amount, 0, ',', '.') }}</div>
                                     </div>
                                     <div class="text-end">
-                                        <div class="small text-muted">Target</div>
+                                        <div class="small text-muted">{{ __('Target') }}</div>
                                         <div class="fw-bold text-primary-custom">Rp {{ number_format($campaign->goal_amount, 0, ',', '.') }}</div>
                                     </div>
                                 </div>
@@ -44,9 +44,9 @@
     @else
         <div class="text-center py-5">
             <i data-lucide="history" class="text-muted mb-4" style="width: 64px; height: 64px; opacity: 0.2;"></i>
-            <h4 class="fw-bold text-muted">Belum ada riwayat akses</h4>
-            <p class="text-muted">Campaign yang Anda buka akan muncul di sini.</p>
-            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-4 mt-3">Mulai Eksplorasi</a>
+            <h4 class="fw-bold text-muted">{{ __('Belum ada riwayat akses') }}</h4>
+            <p class="text-muted">{{ __('Campaign yang Anda buka akan muncul di sini.') }}</p>
+            <a href="{{ route('home') }}" class="btn btn-primary rounded-pill px-4 mt-3">{{ __('Mulai Eksplorasi') }}</a>
         </div>
     @endif
 </div>
